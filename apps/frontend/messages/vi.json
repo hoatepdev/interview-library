@@ -1,0 +1,34 @@
+{
+  "Header": {
+    "dashboard": "Bảng điều khiển",
+    "topics": "Chủ đề",
+    "questions": "Câu hỏi",
+    "practice": "Luyện tập"
+  },
+  "Dashboard": {
+    "welcome": "Chào mừng trở lại, {user}!",
+    "overview": "Tiến độ học tập của bạn.",
+    "questionsMastered": "Câu hỏi đã thuộc",
+    "activeTopics": "Chủ đề đang học",
+    "practiceSessions": "Phiên luyện tập",
+    "currentStreak": "Chuỗi liên tục"
+  },
+  "Topics": {
+    "title": "Chủ đề",
+    "description": "Quản lý và khám phá các chủ đề phỏng vấn.",
+    "create": "Tạo chủ đề",
+    "questions": "Câu hỏi",
+    "viewQuestions": "Xem câu hỏi"
+  },
+  "Questions": {
+    "title": "Câu hỏi",
+    "description": "Duyệt và quản lý câu hỏi phỏng vấn.",
+    "add": "Thêm câu hỏi",
+    "search": "Tìm kiếm câu hỏi...",
+    "filters": "Bộ lọc"
+  },
+  "Common": {
+    "cancel": "Hủy",
+    "submit": "Gửi"
+  }
+}

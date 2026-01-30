@@ -1,0 +1,34 @@
+{
+  "Header": {
+    "dashboard": "Dashboard",
+    "topics": "Topics",
+    "questions": "Questions",
+    "practice": "Practice"
+  },
+  "Dashboard": {
+    "welcome": "Welcome back, {user}!",
+    "overview": "Your learning progress at a glance.",
+    "questionsMastered": "Questions Mastered",
+    "activeTopics": "Active Topics",
+    "practiceSessions": "Practice Sessions",
+    "currentStreak": "Current Streak"
+  },
+  "Topics": {
+    "title": "Topics",
+    "description": "Manage and explore interview topics.",
+    "create": "Create Topic",
+    "questions": "Questions",
+    "viewQuestions": "View Questions"
+  },
+  "Questions": {
+    "title": "Questions",
+    "description": "Browse and manage interview questions.",
+    "add": "Add Question",
+    "search": "Search questions...",
+    "filters": "Filters"
+  },
+  "Common": {
+    "cancel": "Cancel",
+    "submit": "Submit"
+  }
+}

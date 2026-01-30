@@ -1,0 +1,30 @@
+{
+  "name": "interview-library",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal interview question management app",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter frontend dev\" \"pnpm --filter backend start:dev\"",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend start:dev",
+    "db:migrate": "pnpm --filter backend migration:run",
+    "db:migrate:revert": "pnpm --filter backend migration:revert",
+    "build": "pnpm --filter frontend build && pnpm --filter backend build",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "dependencies": {
+    "@radix-ui/react-popover": "^1.1.15"
+  }
+}

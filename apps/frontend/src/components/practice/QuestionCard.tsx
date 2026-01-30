@@ -1,0 +1,34 @@
+import { Question } from "@/types";
+import { Badge } from "lucide-react";
+
+interface QuestionCardProps {
+  question: Question;
+}
+
+export function QuestionCard({ question }: QuestionCardProps) {
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-none border border-gray-100 dark:border-gray-700 p-8 mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs font-medium px-2.5 py-0.5 rounded-full uppercase tracking-wide">
+          {question.level}
+        </span>
+        <span className="text-gray-400 dark:text-gray-500 text-sm">
+          {question.topic?.name || "Uncategorized"}
+          {question.isFavorite && (
+            <span className="ml-2 text-yellow-500">⭐</span>
+          )}
+        </span>
+      </div>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{question.title}</h2>
+      <div className="prose max-w-none text-gray-600 dark:text-gray-300">
+        <p>{question.content}</p>
+      </div>
+      <div className="mt-4 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+        <span>Practiced {question.practiceCount}x</span>
+        {question.difficultyScore && (
+          <span>• Difficulty: {question.difficultyScore}</span>
+        )}
+      </div>
+    </div>
+  );
+}
