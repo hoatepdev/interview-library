@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { ApiLocaleProvider } from "@/components/providers/ApiLocaleProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,15 +38,17 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
         <NextIntlClientProvider messages={messages}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <MainLayout>{children}</MainLayout>
-            <Toaster richColors position="top-right" />
-          </ThemeProvider>
+          <ApiLocaleProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <MainLayout>{children}</MainLayout>
+              <Toaster richColors position="top-right" />
+            </ThemeProvider>
+          </ApiLocaleProvider>
         </NextIntlClientProvider>
       </body>
     </html>

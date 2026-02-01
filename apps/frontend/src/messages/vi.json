@@ -1,0 +1,137 @@
+{
+  "common": {
+    "loading": "Đang tải...",
+    "search": "Tìm kiếm",
+    "add": "Thêm",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "close": "Đóng",
+    "actions": "Hành động",
+    "viewAll": "Xem tất cả",
+    "noData": "Không tìm thấy dữ liệu"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "topics": "Chủ đề",
+    "questions": "Câu hỏi",
+    "practice": "Luyện tập",
+    "settings": "Cài đặt"
+  },
+  "home": {
+    "welcome": "Chào mừng trở lại, Developer!",
+    "subtitle": "Sẵn sàng cho buổi phỏng vấn tiếp theo? Bạn có {count} câu hỏi cần ôn tập hôm nay.",
+    "startPractice": "Bắt đầu Luyện tập",
+    "totalTopics": "Tổng Chủ đề",
+    "mastered": "Đã thành thạo",
+    "practiceTime": "Thời gian luyện tập",
+    "recentActivity": "Hoạt động gần đây",
+    "hours": "giờ"
+  },
+  "topics": {
+    "title": "Chủ đề",
+    "subtitle": "Quản lý và khám phá các chủ đề phỏng vấn.",
+    "createTopic": "Tạo Chủ đề",
+    "editTopic": "Sửa Chủ đề",
+    "createNewTopic": "Tạo Chủ đề Mới",
+    "searchPlaceholder": "Tìm kiếm chủ đề...",
+    "questionsCount": "{count} câu hỏi",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa \"{name}\"? Điều này sẽ xóa cả tất cả câu hỏi liên quan."
+  },
+  "questions": {
+    "title": "Câu hỏi",
+    "subtitle": "Duyệt và quản lý câu hỏi phỏng vấn.",
+    "addQuestion": "Thêm Câu hỏi",
+    "editQuestion": "Sửa Câu hỏi",
+    "addNewQuestion": "Thêm Câu hỏi Mới",
+    "searchPlaceholder": "Tìm kiếm câu hỏi...",
+    "filters": "Bộ lọc",
+    "clearAll": "Xóa tất cả",
+    "level": "Trình độ",
+    "status": "Trạng thái",
+    "topic": "Chủ đề",
+    "favoritesOnly": "Chỉ yêu thích",
+    "allLevels": "Tất cả trình độ",
+    "allStatuses": "Tất cả trạng thái",
+    "allTopics": "Tất cả chủ đề",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa câu hỏi này?",
+    "levels": {
+      "junior": "Junior",
+      "middle": "Middle",
+      "senior": "Senior"
+    },
+    "statuses": {
+      "new": "Mới",
+      "learning": "Đang học",
+      "mastered": "Đã thành thạo"
+    }
+  },
+  "practice": {
+    "title": "Chế độ Luyện tập",
+    "subtitle": "Kiểm tra kiến thức của bạn với các câu hỏi ngẫu nhiên.",
+    "startSession": "Bắt đầu Luyện tập",
+    "nextQuestion": "Câu hỏi tiếp theo",
+    "showAnswer": "Hiện đáp án",
+    "hideAnswer": "Ẩn đáp án",
+    "rateYourself": "Tự đánh giá",
+    "noQuestions": "Không có câu hỏi nào. Hãy thêm một số câu hỏi trước.",
+    "timeSpent": "Thời gian",
+    "questionsReviewed": "Số câu đã ôn",
+    "sessionStats": "Thống kê phiên",
+    "overallStats": "Thống kê chung",
+    "ratings": {
+      "poor": "Kém",
+      "fair": "Khá",
+      "good": "Tốt",
+      "great": "Rất tốt"
+    }
+  },
+  "form": {
+    "name": "Tên",
+    "description": "Mô tả",
+    "icon": "Biểu tượng",
+    "color": "Màu sắc",
+    "title": "Tiêu đề",
+    "content": "Nội dung",
+    "answer": "Đáp án",
+    "level": "Trình độ",
+    "topic": "Chủ đề",
+    "selectTopic": "Chọn một chủ đề",
+    "optional": "Tùy chọn",
+    "enterTitle": "Nhập tiêu đề câu hỏi",
+    "enterContent": "Nhập nội dung câu hỏi",
+    "enterAnswer": "Nhập đáp án (tùy chọn)",
+    "enterName": "Nhập tên",
+    "enterDescription": "Nhập mô tả"
+  },
+  "stats": {
+    "totalQuestions": "Tổng Câu hỏi",
+    "totalSessions": "Tổng Phiên",
+    "totalTime": "Tổng Thời gian",
+    "byStatus": "Theo Trạng thái",
+    "byLevel": "Theo Trình độ",
+    "byRating": "Theo Đánh giá",
+    "needsReview": "Cần ôn tập",
+    "recentActivity": "Hoạt động gần đây"
+  },
+  "notifications": {
+    "created": "Tạo thành công",
+    "updated": "Cập nhật thành công",
+    "deleted": "Xóa thành công",
+    "error": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "topicCreated": "Tạo chủ đề thành công",
+    "topicUpdated": "Cập nhật chủ đề thành công",
+    "topicDeleted": "Xóa chủ đề thành công",
+    "questionCreated": "Tạo câu hỏi thành công",
+    "questionUpdated": "Cập nhật câu hỏi thành công",
+    "questionDeleted": "Xóa câu hỏi thành công",
+    "favoriteToggled": "Đã cập nhật yêu thích"
+  },
+  "language": {
+    "title": "Ngôn ngữ",
+    "en": "English",
+    "vi": "Tiếng Việt"
+  }
+}

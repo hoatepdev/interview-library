@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TopicsModule } from './topics/topics.module';
 import { QuestionsModule } from './questions/questions.module';
 import { PracticeModule } from './practice/practice.module';
+import { I18nModule } from './i18n/i18n.module';
+import { TranslationModule } from './translations/translation.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { PracticeModule } from './practice/practice.module';
       synchronize: false, // Use migrations in production
       logging: process.env.NODE_ENV === 'development',
     }),
+    I18nModule,
+    TranslationModule,
     TopicsModule,
     QuestionsModule,
     PracticeModule,

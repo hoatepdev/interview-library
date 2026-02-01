@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { getQuestions, questionsApi, Question, getTopics, Topic } from "@/lib/api";
 import { QuestionList } from "@/components/questions/QuestionList";
 import { Search, Plus, Filter, Star } from "lucide-react";
@@ -22,6 +23,9 @@ import { QuestionForm } from "@/components/questions/QuestionForm";
 import { Button } from "@/components/ui/button";
 
 function QuestionsContent() {
+  const t = useTranslations('questions');
+  const tNotif = useTranslations('notifications');
+  const tCommon = useTranslations('common');
   const searchParams = useSearchParams();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -133,10 +137,10 @@ function QuestionsContent() {
 
       setIsDialogOpen(false);
       await fetchQuestions();
-      toast.success("Question created successfully");
+      toast.success(tNotif('questionCreated'));
     } catch (error) {
       console.error("Failed to create question:", error);
-      toast.error("Failed to create question. Please try again.");
+      toast.error(tNotif('error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -158,10 +162,10 @@ function QuestionsContent() {
       setIsDialogOpen(false);
       setEditingQuestion(null);
       await fetchQuestions();
-      toast.success("Question updated successfully");
+      toast.success(tNotif('questionUpdated'));
     } catch (error) {
       console.error("Failed to update question:", error);
-      toast.error("Failed to update question. Please try again.");
+      toast.error(tNotif('error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -171,10 +175,10 @@ function QuestionsContent() {
     try {
       await questionsApi.delete(id);
       await fetchQuestions();
-      toast.success("Question deleted successfully");
+      toast.success(tNotif('questionDeleted'));
     } catch (error) {
       console.error("Failed to delete question:", error);
-      toast.error("Failed to delete question. Please try again.");
+      toast.error(tNotif('error'));
     }
   };
 
@@ -184,7 +188,7 @@ function QuestionsContent() {
       await fetchQuestions();
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
-      toast.error("Failed to update favorite. Please try again.");
+      toast.error(tNotif('error'));
     }
   };
 
@@ -231,20 +235,20 @@ function QuestionsContent() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Questions</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">Browse and manage interview questions.</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">{t('subtitle')}</p>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="space-x-2" onClick={() => setEditingQuestion(null)}>
               <Plus className="w-5 h-5" />
-              <span>Add Question</span>
+              <span>{t('addQuestion')}</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>{editingQuestion ? "Edit Question" : "Add New Question"}</DialogTitle>
+              <DialogTitle>{editingQuestion ? t('editQuestion') : t('addNewQuestion')}</DialogTitle>
             </DialogHeader>
             <QuestionForm
               onCancel={handleDialogClose}
@@ -272,14 +276,14 @@ function QuestionsContent() {
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
             className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm dark:shadow-none"
-            placeholder="Search questions..."
+            placeholder={t('searchPlaceholder')}
           />
         </div>
         <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
           <PopoverTrigger asChild>
             <button className="flex items-center justify-center space-x-2 px-5 py-3 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 bg-white dark:bg-gray-800 transition-colors text-gray-700 dark:text-gray-200 font-medium">
               <Filter className="w-5 h-5" />
-              <span>Filters</span>
+              <span>{t('filters')}</span>
               {activeFilterCount > 0 && (
                 <span className="ml-2 bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
                   {activeFilterCount}
@@ -290,53 +294,53 @@ function QuestionsContent() {
           <PopoverContent className="w-72 p-4" align="end">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900 dark:text-white">Filters</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">{t('filters')}</h3>
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
                     className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                   >
-                    Clear all
+                    {t('clearAll')}
                   </button>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Level</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('level')}</label>
                 <select
                   value={levelFilter}
                   onChange={(e) => handleLevelChange(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 >
-                  <option value="all">All Levels</option>
-                  <option value="junior">Junior</option>
-                  <option value="middle">Middle</option>
-                  <option value="senior">Senior</option>
+                  <option value="all">{t('allLevels')}</option>
+                  <option value="junior">{t('levels.junior')}</option>
+                  <option value="middle">{t('levels.middle')}</option>
+                  <option value="senior">{t('levels.senior')}</option>
                 </select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('status')}</label>
                 <select
                   value={statusFilter}
                   onChange={(e) => handleStatusChange(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 >
-                  <option value="all">All Statuses</option>
-                  <option value="new">New</option>
-                  <option value="learning">Learning</option>
-                  <option value="mastered">Mastered</option>
+                  <option value="all">{t('allStatuses')}</option>
+                  <option value="new">{t('statuses.new')}</option>
+                  <option value="learning">{t('statuses.learning')}</option>
+                  <option value="mastered">{t('statuses.mastered')}</option>
                 </select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Topic</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('topic')}</label>
                 <select
                   value={topicFilter}
                   onChange={(e) => handleTopicChange(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 >
-                  <option value="all">All Topics</option>
+                  <option value="all">{t('allTopics')}</option>
                   {topics.map((topic) => (
                     <option key={topic.id} value={topic.id}>
                       {topic.name}
@@ -355,7 +359,7 @@ function QuestionsContent() {
                 />
                 <label htmlFor="favorites" className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
                   <Star className="w-4 h-4" />
-                  Favorites only
+                  {t('favoritesOnly')}
                 </label>
               </div>
             </div>
@@ -386,8 +390,9 @@ function QuestionsContent() {
 }
 
 export default function QuestionsPage() {
+  const tCommon = useTranslations('common');
   return (
-    <Suspense fallback={<div className="container mx-auto px-4 py-8">Loading...</div>}>
+    <Suspense fallback={<div className="container mx-auto px-4 py-8">{tCommon('loading')}</div>}>
       <QuestionsContent />
     </Suspense>
   );

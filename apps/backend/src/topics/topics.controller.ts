@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus, Query, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { TopicsService } from './topics.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
@@ -14,13 +15,15 @@ export class TopicsController {
   }
 
   @Get()
-  findAll() {
-    return this.topicsService.findAll();
+  findAll(@Req() req: Request) {
+    const lang = req.i18n?.lang || 'en';
+    return this.topicsService.findAll(lang);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.topicsService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req: Request) {
+    const lang = req.i18n?.lang || 'en';
+    return this.topicsService.findOne(id, lang);
   }
 
   @Put(':id')

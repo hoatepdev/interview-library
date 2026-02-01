@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Topic } from './topic.entity';
+import { QuestionTranslation } from './question-translation.entity';
 
 export enum QuestionLevel {
   JUNIOR = 'junior',
@@ -18,6 +19,7 @@ export class Question {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // English (default language) - kept as source of truth
   @Column({ length: 255 })
   title: string;
 
@@ -68,4 +70,7 @@ export class Question {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => QuestionTranslation, translation => translation.question, { cascade: true })
+  translations: QuestionTranslation[];
 }

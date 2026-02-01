@@ -5,6 +5,7 @@ import { Question, QuestionStatus } from '../database/entities/question.entity';
 import { PracticeLog, SelfRating } from '../database/entities/practice-log.entity';
 import { CreatePracticeLogDto } from './dto/create-practice-log.dto';
 import { QueryPracticeDto } from './dto/query-practice.dto';
+import { TranslationService, Locale } from '../i18n/translation.service';
 
 @Injectable()
 export class PracticeService {
@@ -13,9 +14,10 @@ export class PracticeService {
     private readonly questionRepository: Repository<Question>,
     @InjectRepository(PracticeLog)
     private readonly practiceLogRepository: Repository<PracticeLog>,
+    private readonly translationService: TranslationService,
   ) {}
 
-  async getRandomQuestion(query: QueryPracticeDto): Promise<Question> {
+  async getRandomQuestion(query: QueryPracticeDto, locale: Locale = 'en'): Promise<any> {
     const { topicId, level, status, excludeQuestionId } = query;
 
     const where: any = {};
@@ -39,16 +41,16 @@ export class PracticeService {
 
     const questions = await this.questionRepository.find({
       where,
-      relations: ['topic'],
+      relations: ['topic', 'translations'],
     });
 
     if (questions.length === 0) {
       throw new NotFoundException('No questions found matching the criteria');
     }
 
-    // Return a random question
+    // Return a random question with translations
     const randomIndex = Math.floor(Math.random() * questions.length);
-    return questions[randomIndex];
+    return this.translationService.formatQuestion(questions[randomIndex], locale, true).data;
   }
 
   async logPractice(createPracticeLogDto: CreatePracticeLogDto): Promise<PracticeLog> {
@@ -91,7 +93,7 @@ export class PracticeService {
     return practiceLog;
   }
 
-  async getStats() {
+  async getStats(locale: Locale = 'en') {
     const totalQuestions = await this.questionRepository.count();
     const totalLogs = await this.practiceLogRepository.count();
 
@@ -131,7 +133,7 @@ export class PracticeService {
 
     // Get recent practice logs
     const recentLogs = await this.practiceLogRepository.find({
-      relations: ['question', 'question.topic'],
+      relations: ['question', 'question.topic', 'question.translations'],
       order: { practicedAt: 'DESC' },
       take: 5,
     });
@@ -145,37 +147,18 @@ export class PracticeService {
       questionsByLevel: this.formatArrayAsObject(questionsByLevel),
       practiceByRating: this.formatArrayAsObject(practiceByRating),
       questionsNeedingReview,
-      recentLogs: recentLogs.map((log) => ({
-        id: log.id,
-        questionId: log.question.id,
-        questionTitle: log.question.title,
-        topicName: log.question.topic?.name,
-        level: log.question.level,
-        rating: log.selfRating,
-        practicedAt: log.practicedAt,
-      })),
+      recentLogs: recentLogs.map((log) => this.formatLogWithTranslations(log, locale)),
     };
   }
 
-  async getHistory(limit = 20) {
+  async getHistory(limit = 20, locale: Locale = 'en') {
     const logs = await this.practiceLogRepository.find({
-      relations: ['question', 'question.topic'],
+      relations: ['question', 'question.topic', 'question.translations'],
       order: { practicedAt: 'DESC' },
       take: limit,
     });
 
-    return logs.map((log) => ({
-      id: log.id,
-      questionId: log.question.id,
-      questionTitle: log.question.title,
-      topicName: log.question.topic?.name,
-      topicColor: log.question.topic?.color,
-      level: log.question.level,
-      rating: log.selfRating,
-      timeSpentSeconds: log.timeSpentSeconds,
-      notes: log.notes,
-      practicedAt: log.practicedAt,
-    }));
+    return logs.map((log) => this.formatLogWithTranslations(log, locale));
   }
 
   private formatArrayAsObject(arr: any[]) {
@@ -185,5 +168,20 @@ export class PracticeService {
       acc[key] = value;
       return acc;
     }, {} as Record<string, number>);
+  }
+
+  private formatLogWithTranslations(log: PracticeLog, locale: Locale): Record<string, any> {
+    return {
+      id: log.id,
+      questionId: log.question.id,
+      questionTitle: this.translationService.getQuestionTitle(log.question, locale),
+      topicName: log.question.topic ? this.translationService.getTopicName(log.question.topic, locale) : undefined,
+      topicColor: log.question.topic?.color,
+      level: log.question.level,
+      rating: log.selfRating,
+      timeSpentSeconds: log.timeSpentSeconds,
+      notes: log.notes,
+      practicedAt: log.practicedAt,
+    };
   }
 }

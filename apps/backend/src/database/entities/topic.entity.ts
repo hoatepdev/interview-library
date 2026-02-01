@@ -1,10 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { TopicTranslation } from './topic-translation.entity';
 
 @Entity('topics')
 export class Topic {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // English (default language) - kept as source of truth
   @Column({ length: 100 })
   name: string;
 
@@ -25,4 +27,7 @@ export class Topic {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => TopicTranslation, translation => translation.topic, { cascade: true })
+  translations: TopicTranslation[];
 }

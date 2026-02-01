@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Patch, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Patch, Query, HttpCode, HttpStatus, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { QuestionsService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -16,13 +17,15 @@ export class QuestionsController {
   }
 
   @Get()
-  findAll(@Query() query: QueryQuestionsDto) {
-    return this.questionsService.findAll(query);
+  findAll(@Req() req: Request, @Query() query: QueryQuestionsDto) {
+    const lang = req.i18n?.lang || 'en';
+    return this.questionsService.findAll(query, lang);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.questionsService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req: Request) {
+    const lang = req.i18n?.lang || 'en';
+    return this.questionsService.findOne(id, lang);
   }
 
   @Put(':id')

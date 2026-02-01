@@ -1,20 +1,24 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { BookOpen, Trophy, ArrowRight, Clock } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
-export default function Home() {
+export default async function Home() {
+  const t = await getTranslations('home');
+  const tCommon = await getTranslations('common');
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
       <section className="bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-800 rounded-2xl p-8 text-white shadow-lg">
-        <h1 className="text-3xl font-bold mb-2">Welcome back, Developer!</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('welcome')}</h1>
         <p className="text-blue-100 dark:text-blue-200 mb-6 max-w-2xl">
-          Ready to master your next interview? You have 12 questions due for review today.
+          {t('subtitle', { count: 12 })}
         </p>
         <Link
           href="/practice"
           className="inline-flex items-center bg-white text-blue-600 dark:bg-gray-800 dark:text-blue-400 px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
         >
-          Start Practice Session
+          {t('startPractice')}
           <ArrowRight className="ml-2 w-5 h-5" />
         </Link>
       </section>
@@ -26,7 +30,7 @@ export default function Home() {
             <BookOpen className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Topics</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t('totalTopics')}</p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">8</p>
           </div>
         </div>
@@ -36,7 +40,7 @@ export default function Home() {
             <Trophy className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Mastered</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t('mastered')}</p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">24</p>
           </div>
         </div>
@@ -46,8 +50,8 @@ export default function Home() {
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Practice Time</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">4.5h</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t('practiceTime')}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">4.5{t('hours')}</p>
           </div>
         </div>
       </section>
@@ -55,9 +59,9 @@ export default function Home() {
       {/* Recent Activity */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recent Activity</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('recentActivity')}</h2>
           <Link href="/history" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-            View all
+            {tCommon('viewAll')}
           </Link>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm dark:shadow-none overflow-hidden">

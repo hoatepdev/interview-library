@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { getTopics, topicsApi, Topic } from "@/lib/api";
 import { TopicCard } from "@/components/topics/TopicCard";
 import { Search, Plus } from "lucide-react";
@@ -16,6 +17,8 @@ import { TopicForm } from "@/components/topics/TopicForm";
 import { Button } from "@/components/ui/button";
 
 export default function TopicsPage() {
+  const t = useTranslations('topics');
+  const tNotif = useTranslations('notifications');
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -55,10 +58,10 @@ export default function TopicsPage() {
 
       setIsDialogOpen(false);
       await fetchTopics();
-      toast.success("Topic created successfully");
+      toast.success(tNotif('topicCreated'));
     } catch (error) {
       console.error("Failed to create topic:", error);
-      toast.error("Failed to create topic. Please try again.");
+      toast.error(tNotif('error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -82,10 +85,10 @@ export default function TopicsPage() {
       setIsDialogOpen(false);
       setEditingTopic(null);
       await fetchTopics();
-      toast.success("Topic updated successfully");
+      toast.success(tNotif('topicUpdated'));
     } catch (error) {
       console.error("Failed to update topic:", error);
-      toast.error("Failed to update topic. Please try again.");
+      toast.error(tNotif('error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -95,10 +98,10 @@ export default function TopicsPage() {
     try {
       await topicsApi.delete(id);
       await fetchTopics();
-      toast.success("Topic deleted successfully");
+      toast.success(tNotif('topicDeleted'));
     } catch (error) {
       console.error("Failed to delete topic:", error);
-      toast.error("Failed to delete topic. Please try again.");
+      toast.error(tNotif('error'));
     }
   };
 
@@ -125,20 +128,20 @@ export default function TopicsPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Topics</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">Manage and explore interview topics.</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">{t('subtitle')}</p>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="space-x-2" onClick={() => setEditingTopic(null)}>
               <Plus className="w-5 h-5" />
-              <span>Create Topic</span>
+              <span>{t('createTopic')}</span>
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingTopic ? "Edit Topic" : "Create New Topic"}</DialogTitle>
+              <DialogTitle>{editingTopic ? t('editTopic') : t('createNewTopic')}</DialogTitle>
             </DialogHeader>
             <TopicForm
               onCancel={handleDialogClose}
@@ -164,7 +167,7 @@ export default function TopicsPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm dark:shadow-none"
-          placeholder="Search topics..."
+          placeholder={t('searchPlaceholder')}
         />
       </div>
 

@@ -1,4 +1,7 @@
+'use client';
+
 import axios from 'axios';
+import { useLocale } from 'next-intl';
 import type {
   Topic,
   Question,
@@ -13,12 +16,31 @@ import type {
   PracticeLogEntry,
 } from '@/types';
 
+let currentLocale = 'en';
+
+export function setApiLocale(locale: string) {
+  currentLocale = locale;
+}
+
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Request interceptor to add Accept-Language header
+api.interceptors.request.use((config) => {
+  config.headers['Accept-Language'] = currentLocale;
+  return config;
+});
+
+// Hook for client components to sync locale
+export function useApiLocale() {
+  const locale = useLocale();
+  setApiLocale(locale);
+  return { locale };
+}
 
 // Topics
 export const topicsApi = {

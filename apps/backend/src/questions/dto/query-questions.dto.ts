@@ -1,6 +1,7 @@
 import { IsOptional, IsEnum, IsString, IsUUID, IsBoolean } from 'class-validator';
 import { QuestionLevel, QuestionStatus } from '../../database/entities/question.entity';
 import { Type } from 'class-transformer';
+import { SUPPORTED_LANGUAGES } from '../../i18n/i18n.middleware';
 
 export class QueryQuestionsDto {
   @IsOptional()
@@ -23,4 +24,8 @@ export class QueryQuestionsDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @IsOptional()
+  @IsEnum(SUPPORTED_LANGUAGES)
+  lang?: typeof SUPPORTED_LANGUAGES[number];
 }

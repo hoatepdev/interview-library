@@ -6,7 +6,9 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  Req,
 } from "@nestjs/common";
+import { Request } from "express";
 import { PracticeService } from "./practice.service";
 import { CreatePracticeLogDto } from "./dto/create-practice-log.dto";
 import { QueryPracticeDto } from "./dto/query-practice.dto";
@@ -16,8 +18,9 @@ export class PracticeController {
   constructor(private readonly practiceService: PracticeService) {}
 
   @Get("random")
-  getRandomQuestion(@Query() query: QueryPracticeDto) {
-    return this.practiceService.getRandomQuestion(query);
+  getRandomQuestion(@Req() req: Request, @Query() query: QueryPracticeDto) {
+    const lang = req.i18n?.lang || 'en';
+    return this.practiceService.getRandomQuestion(query, lang);
   }
 
   @Post("log")
@@ -27,12 +30,14 @@ export class PracticeController {
   }
 
   @Get("stats")
-  getStats() {
-    return this.practiceService.getStats();
+  getStats(@Req() req: Request) {
+    const lang = req.i18n?.lang || 'en';
+    return this.practiceService.getStats(lang);
   }
 
   @Get("history")
-  getHistory(@Query("limit") limit?: string) {
-    return this.practiceService.getHistory(limit ? parseInt(limit) : 20);
+  getHistory(@Req() req: Request, @Query("limit") limit?: string) {
+    const lang = req.i18n?.lang || 'en';
+    return this.practiceService.getHistory(limit ? parseInt(limit) : 20, lang);
   }
 }

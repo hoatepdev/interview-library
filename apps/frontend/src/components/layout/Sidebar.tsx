@@ -1,18 +1,22 @@
 "use client";
 
-import { Link, usePathname } from "@/navigation";
+import { Link, usePathname } from "@/i18n/routing";
 import { BookOpen, HelpCircle, Swords, LayoutDashboard, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Topics", href: "/topics", icon: BookOpen },
-  { name: "Questions", href: "/questions", icon: HelpCircle },
-  { name: "Practice", href: "/practice", icon: Swords },
+  { nameKey: "nav.home", href: "/", icon: LayoutDashboard },
+  { nameKey: "nav.topics", href: "/topics", icon: BookOpen },
+  { nameKey: "nav.questions", href: "/questions", icon: HelpCircle },
+  { nameKey: "nav.practice", href: "/practice", icon: Swords },
 ];
 
 export function Sidebar() {
+  const t = useTranslations();
   const pathname = usePathname();
+  const locale = useLocale();
 
   return (
     <div className="flex h-full w-64 flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
@@ -24,7 +28,7 @@ export function Sidebar() {
           const isActive = pathname === item.href;
           return (
             <Link
-              key={item.name}
+              key={item.nameKey}
               href={item.href}
               className={cn(
                 "group flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors",
@@ -40,7 +44,7 @@ export function Sidebar() {
                 )}
                 aria-hidden="true"
               />
-              {item.name}
+              {t(item.nameKey)}
             </Link>
           );
         })}
@@ -54,7 +58,7 @@ export function Sidebar() {
             className="mr-3 h-5 w-5 flex-shrink-0 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-white"
             aria-hidden="true"
           />
-          Settings
+          {t('nav.settings')}
         </Link>
       </div>
     </div>
