@@ -62,6 +62,19 @@ export class Question {
   @Column({ name: 'last_practiced_at', nullable: true })
   lastPracticedAt: Date;
 
+  @Column({ name: 'next_review_at', nullable: true })
+  nextReviewAt: Date;
+
+  // Spaced repetition tracking
+  @Column({ name: 'ease_factor', default: 2.5 })
+  easeFactor: number;
+
+  @Column({ name: 'interval_days', default: 0 })
+  intervalDays: number;
+
+  @Column({ name: 'repetitions', default: 0 })
+  repetitions: number;
+
   @Column({ type: 'int', default: 0 })
   order: number;
 

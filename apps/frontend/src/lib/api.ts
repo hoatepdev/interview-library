@@ -68,6 +68,8 @@ export const questionsApi = {
 export const practiceApi = {
   getRandomQuestion: (params?: { topicId?: string; level?: string; status?: string; excludeQuestionId?: string }) =>
     api.get<Question>('/practice/random', { params }).then((res) => res.data),
+  getQuestionsDueForReview: (limit = 20) =>
+    api.get<Question[]>('/practice/due', { params: { limit } }).then((res) => res.data),
   logPractice: (data: CreatePracticeLogDto) =>
     api.post<PracticeLog>('/practice/log', data).then((res) => res.data),
   getStats: () => api.get<PracticeStats>('/practice/stats').then((res) => res.data),

@@ -5,11 +5,12 @@ import { PracticeController } from './practice.controller';
 import { Question } from '../database/entities/question.entity';
 import { PracticeLog } from '../database/entities/practice-log.entity';
 import { I18nModule } from '../i18n/i18n.module';
+import { SpacedRepetitionService } from './spaced-repetition.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Question, PracticeLog]), I18nModule],
   controllers: [PracticeController],
-  providers: [PracticeService],
+  providers: [PracticeService, SpacedRepetitionService],
   exports: [PracticeService],
 })
 export class PracticeModule {}

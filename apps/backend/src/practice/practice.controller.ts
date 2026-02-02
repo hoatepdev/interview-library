@@ -23,6 +23,12 @@ export class PracticeController {
     return this.practiceService.getRandomQuestion(query, lang);
   }
 
+  @Get("due")
+  getQuestionsDueForReview(@Req() req: Request, @Query("limit") limit?: string) {
+    const lang = req.i18n?.lang || 'en';
+    return this.practiceService.getQuestionsDueForReview(lang, limit ? parseInt(limit) : 20);
+  }
+
   @Post("log")
   @HttpCode(HttpStatus.CREATED)
   logPractice(@Body() createPracticeLogDto: CreatePracticeLogDto) {

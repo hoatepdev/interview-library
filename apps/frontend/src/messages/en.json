@@ -56,6 +56,10 @@
     "allLevels": "All Levels",
     "allStatuses": "All Statuses",
     "allTopics": "All Topics",
+    "allQuestions": "All Questions",
+    "myFavorites": "My Favorites",
+    "needPractice": "Need Practice",
+    "mastered": "Mastered",
     "deleteConfirm": "Are you sure you want to delete this question?",
     "levels": {
       "junior": "Junior",
@@ -81,6 +85,16 @@
     "questionsReviewed": "Questions reviewed",
     "sessionStats": "Session Stats",
     "overallStats": "Overall Stats",
+    "accuracy": "Accuracy",
+    "dueForReview": "Due for Review",
+    "dueForReviewDesc": "Questions scheduled for review based on your performance.",
+    "due": "due",
+    "viewAll": "View all",
+    "statuses": {
+      "new": "New",
+      "learning": "Learning",
+      "mastered": "Mastered"
+    },
     "ratings": {
       "poor": "Poor",
       "fair": "Fair",

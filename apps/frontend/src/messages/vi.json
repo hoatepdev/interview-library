@@ -56,6 +56,10 @@
     "allLevels": "Tất cả trình độ",
     "allStatuses": "Tất cả trạng thái",
     "allTopics": "Tất cả chủ đề",
+    "allQuestions": "Tất cả câu hỏi",
+    "myFavorites": "Yêu thích",
+    "needPractice": "Cần luyện tập",
+    "mastered": "Đã thành thạo",
     "deleteConfirm": "Bạn có chắc chắn muốn xóa câu hỏi này?",
     "levels": {
       "junior": "Junior",
@@ -81,6 +85,16 @@
     "questionsReviewed": "Số câu đã ôn",
     "sessionStats": "Thống kê phiên",
     "overallStats": "Thống kê chung",
+    "accuracy": "Độ chính xác",
+    "dueForReview": "Cần ôn tập",
+    "dueForReviewDesc": "Các câu hỏi được lên lịch ôn tập dựa trên hiệu suất của bạn.",
+    "due": "đến hạn",
+    "viewAll": "Xem tất cả",
+    "statuses": {
+      "new": "Mới",
+      "learning": "Đang học",
+      "mastered": "Đã thành thạo"
+    },
     "ratings": {
       "poor": "Kém",
       "fair": "Khá",
@@ -113,6 +127,7 @@
     "byStatus": "Theo Trạng thái",
     "byLevel": "Theo Trình độ",
     "byRating": "Theo Đánh giá",
+    "overallStats": "Thống kê chung",
     "needsReview": "Cần ôn tập",
     "recentActivity": "Hoạt động gần đây"
   },

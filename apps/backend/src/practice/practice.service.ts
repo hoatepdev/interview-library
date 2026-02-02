@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Raw } from 'typeorm';
+import { Repository, Raw, LessThanOrEqual } from 'typeorm';
 import { Question, QuestionStatus } from '../database/entities/question.entity';
 import { PracticeLog, SelfRating } from '../database/entities/practice-log.entity';
 import { CreatePracticeLogDto } from './dto/create-practice-log.dto';
 import { QueryPracticeDto } from './dto/query-practice.dto';
 import { TranslationService, Locale } from '../i18n/translation.service';
+import { SpacedRepetitionService } from './spaced-repetition.service';
 
 @Injectable()
 export class PracticeService {
@@ -15,6 +16,7 @@ export class PracticeService {
     @InjectRepository(PracticeLog)
     private readonly practiceLogRepository: Repository<PracticeLog>,
     private readonly translationService: TranslationService,
+    private readonly spacedRepetitionService: SpacedRepetitionService,
   ) {}
 
   async getRandomQuestion(query: QueryPracticeDto, locale: Locale = 'en'): Promise<any> {
@@ -77,9 +79,28 @@ export class PracticeService {
     question.practiceCount += 1;
     question.lastPracticedAt = new Date();
 
+    // Calculate next review date using spaced repetition
+    const { nextInterval, nextEaseFactor, nextRepetitions } =
+      this.spacedRepetitionService.calculateNextReview(
+        question.easeFactor,
+        question.intervalDays,
+        question.repetitions,
+        selfRating,
+      );
+
+    // Update question with spaced repetition data
+    question.easeFactor = nextEaseFactor;
+    question.intervalDays = nextInterval;
+    question.repetitions = nextRepetitions;
+
+    // Set next review date
+    const nextReviewDate = new Date();
+    nextReviewDate.setDate(nextReviewDate.getDate() + nextInterval);
+    question.nextReviewAt = nextReviewDate;
+
     // Auto-update status based on rating
     if (selfRating === SelfRating.GREAT) {
-      if (question.practiceCount >= 3) {
+      if (question.repetitions >= 3) {
         question.status = QuestionStatus.MASTERED;
       } else {
         question.status = QuestionStatus.LEARNING;
@@ -91,6 +112,72 @@ export class PracticeService {
     await this.questionRepository.save(question);
 
     return practiceLog;
+  }
+
+  async getQuestionsDueForReview(locale: Locale = 'en', limit = 20): Promise<any[]> {
+    const now = new Date();
+
+    const questions = await this.questionRepository
+      .createQueryBuilder('question')
+      .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now })
+      .leftJoinAndSelect('question.topic', 'topic')
+      .leftJoinAndSelect('question.translations', 'translations')
+      .limit(limit)
+      .getRawMany();
+
+    // Map raw results to entities
+    const result = [];
+    const seenIds = new Set();
+
+    for (const row of questions) {
+      const id = row.question_id;
+      if (seenIds.has(id)) continue;
+      seenIds.add(id);
+
+      const question = this.questionRepository.create({
+        id: row.question_id,
+        title: row.question_title,
+        content: row.question_content,
+        answer: row.question_answer,
+        topicId: row.question_topicId,
+        level: row.question_level,
+        status: row.question_status,
+        isFavorite: row.question_isFavorite,
+        difficultyScore: row.question_difficultyScore,
+        practiceCount: row.question_practiceCount,
+        lastPracticedAt: row.question_lastPracticedAt,
+        nextReviewAt: row.question_nextReviewAt,
+        easeFactor: row.question_easeFactor,
+        intervalDays: row.question_intervalDays,
+        repetitions: row.question_repetitions,
+        order: row.question_order,
+        createdAt: row.question_createdAt,
+        updatedAt: row.question_updatedAt,
+        topic: row.topic_id ? {
+          id: row.topic_id,
+          name: row.topic_name,
+          slug: row.topic_slug,
+          description: row.topic_description,
+          icon: row.topic_icon,
+          color: row.topic_color,
+          createdAt: row.topic_createdAt,
+          updatedAt: row.topic_updatedAt,
+        } : null,
+        translations: [],
+      });
+
+      result.push(question);
+      if (result.length >= limit) break;
+    }
+
+    return result.map(q => ({
+      ...this.translationService.formatQuestion(q, locale, true).data,
+      easeFactor: q.easeFactor,
+      intervalDays: q.intervalDays,
+      repetitions: q.repetitions,
+      nextReviewAt: q.nextReviewAt,
+      dueStatus: this.spacedRepetitionService.getDueStatus(q.nextReviewAt),
+    }));
   }
 
   async getStats(locale: Locale = 'en') {
@@ -124,11 +211,10 @@ export class PracticeService {
 
     const totalPracticeTimeSeconds = timeResult[0]?.total || 0;
 
-    // Get questions due for review (those practiced less than 3 times or with poor/fair ratings)
-    const questionsNeedingReview = await this.questionRepository
+    // Count questions due for review
+    const questionsDueForReview = await this.questionRepository
       .createQueryBuilder('question')
-      .where('question.practiceCount < 3')
-      .orWhere('question.status = :learning', { learning: 'learning' })
+      .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now: new Date() })
       .getCount();
 
     // Get recent practice logs
@@ -146,7 +232,7 @@ export class PracticeService {
       questionsByStatus: this.formatArrayAsObject(questionsByStatus),
       questionsByLevel: this.formatArrayAsObject(questionsByLevel),
       practiceByRating: this.formatArrayAsObject(practiceByRating),
-      questionsNeedingReview,
+      questionsNeedingReview: questionsDueForReview,
       recentLogs: recentLogs.map((log) => this.formatLogWithTranslations(log, locale)),
     };
   }
