@@ -128,7 +128,8 @@
     "byLevel": "By Level",
     "byRating": "By Rating",
     "needsReview": "Needs Review",
-    "recentActivity": "Recent Activity"
+    "recentActivity": "Recent Activity",
+    "overallStats": "Overall Statistics"
   },
   "notifications": {
     "created": "Created successfully",
@@ -153,6 +154,17 @@
     "logout": "Log out",
     "settings": "Settings",
     "loginRequired": "Login Required",
-    "loginRequiredDesc": "Sign in to continue with this action"
+    "loginRequiredDesc": "Sign in to continue with this action",
+    "welcomeBack": "Welcome back",
+    "signInDesc": "Sign in to access your interview library and sync your progress.",
+    "agreement": "By signing in, you agree to our",
+    "terms": "Terms",
+    "privacy": "Privacy Policy"
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "Signal Lost",
+    "description": "The page you are looking for has drifted into deep space.",
+    "returnHome": "Return to Base"
   }
 }

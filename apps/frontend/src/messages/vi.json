@@ -154,6 +154,17 @@
     "logout": "Đăng xuất",
     "settings": "Cài đặt",
     "loginRequired": "Cần Đăng Nhập",
-    "loginRequiredDesc": "Đăng nhập để tiếp tục hành động này"
+    "loginRequiredDesc": "Đăng nhập để tiếp tục hành động này",
+    "welcomeBack": "Chào mừng trở lại",
+    "signInDesc": "Đăng nhập để truy cập thư viện phỏng vấn và đồng bộ tiến độ.",
+    "agreement": "Bằng cách đăng nhập, bạn đồng ý với",
+    "terms": "Điều khoản",
+    "privacy": "Chính sách bảo mật"
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "Mất Tín Hiệu",
+    "description": "Trang bạn đang tìm kiếm đã trôi dạt vào không gian sâu thẳm.",
+    "returnHome": "Trở về Căn cứ"
   }
 }

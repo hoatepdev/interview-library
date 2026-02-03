@@ -20,22 +20,12 @@ export class AuthController {
   googleAuthCallback(@Req() req: Request & { user: User }, @Res() res: Response) {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-    // Debug: Log session state after OAuth
-    this.logger.log(`=== Google OAuth Callback ===`);
-    this.logger.log(`User in request: ${req.user ? JSON.stringify({ id: req.user.id, email: req.user.email }) : 'undefined'}`);
-    this.logger.log(`Session ID: ${(req as any).sessionID}`);
-    this.logger.log(`Session data: ${JSON.stringify((req as any).session?.['passport'] || {})}`);
-
-    // Manually login to ensure session is established
-    // This triggers serializeUser and saves the session
+    // Manually login to establish session (triggers serializeUser)
     (req as any).login(req.user, (err: any) => {
       if (err) {
-        this.logger.error(`Login error: ${err}`);
+        this.logger.error(`OAuth login error: ${err}`);
         return res.status(500).json({ error: 'Login failed' });
       }
-
-      this.logger.log(`Session after login: ${JSON.stringify((req as any).session?.['passport'] || {})}`);
-      this.logger.log(`Redirecting to frontend: ${frontendUrl}`);
       res.redirect(frontendUrl);
     });
   }
@@ -49,22 +39,12 @@ export class AuthController {
   githubAuthCallback(@Req() req: Request & { user: User }, @Res() res: Response) {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-    // Debug: Log session state after OAuth
-    this.logger.log(`=== GitHub OAuth Callback ===`);
-    this.logger.log(`User in request: ${req.user ? JSON.stringify({ id: req.user.id, email: req.user.email }) : 'undefined'}`);
-    this.logger.log(`Session ID: ${(req as any).sessionID}`);
-    this.logger.log(`Session data: ${JSON.stringify((req as any).session?.['passport'] || {})}`);
-
-    // Manually login to ensure session is established
-    // This triggers serializeUser and saves the session
+    // Manually login to establish session (triggers serializeUser)
     (req as any).login(req.user, (err: any) => {
       if (err) {
-        this.logger.error(`Login error: ${err}`);
+        this.logger.error(`OAuth login error: ${err}`);
         return res.status(500).json({ error: 'Login failed' });
       }
-
-      this.logger.log(`Session after login: ${JSON.stringify((req as any).session?.['passport'] || {})}`);
-      this.logger.log(`Redirecting to frontend: ${frontendUrl}`);
       res.redirect(frontendUrl);
     });
   }
@@ -79,18 +59,6 @@ export class AuthController {
       name: req.user.name,
       avatar: req.user.avatar,
       provider: req.user.provider,
-    };
-  }
-
-  @Get('debug-session')
-  @HttpCode(HttpStatus.OK)
-  debugSession(@Req() req: any) {
-    return {
-      hasSession: !!req.session,
-      sessionID: req.sessionID,
-      sessionPassport: req.session?.['passport'] || null,
-      requestUser: req.user ? { id: req.user.id, email: req.user.email } : null,
-      cookies: req.cookies,
     };
   }
 

@@ -5,9 +5,11 @@
 Personal interview question management application for storing, categorizing, and practicing interview questions.
 
 ### Tech Stack
-- **Frontend**: Next.js 14 (App Router), React, TypeScript, Tailwind CSS
-- **Backend**: NestJS, TypeScript, TypeORM
+- **Frontend**: Next.js 14 (App Router), React, TypeScript, Tailwind CSS, next-intl
+- **Backend**: NestJS, TypeScript, TypeORM, Passport.js
 - **Database**: PostgreSQL (Docker)
+- **Authentication**: OAuth (Google, GitHub) with session-based auth
+- **Internationalization**: English, Vietnamese (vi)
 
 ---
 
@@ -22,12 +24,14 @@ Personal interview question management application for storing, categorizing, an
 |------|--------|-------------|
 | Project Setup | ✅ | Monorepo structure with Next.js + NestJS |
 | Database | ✅ | PostgreSQL with Docker Compose |
-| DB Schema | ✅ | Tables: topics, questions with migrations |
+| DB Schema | ✅ | Tables: topics, questions, users with migrations |
 | Topics CRUD | ✅ | API + UI for topic management |
 | Questions CRUD | ✅ | API + UI for question management |
 | Layout & Navigation | ✅ | Header, Sidebar, MainLayout |
 | Home Dashboard | ✅ | Redesigned with stats & activity |
 | Practice UI (Frontend) | ✅ | Components created & API connected |
+| Multi-language (i18n) | ✅ | English & Vietnamese support |
+| Dark Mode | ✅ | Full dark mode support with theme toggle |
 
 ### Backend API Endpoints
 
@@ -123,6 +127,13 @@ topics
 ├── icon (VARCHAR)
 └── description (TEXT)
 
+topic_translations
+├── id (UUID, PK)
+├── topic_id (UUID, FK)
+├── locale (VARCHAR)
+├── name (VARCHAR)
+└── description (TEXT)
+
 questions
 ├── id (UUID, PK)
 ├── title (VARCHAR)
@@ -131,10 +142,49 @@ questions
 ├── topic_id (UUID, FK)
 ├── level (ENUM: junior/middle/senior)
 ├── status (ENUM: new/learning/mastered)
-├── is_favorite (BOOLEAN)
 ├── difficulty_score (INT)
 ├── practice_count (INT)
 └── last_practiced_at (TIMESTAMP)
+
+question_translations
+├── id (UUID, PK)
+├── question_id (UUID, FK)
+├── locale (VARCHAR)
+├── title (VARCHAR)
+├── content (TEXT)
+└── answer (TEXT)
+
+users
+├── id (UUID, PK)
+├── email (VARCHAR, unique)
+├── name (VARCHAR)
+├── avatar (VARCHAR)
+├── provider (VARCHAR)
+├── provider_id (VARCHAR)
+└── created_at (TIMESTAMP)
+
+user_questions
+├── id (UUID, PK)
+├── user_id (UUID, FK → users)
+├── question_id (UUID, FK → questions)
+├── is_favorite (BOOLEAN)
+├── status (ENUM: new/learning/mastered)
+└── UNIQUE(user_id, question_id)
+
+question_favorites
+├── id (UUID, PK)
+├── user_id (UUID, FK → users)
+├── question_id (UUID, FK → questions)
+└── created_at (TIMESTAMP)
+
+practice_logs
+├── id (UUID, PK)
+├── user_id (UUID, FK → users)
+├── question_id (UUID, FK → questions)
+├── self_rating (ENUM: poor/fair/good/great)
+├── time_spent_seconds (INT, nullable)
+├── notes (TEXT, nullable)
+└── practiced_at (TIMESTAMP)
 ```
 
 ### How to Run
@@ -327,7 +377,148 @@ When logging practice:
 
 ---
 
-## Phase 5: Extended Features (Post-MVP)
+## Phase 5: Authentication & User Features
+
+**Status**: ✅ Complete
+**Duration**: ~3-5 days
+
+### Tasks Completed
+
+| Priority | Task | Status | Description |
+|----------|------|--------|-------------|
+| P0 | User Authentication | ✅ Done | OAuth with Google & GitHub |
+| P0 | Session Management | ✅ Done | Passport.js session-based auth |
+| P0 | User CRUD | ✅ Done | Users table & entities |
+| P0 | User-specific Questions | ✅ Done | Row-level security for user data |
+| P0 | Multi-language Support | ✅ Done | i18n with English & Vietnamese |
+| P1 | Language Switcher | ✅ Done | Toggle between en/vi |
+| P1 | Login Modal | ✅ Done | OAuth login UI |
+| P1 | Protected Routes | ✅ Done | Session auth guard |
+
+### Backend Implementation Complete
+
+**Files Created:**
+```
+apps/backend/src/
+├── auth/
+│   ├── auth.module.ts              ✅
+│   ├── auth.controller.ts          ✅
+│   ├── auth.service.ts             ✅
+│   ├── strategies/
+│   │   ├── google.strategy.ts      ✅
+│   │   └── github.strategy.ts      ✅
+│   ├── guards/
+│   │   └── session-auth.guard.ts   ✅
+│   └── serializers/
+│       └── auth.serializer.ts      ✅
+├── i18n/
+│   ├── i18n.module.ts              ✅
+│   ├── i18n.middleware.ts          ✅
+│   ├── i18n.service.ts             ✅
+│   └── translation.service.ts      ✅
+└── database/
+    └── entities/
+        ├── user.entity.ts          ✅
+        ├── user-question.entity.ts ✅
+        ├── question-favorite.entity.ts ✅
+        ├── topic-translation.entity.ts ✅
+        └── question-translation.entity.ts ✅
+```
+
+### Frontend Implementation Complete
+
+**Files Updated/Created:**
+```
+apps/frontend/src/
+├── app/
+│   └── [locale]/
+│       ├── layout.tsx              ✅ Locale-based layout
+│       ├── not-found.tsx           ✅ Localized 404
+│       └── [...rest]/              ✅ Catch-all for auth redirects
+├── components/
+│   ├── auth/
+│   │   └── LoginModal.tsx          ✅ OAuth login UI
+│   └── layout/
+│       ├── Header.tsx              ✅ Updated with lang switcher & login
+│       ├── Sidebar.tsx             ✅ Updated with user menu
+│       └── MainLayout.tsx          ✅ Updated for authenticated users
+├── lib/
+│   ├── api.ts                      ✅ Added auth API methods
+│   └── auth.ts                     ✅ Auth utility functions
+├── messages/
+│   ├── en.json                     ✅ English translations
+│   └── vi.json                     ✅ Vietnamese translations
+└── middleware.ts                   ✅ i18n redirect middleware
+```
+
+### Features Implemented
+
+- **OAuth Authentication**:
+  - Google OAuth integration
+  - GitHub OAuth integration
+  - Session-based authentication with Passport.js
+  - Secure session storage with HTTP-only cookies
+
+- **User Management**:
+  - User registration on first OAuth login
+  - Profile data (name, email, avatar)
+  - Provider tracking (google/github)
+
+- **User-Specific Data**:
+  - User-question relationships for personal favorites/status
+  - User-specific practice logs
+  - Row-level security on all user data
+
+- **Multi-language Support**:
+  - Locale-based routing (/en/*, /vi/*)
+  - next-intl integration
+  - Language switcher in header
+  - Translations for all UI elements
+
+- **Login/Logout**:
+  - Login modal with OAuth buttons
+  - Logout functionality
+  - Protected routes with session guard
+  - User profile display
+
+### API Endpoints (All Working)
+
+```
+# Authentication
+GET    /api/auth/google           - Initiate Google OAuth
+GET    /api/auth/google/callback  - Google OAuth callback
+GET    /api/auth/github           - Initiate GitHub OAuth
+GET    /api/auth/github/callback  - GitHub OAuth callback
+GET    /api/auth/me               - Get current user profile
+GET    /api/auth/debug-session    - Debug session state
+POST   /api/auth/logout           - Logout user
+
+# Translations
+GET    /api/translations          - Get translations by locale
+GET    /api/translations/:locale  - Get specific locale translations
+```
+
+### Environment Variables
+
+Add to `.env`:
+
+```bash
+# OAuth Credentials
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:3001/api/auth/google/callback
+
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+GITHUB_CALLBACK_URL=http://localhost:3001/api/auth/github/callback
+
+# Session
+SESSION_SECRET=your_random_secret_string
+```
+
+---
+
+## Phase 6: Extended Features (Post-MVP)
 
 **Status**: ⏳ Optional
 **Duration**: Variable
@@ -385,32 +576,26 @@ Tech: Chart.js / Recharts
 
 ## Future Enhancements
 
-### Multi-User Support
+> **Note**: Multi-user support with authentication has been implemented in Phase 5.
+> Current implementation includes:
+> - OAuth authentication (Google & GitHub)
+> - User-specific data isolation
+> - Session-based authentication
+> - Row-level security for user data
 
-To extend from single-user to multi-user:
+### Additional User Features (Future)
 
-1. **Add Authentication**
-   - Integration: Supabase Auth / Auth0 / Clerk
-   - Add JWT tokens to API requests
+To extend the current authentication system:
 
-2. **Database Changes**
-   ```sql
-   -- Add user_id to existing tables
-   ALTER TABLE questions ADD COLUMN user_id UUID;
-   ALTER TABLE topics ADD COLUMN user_id UUID;
+1. **Email/Password Authentication**
+   - Add traditional login alongside OAuth
+   - Password reset flow
+   - Email verification
 
-   -- Create users table
-   CREATE TABLE users (
-     id UUID PRIMARY KEY,
-     email VARCHAR UNIQUE,
-     name VARCHAR,
-     created_at TIMESTAMP
-   );
-   ```
-
-3. **Row-Level Security**
-   - All queries filter by user_id
-   - Backend middleware to validate ownership
+2. **User Settings**
+   - Profile customization
+   - Preferences management
+   - Notification settings
 
 ### Offline Support (PWA)
 
@@ -442,19 +627,26 @@ interview-library/
 │   │   │   ├── topics/       # Topics module ✅
 │   │   │   ├── questions/    # Questions module ✅
 │   │   │   ├── practice/     # Practice module ✅
-│   │   │   │   ├── practice.module.ts
-│   │   │   │   ├── practice.controller.ts
-│   │   │   │   ├── practice.service.ts
-│   │   │   │   └── dto/
+│   │   │   ├── auth/         # Authentication module ✅
+│   │   │   │   ├── strategies/
+│   │   │   │   ├── guards/
+│   │   │   │   └── serializers/
+│   │   │   ├── i18n/         # Internationalization ✅
 │   │   │   └── database/     # Entities & migrations ✅
 │   │   └── package.json
 │   │
 │   └── frontend/             # Next.js App
 │       ├── src/
 │       │   ├── app/          # App Router pages ✅
-│       │   │   ├── practice/   # Practice page ✅
+│       │   │   └── [locale]/  # Locale-based routing ✅
 │       │   ├── components/   # React components ✅
+│       │   │   ├── auth/     # Auth components ✅
+│       │   │   ├── layout/   # Layout components ✅
+│       │   │   ├── practice/ # Practice components ✅
+│       │   │   ├── topics/   # Topic components ✅
+│       │   │   └── questions/# Question components ✅
 │       │   ├── lib/          # Utilities, API client ✅
+│       │   ├── messages/     # i18n translations ✅
 │       │   └── types/        # TypeScript types ✅
 │       └── package.json
 │
@@ -616,20 +808,27 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 | Phase 2: Practice Mode | ✅ Complete | 100% |
 | Phase 3: Search & Filter | ✅ Complete | 80% (basic search done) |
 | Phase 4: Polish & UX | ✅ Complete | 80% (core UX done) |
-| Phase 5: Extended Features | ⏳ Pending | 0% |
+| Phase 5: Authentication & User Features | ✅ Complete | 100% |
+| Phase 6: Extended Features | ⏳ Pending | 0% |
 
 ### Current Development State
 
 **Frontend**: Fully connected to backend APIs ✅
 - `lib/api.ts` uses axios with real backend endpoints
-- `topicsApi`, `questionsApi`, `practiceApi` fully implemented
+- `topicsApi`, `questionsApi`, `practiceApi`, `authApi` fully implemented
 - `TopicForm` connected to backend with loading states
 - `QuestionForm` connected to backend with loading states
 - All list pages fetch real data from backend
+- Multi-language support with next-intl
+- Login modal with OAuth integration
 
 **Backend**: Full implementation ready ✅
 - All CRUD endpoints functional
 - Practice mode APIs complete
+- OAuth authentication (Google & GitHub)
+- Session-based auth with Passport.js
+- Multi-language API support
+- User-specific data isolation
 - Tested and working
 
 ### Completed Features
@@ -640,13 +839,22 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 - ✅ Edit Question functionality
 - ✅ Delete Topic (with confirmation)
 - ✅ Delete Question (with confirmation)
-- ✅ Toggle favorite on questions
+- ✅ Toggle favorite on questions (user-specific)
 - ✅ Real-time data fetching from backend
 - ✅ Loading states during API calls
 - ✅ Error handling with toast notifications
 - ✅ Dark mode (full theme support across all components)
 - ✅ Search functionality for questions and topics
 - ✅ Toast notifications (sonner) for all user actions
+- ✅ Google OAuth authentication
+- ✅ GitHub OAuth authentication
+- ✅ Session-based authentication
+- ✅ User profile management
+- ✅ User-specific question data (favorites, status)
+- ✅ Multi-language support (English, Vietnamese)
+- ✅ Language switcher in header
+- ✅ Locale-based routing (/en/*, /vi/*)
+- ✅ Localized UI messages
 
 ### Immediate Next Steps
 
@@ -659,6 +867,12 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
    - Mobile responsive navigation improvements
    - Keyboard shortcuts (k for practice, t for topics, q for questions)
 
+3. **Extended Features (Phase 6)**
+   - AI-assisted practice with follow-up questions
+   - Spaced repetition algorithm for review scheduling
+   - Tags system for better question organization
+   - Statistics & analytics dashboard
+
 ---
 
-*Last updated: January 30, 2026 - Search, Dark Mode, Toast Notifications, CRUD Complete*
+*Last updated: February 3, 2026 - Authentication (OAuth), Multi-language (i18n), User Features Complete*

@@ -30,5 +30,38 @@
   "Common": {
     "cancel": "Hủy",
     "submit": "Gửi"
+  },
+  "stats": {
+    "overallStats": "Thống kê tổng quan",
+    "needsReview": "Cần ôn tập",
+    "byStatus": "Theo trạng thái",
+    "byRating": "Theo đánh giá"
+  },
+  "practice": {
+    "questionsReviewed": "Câu hỏi đã ôn",
+    "accuracy": "Độ chính xác",
+    "timeSpent": "Thời gian học",
+    "statuses": {
+      "new": "Mới",
+      "learning": "Đang học",
+      "mastered": "Đã thuộc"
+    },
+    "ratings": {
+      "poor": "Kém",
+      "fair": "Tạm",
+      "good": "Tốt",
+      "great": "Xuất sắc"
+    }
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "loginRequiredDesc": "Vui lòng đăng nhập để xem thống kê",
+    "nav": {
+      "home": "Trang chủ",
+      "topics": "Chủ đề",
+      "questions": "Câu hỏi",
+      "practice": "Luyện tập",
+      "settings": "Cài đặt"
+    }
   }
 }

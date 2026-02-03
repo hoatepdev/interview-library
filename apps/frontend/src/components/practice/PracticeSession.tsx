@@ -53,7 +53,7 @@ export function PracticeSession() {
 
       // Load next question, excluding current one
       await loadQuestion(question.id);
-    }, 'practice');
+    });
   };
 
   if (isLoading) {

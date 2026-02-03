@@ -266,7 +266,7 @@ function QuestionsContent() {
         console.error("Failed to toggle favorite:", error);
         toast.error(tNotif("error"));
       }
-    }, 'favorite');
+    });
   };
 
   const handleEditClick = (question: Question) => {

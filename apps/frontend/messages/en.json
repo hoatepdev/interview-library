@@ -30,5 +30,38 @@
   "Common": {
     "cancel": "Cancel",
     "submit": "Submit"
+  },
+  "stats": {
+    "overallStats": "Overall Statistics",
+    "needsReview": "Needs Review",
+    "byStatus": "By Status",
+    "byRating": "By Rating"
+  },
+  "practice": {
+    "questionsReviewed": "Questions Reviewed",
+    "accuracy": "Accuracy",
+    "timeSpent": "Time Spent",
+    "statuses": {
+      "new": "New",
+      "learning": "Learning",
+      "mastered": "Mastered"
+    },
+    "ratings": {
+      "poor": "Poor",
+      "fair": "Fair",
+      "good": "Good",
+      "great": "Great"
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "loginRequiredDesc": "Please sign in to view your statistics",
+    "nav": {
+      "home": "Home",
+      "topics": "Topics",
+      "questions": "Questions",
+      "practice": "Practice",
+      "settings": "Settings"
+    }
   }
 }

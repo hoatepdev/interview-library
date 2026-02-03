@@ -5,6 +5,7 @@ import { LoginButton } from "@/components/auth/login-button";
 import { Sparkles, Terminal, LogIn } from "lucide-react";
 import { useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useTranslations } from "next-intl";
 
 export interface LoginModalProps {
   open?: boolean;
@@ -16,6 +17,7 @@ export function LoginModal({ open: controlledOpen, onOpenChange: controlledOnOpe
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? controlledOnOpenChange : setInternalOpen;
+  const t = useTranslations('auth');
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -26,14 +28,14 @@ export function LoginModal({ open: controlledOpen, onOpenChange: controlledOnOpe
               className="mr-3 h-5 w-5 flex-shrink-0 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-white"
               aria-hidden="true"
             />
-            Login
+            {t('login')}
           </button>
         </DialogTrigger>
       )}
       
       <DialogContent className="max-w-md p-0 overflow-hidden bg-transparent border-none shadow-2xl sm:rounded-2xl ring-0">
         <VisuallyHidden>
-          <DialogTitle>Login</DialogTitle>
+          <DialogTitle>{t('login')}</DialogTitle>
         </VisuallyHidden>
         
         <div className="relative w-full overflow-hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border border-white/20 dark:border-white/10 rounded-2xl shadow-[0_0_40px_-10px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_-10px_rgba(0,0,0,0.5)]">
@@ -59,10 +61,10 @@ export function LoginModal({ open: controlledOpen, onOpenChange: controlledOnOpe
 
             {/* Typography */}
             <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 text-center">
-              Welcome back
+              {t('welcomeBack')}
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 text-center mb-8 max-w-[260px] leading-relaxed">
-              Sign in to access your interview library and sync your progress.
+              {t('signInDesc')}
             </p>
 
             {/* Actions */}
@@ -73,10 +75,10 @@ export function LoginModal({ open: controlledOpen, onOpenChange: controlledOnOpe
             {/* Footer */}
             <div className="mt-8 text-center">
               <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                By signing in, you agree to our{' '}
-                <a href="#" className="hover:text-blue-500 transition-colors">Terms</a>
+                {t('agreement')}{' '}
+                <a href="#" className="hover:text-blue-500 transition-colors">{t('terms')}</a>
                 {' '}and{' '}
-                <a href="#" className="hover:text-blue-500 transition-colors">Privacy Policy</a>
+                <a href="#" className="hover:text-blue-500 transition-colors">{t('privacy')}</a>
               </p>
             </div>
           </div>

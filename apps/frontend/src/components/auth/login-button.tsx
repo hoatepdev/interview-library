@@ -1,9 +1,6 @@
-'use client';
+"use client";
 
-// Icons are SVG now, no need for lucide-react import for these specifically if we use raw SVG
-// But let's keep Lucide for consistency if we swap later. 
-// Actually sticking to the SVGs from previous code but styling them better.
-import clsx from 'clsx';
+import clsx from "clsx";
 
 export function LoginButton() {
   return (
@@ -20,7 +17,10 @@ export function LoginButton() {
           "hover:-translate-y-0.5"
         )}
       >
-        <svg className="w-5 h-5 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
+        <svg
+          className="w-5 h-5 transition-transform group-hover:scale-110"
+          viewBox="0 0 24 24"
+        >
           <path
             fill="currentColor"
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -42,7 +42,9 @@ export function LoginButton() {
             className="text-[#EA4335]"
           />
         </svg>
-        <span className="font-semibold tracking-wide">Continue with Google</span>
+        <span className="font-semibold tracking-wide">
+          Continue with Google
+        </span>
       </a>
 
       <a
@@ -56,10 +58,16 @@ export function LoginButton() {
           "hover:-translate-y-0.5"
         )}
       >
-        <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-5 h-5 transition-transform group-hover:scale-110"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.07-.21.07-.48 0-.705-.435-.82-.82-2.055-.82-2.055-1.34-2.705-2.62-2.705-3.14 0-5.69 2.55-5.69 5.69 0 3.14 2.55 5.69 5.69 5.69 1.33 0 2.63-.45 3.65-1.35.05.65.05 1.85-.705 1.85-.705.14 1.26.42 2.62 1.95 2.62 3.38 0 6.12-2.74 6.12-6.12 0-3.38-2.74-6.12-6.12-6.12zm0 10.84c-2.59 0-4.69-2.1-4.69-4.69s2.1-4.69 4.69-4.69 4.69 2.1 4.69 4.69-2.1 4.69-4.69 4.69z" />
         </svg>
-        <span className="font-semibold tracking-wide">Continue with GitHub</span>
+        <span className="font-semibold tracking-wide">
+          Continue with GitHub
+        </span>
       </a>
     </div>
   );

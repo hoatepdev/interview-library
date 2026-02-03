@@ -16,8 +16,6 @@ export class AuthService {
     const { id, emails, displayName, photos } = profile;
     const email = emails?.[0]?.value;
 
-    this.logger.log(`OAuth ${provider} callback for email: ${email}`);
-
     if (!email) {
       throw new Error('Email is required from OAuth provider');
     }
@@ -25,7 +23,7 @@ export class AuthService {
     let user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
-      this.logger.log(`Creating new user for email: ${email}`);
+      this.logger.log(`Creating new user: ${email}`);
       user = this.userRepository.create({
         email,
         name: displayName || email.split('@')[0],
@@ -34,7 +32,6 @@ export class AuthService {
         providerId: id,
       });
       await this.userRepository.save(user);
-      this.logger.log(`User created with ID: ${user.id}`);
     } else {
       // Update user info if changed
       if (displayName && user.name !== displayName) {
@@ -44,10 +41,8 @@ export class AuthService {
         user.avatar = photos[0].value;
       }
       await this.userRepository.save(user);
-      this.logger.log(`User updated: ${user.id}`);
     }
 
-    this.logger.log(`OAuth validation successful for user: ${user.id}`);
     return user;
   }
 
