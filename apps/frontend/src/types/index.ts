@@ -24,6 +24,7 @@ export interface Topic {
   color?: string;
   icon?: string;
   description?: string;
+  questionsCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -48,7 +49,7 @@ export interface Question {
 
 export interface CreateTopicDto {
   name: string;
-  slug: string;
+  slug?: string;
   color?: string;
   icon?: string;
   description?: string;
@@ -118,4 +119,15 @@ export interface PracticeLogEntry {
   timeSpentSeconds?: number;
   notes?: string;
   practicedAt: string;
+}
+
+export interface DueStatus {
+  isDue: boolean;
+  text: string;
+  daysUntil?: number;
+}
+
+export interface DueQuestion extends Question {
+  nextReviewAt?: string | null;
+  dueStatus: DueStatus;
 }

@@ -5,6 +5,11 @@ import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { UpdateQuestionStatusDto } from './dto/update-question-status.dto';
 import { QueryQuestionsDto } from './dto/query-questions.dto';
+import { User } from '../database/entities/user.entity';
+
+interface AuthenticatedRequest extends Request {
+  user?: User;
+}
 
 @Controller('questions')
 export class QuestionsController {
@@ -12,20 +17,29 @@ export class QuestionsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createQuestionDto: CreateQuestionDto) {
+  create(@Req() req: AuthenticatedRequest, @Body() createQuestionDto: CreateQuestionDto) {
     return this.questionsService.create(createQuestionDto);
   }
 
   @Get()
-  findAll(@Req() req: Request, @Query() query: QueryQuestionsDto) {
+  findAll(@Req() req: AuthenticatedRequest, @Query() query: QueryQuestionsDto) {
     const lang = req.i18n?.lang || 'en';
-    return this.questionsService.findAll(query, lang);
+    const userId = req.user?.id;
+    return this.questionsService.findAll(query, lang, userId);
+  }
+
+  @Get('by-topic-slug/:slug')
+  getByTopicSlug(@Param('slug') slug: string, @Query() query: QueryQuestionsDto, @Req() req: AuthenticatedRequest) {
+    const lang = req.i18n?.lang || 'en';
+    const userId = req.user?.id;
+    return this.questionsService.getByTopicSlug(slug, query, lang, userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Req() req: Request) {
+  findOne(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const lang = req.i18n?.lang || 'en';
-    return this.questionsService.findOne(id, lang);
+    const userId = req.user?.id;
+    return this.questionsService.findOne(id, lang, userId);
   }
 
   @Put(':id')
@@ -38,11 +52,14 @@ export class QuestionsController {
     return this.questionsService.updateStatus(id, updateStatusDto);
   }
 
-  // TODO: Implement toggleFavorite using QuestionFavorite table
-  // @Patch(':id/favorite')
-  // toggleFavorite(@Param('id') id: string) {
-  //   return this.questionsService.toggleFavorite(id);
-  // }
+  @Patch(':id/favorite')
+  toggleFavorite(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new Error('User must be authenticated to favorite questions');
+    }
+    return this.questionsService.toggleFavorite(id, userId);
+  }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

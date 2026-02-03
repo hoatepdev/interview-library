@@ -23,7 +23,7 @@ export function LoginModal({ open: controlledOpen, onOpenChange: controlledOnOpe
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
         <DialogTrigger asChild>
-          <button className="group flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-400 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors w-full">
+          <button className="group flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-400 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors w-full cursor-pointer">
             <LogIn
               className="mr-3 h-5 w-5 flex-shrink-0 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-white"
               aria-hidden="true"

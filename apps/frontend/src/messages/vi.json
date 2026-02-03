@@ -38,7 +38,8 @@
     "createNewTopic": "Tạo Chủ đề Mới",
     "searchPlaceholder": "Tìm kiếm chủ đề...",
     "questionsCount": "{count} câu hỏi",
-    "deleteConfirm": "Bạn có chắc chắn muốn xóa \"{name}\"? Điều này sẽ xóa cả tất cả câu hỏi liên quan."
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa \"{name}\"? Điều này sẽ xóa cả tất cả câu hỏi liên quan.",
+    "viewQuestions": "Xem Câu hỏi"
   },
   "questions": {
     "title": "Câu hỏi",
@@ -112,13 +113,44 @@
     "answer": "Đáp án",
     "level": "Trình độ",
     "topic": "Chủ đề",
-    "selectTopic": "Chọn một chủ đề",
+    "selectTopic": "Chọn chủ đề",
+    "selectLevel": "Chọn trình độ",
     "optional": "Tùy chọn",
-    "enterTitle": "Nhập tiêu đề câu hỏi",
-    "enterContent": "Nhập nội dung câu hỏi",
-    "enterAnswer": "Nhập đáp án (tùy chọn)",
+    "enterTitle": "ví dụ: Giải thích Event Loop",
+    "enterContent": "Nội dung chi tiết của câu hỏi...",
+    "enterAnswer": "Đáp án/giải pháp chi tiết...",
     "enterName": "Nhập tên",
-    "enterDescription": "Nhập mô tả"
+    "enterDescription": "Nhập mô tả",
+    "questionContent": "Nội dung Câu hỏi",
+    "answerOptional": "Đáp án (Tùy chọn)",
+    "createQuestion": "Thêm Câu hỏi",
+    "updateQuestion": "Cập Nhật Câu hỏi",
+    "creating": "Đang thêm...",
+    "updating": "Đang cập nhật...",
+    "createTopic": "Tạo Chủ đề",
+    "updateTopic": "Cập Nhật Chủ đề",
+    "icons": {
+      "code": "Mã",
+      "database": "Cơ sở dữ liệu",
+      "server": "Máy chủ",
+      "atom": "Nguyên tử",
+      "cpu": "CPU",
+      "box": "Hộp",
+      "layers": "Lớp",
+      "zap": "Tia chớp"
+    },
+    "colors": {
+      "blue": "Xanh dương",
+      "green": "Xanh lá",
+      "yellow": "Vàng",
+      "purple": "Tím",
+      "red": "Đỏ",
+      "orange": "Cam",
+      "cyan": "Xanh lơ",
+      "pink": "Hồng",
+      "indigo": "Chàm",
+      "slate": "Xám xịn"
+    }
   },
   "stats": {
     "totalQuestions": "Tổng Câu hỏi",

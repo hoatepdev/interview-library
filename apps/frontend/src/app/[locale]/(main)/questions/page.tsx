@@ -269,14 +269,32 @@ function QuestionsContent() {
     });
   };
 
-  const handleEditClick = (question: Question) => {
-    setEditingQuestion(question);
-    setIsDialogOpen(true);
-  };
-
   const handleDialogClose = () => {
     setIsDialogOpen(false);
     setEditingQuestion(null);
+  };
+
+  // Auth wrappers for protected actions
+  const handleCreateQuestionClick = () => {
+    requireAuth(() => {
+      setEditingQuestion(null);
+      setIsDialogOpen(true);
+    });
+  };
+
+  const handleEditQuestionClick = (question: Question) => {
+    requireAuth(() => {
+      setEditingQuestion(question);
+      setIsDialogOpen(true);
+    });
+  };
+
+  const handleDeleteQuestionClick = (id: string) => {
+    requireAuth(() => {
+      if (window.confirm(`Are you sure you want to delete this question?`)) {
+        handleDeleteQuestion(id);
+      }
+    });
   };
 
   const activeFilterCount =
@@ -298,12 +316,14 @@ function QuestionsContent() {
           </p>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={(open: boolean) =>
+            requireAuth(() => setIsDialogOpen(open))
+          }
+        >
           <DialogTrigger asChild>
-            <Button
-              className="space-x-2"
-              onClick={() => setEditingQuestion(null)}
-            >
+            <Button className="space-x-2" onClick={handleCreateQuestionClick}>
               <Plus className="w-5 h-5" />
               <span>{t("addQuestion")}</span>
             </Button>
@@ -519,8 +539,8 @@ function QuestionsContent() {
       ) : (
         <QuestionList
           questions={questions}
-          onEdit={handleEditClick}
-          onDelete={handleDeleteQuestion}
+          onEdit={handleEditQuestionClick}
+          onDelete={handleDeleteQuestionClick}
           onToggleFavorite={handleToggleFavorite}
         />
       )}

@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { TopicTranslation } from './topic-translation.entity';
+import { Question } from './question.entity';
 
 @Entity('topics')
 export class Topic {
@@ -30,4 +31,7 @@ export class Topic {
 
   @OneToMany(() => TopicTranslation, translation => translation.topic, { cascade: true })
   translations: TopicTranslation[];
+
+  @OneToMany(() => Question, question => question.topic, { nullable: true })
+  questions: Question[];
 }

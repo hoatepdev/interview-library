@@ -45,12 +45,8 @@ export default function TopicsPage() {
   const handleCreateTopic = async (data: any) => {
     setIsSubmitting(true);
     try {
-      // Generate slug from name
-      const slug = data.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-
       await topicsApi.create({
         name: data.name,
-        slug,
         description: data.description,
         icon: data.icon,
         color: data.color,
@@ -72,11 +68,8 @@ export default function TopicsPage() {
 
     setIsSubmitting(true);
     try {
-      const slug = data.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-
       await topicsApi.update(editingTopic.id, {
         name: data.name,
-        slug,
         description: data.description,
         icon: data.icon,
         color: data.color,
@@ -144,6 +137,7 @@ export default function TopicsPage() {
               <DialogTitle>{editingTopic ? t('editTopic') : t('createNewTopic')}</DialogTitle>
             </DialogHeader>
             <TopicForm
+              key={editingTopic?.id || 'new'}
               onCancel={handleDialogClose}
               onSubmit={editingTopic ? handleEditTopic : handleCreateTopic}
               isSubmitting={isSubmitting}
@@ -151,7 +145,7 @@ export default function TopicsPage() {
                 name: editingTopic.name,
                 description: editingTopic.description || "",
                 icon: editingTopic.icon || "code",
-                color: editingTopic.color || "bg-blue-100 text-blue-800",
+                color: editingTopic.color || "#3b82f6",
               } : undefined}
             />
           </DialogContent>

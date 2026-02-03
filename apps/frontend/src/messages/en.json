@@ -38,7 +38,8 @@
     "createNewTopic": "Create New Topic",
     "searchPlaceholder": "Search topics...",
     "questionsCount": "{count} questions",
-    "deleteConfirm": "Are you sure you want to delete \"{name}\"? This will also delete all associated questions."
+    "deleteConfirm": "Are you sure you want to delete \"{name}\"? This will also delete all associated questions.",
+    "viewQuestions": "View Questions"
   },
   "questions": {
     "title": "Questions",
@@ -112,13 +113,44 @@
     "answer": "Answer",
     "level": "Level",
     "topic": "Topic",
-    "selectTopic": "Select a topic",
+    "selectTopic": "Select topic",
+    "selectLevel": "Select level",
     "optional": "Optional",
-    "enterTitle": "Enter question title",
-    "enterContent": "Enter question content",
-    "enterAnswer": "Enter answer (optional)",
+    "enterTitle": "e.g. Explain Event Loop",
+    "enterContent": "Detailed question behavior...",
+    "enterAnswer": "Detailed answer/solution...",
     "enterName": "Enter name",
-    "enterDescription": "Enter description"
+    "enterDescription": "Enter description",
+    "questionContent": "Question Content",
+    "answerOptional": "Answer (Optional)",
+    "createQuestion": "Add Question",
+    "updateQuestion": "Update Question",
+    "creating": "Adding...",
+    "updating": "Updating...",
+    "createTopic": "Create Topic",
+    "updateTopic": "Update Topic",
+    "icons": {
+      "code": "Code",
+      "database": "Database",
+      "server": "Server",
+      "atom": "Atom",
+      "cpu": "CPU",
+      "box": "Box",
+      "layers": "Layers",
+      "zap": "Zap"
+    },
+    "colors": {
+      "blue": "Blue",
+      "green": "Green",
+      "yellow": "Yellow",
+      "purple": "Purple",
+      "red": "Red",
+      "orange": "Orange",
+      "cyan": "Cyan",
+      "pink": "Pink",
+      "indigo": "Indigo",
+      "slate": "Slate"
+    }
   },
   "stats": {
     "totalQuestions": "Total Questions",

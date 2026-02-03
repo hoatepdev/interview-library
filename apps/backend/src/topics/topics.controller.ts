@@ -20,6 +20,12 @@ export class TopicsController {
     return this.topicsService.findAll(lang);
   }
 
+  @Get('slug/:slug')
+  findBySlug(@Param('slug') slug: string, @Req() req: Request) {
+    const lang = req.i18n?.lang || 'en';
+    return this.topicsService.findBySlug(slug, lang);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @Req() req: Request) {
     const lang = req.i18n?.lang || 'en';

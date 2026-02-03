@@ -7,28 +7,7 @@ import { Clock, ChevronRight, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { useLoginDialog } from "@/contexts/login-dialog-context";
-
-interface DueQuestion {
-  id: string;
-  title: string;
-  content: string;
-  answer?: string;
-  topicId: string;
-  level: string;
-  status: string;
-  topic?: {
-    id: string;
-    name: string;
-    color: string;
-    icon: string;
-  };
-  nextReviewAt: string | null;
-  dueStatus: {
-    isDue: boolean;
-    text: string;
-    daysUntil?: number;
-  };
-}
+import { DueQuestion } from "@/types";
 
 export function DueForReview() {
   const t = useTranslations("practice");
@@ -126,7 +105,7 @@ export function DueForReview() {
     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between text-left"
+        className="w-full flex items-center justify-between text-left cursor-pointer"
       >
         <h3 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
           <Clock className="w-5 h-5 text-orange-500" />
@@ -154,7 +133,7 @@ export function DueForReview() {
             <button
               key={question.id}
               onClick={() => router.push(`/practice?question=${question.id}`)}
-              className="w-full text-left p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
+              className="w-full text-left p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group cursor-pointer"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">

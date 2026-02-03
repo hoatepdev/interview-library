@@ -855,6 +855,12 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 - ✅ Language switcher in header
 - ✅ Locale-based routing (/en/*, /vi/*)
 - ✅ Localized UI messages
+- ✅ Login popup for protected actions
+- ✅ Multi-language QuestionForm (labels, placeholders, buttons)
+- ✅ Topic slug feature (SEO-friendly URLs)
+- ✅ Questions count per topic
+- ✅ Topic detail page with slug routing
+- ✅ Auth guards (toggle favorite, create/edit/delete)
 
 ### Immediate Next Steps
 
@@ -875,4 +881,4 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 
 ---
 
-*Last updated: February 3, 2026 - Authentication (OAuth), Multi-language (i18n), User Features Complete*
+*Last updated: February 3, 2026 - Login Popup, Multi-language Forms, Topic Slug Feature Complete*

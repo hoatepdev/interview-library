@@ -9,7 +9,10 @@
       "Bash(lsof -i :3000 -i :3001)",
       "Bash(curl -s http://localhost:3001/api/auth/me)",
       "Bash(docker logs interview-library-db)",
-      "Bash(ls -la /Users/hoatepdev/Developer/personal/interview-library/apps/frontend/src/app/[locale]/)"
+      "Bash(ls -la /Users/hoatepdev/Developer/personal/interview-library/apps/frontend/src/app/[locale]/)",
+      "Bash(npm run build)",
+      "Bash(pnpm run build)",
+      "Bash(ls -la /Users/hoatepdev/Developer/personal/interview-library/apps/frontend/src/app/[locale]/\\(main\\)/topics/)"
     ]
   }
 }

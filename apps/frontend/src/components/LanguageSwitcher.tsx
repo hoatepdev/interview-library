@@ -24,7 +24,7 @@ export function LanguageSwitcher() {
 
   return (
     <div className="relative group">
-      <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+      <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
         <Languages className="w-4 h-4 text-gray-600 dark:text-gray-400" />
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {locales.find(l => l.code === locale)?.flag}
@@ -38,7 +38,7 @@ export function LanguageSwitcher() {
             key={loc.code}
             onClick={() => handleLocaleChange(loc.code)}
             disabled={isPending}
-            className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
+            className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors cursor-pointer ${
               locale === loc.code
                 ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'

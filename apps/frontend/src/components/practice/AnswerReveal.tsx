@@ -13,7 +13,7 @@ export function AnswerReveal({ answer, onReveal, isRevealed }: AnswerRevealProps
     return (
       <button
         onClick={onReveal}
-        className="w-full flex items-center justify-center space-x-2 py-4 px-6 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors border border-blue-200 dark:border-blue-800"
+        className="w-full flex items-center justify-center space-x-2 py-4 px-6 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors border border-blue-200 dark:border-blue-800 cursor-pointer"
       >
         <Eye className="w-5 h-5" />
         <span>Show Answer</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +17,13 @@ import { getTopics, Topic } from "@/lib/api";
 
 interface QuestionFormProps {
   onCancel: () => void;
-  onSubmit: (data: any) => void | Promise<void>;
+  onSubmit: (data: {
+    title: string;
+    content: string;
+    answer: string;
+    topicId: string;
+    level: string;
+  }) => void | Promise<void>;
   isSubmitting?: boolean;
   initialData?: {
     title: string;
@@ -33,6 +40,9 @@ export function QuestionForm({
   isSubmitting = false,
   initialData
 }: QuestionFormProps) {
+  const t = useTranslations("form");
+  const tQuestions = useTranslations("questions");
+  const tCommon = useTranslations("common");
   const [topics, setTopics] = useState<Topic[]>([]);
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
@@ -76,10 +86,10 @@ export function QuestionForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">{t("title")}</Label>
         <Input
           id="title"
-          placeholder="e.g. Explain Event Loop"
+          placeholder={t("enterTitle")}
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           required
@@ -89,14 +99,14 @@ export function QuestionForm({
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="topic">Topic</Label>
+          <Label htmlFor="topic">{t("topic")}</Label>
           <Select
             value={formData.topicId}
             onValueChange={(value: string) => setFormData({ ...formData, topicId: value })}
             disabled={isSubmitting}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select topic" />
+              <SelectValue placeholder={t("selectTopic")} />
             </SelectTrigger>
             <SelectContent>
               {topics.map((topic) => (
@@ -109,29 +119,29 @@ export function QuestionForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="level">Level</Label>
+          <Label htmlFor="level">{t("level")}</Label>
           <Select
             value={formData.level}
             onValueChange={(value: string) => setFormData({ ...formData, level: value })}
             disabled={isSubmitting}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select level" />
+              <SelectValue placeholder={t("selectLevel")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="junior">Junior</SelectItem>
-              <SelectItem value="middle">Middle</SelectItem>
-              <SelectItem value="senior">Senior</SelectItem>
+              <SelectItem value="junior">{tQuestions("levels.junior")}</SelectItem>
+              <SelectItem value="middle">{tQuestions("levels.middle")}</SelectItem>
+              <SelectItem value="senior">{tQuestions("levels.senior")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="content">Question Content</Label>
+        <Label htmlFor="content">{t("questionContent")}</Label>
         <Textarea
           id="content"
-          placeholder="Detailed question behavior..."
+          placeholder={t("enterContent")}
           className="min-h-[100px]"
           value={formData.content}
           onChange={(e) => setFormData({ ...formData, content: e.target.value })}
@@ -141,10 +151,10 @@ export function QuestionForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="answer">Answer (Optional)</Label>
+        <Label htmlFor="answer">{t("answerOptional")}</Label>
         <Textarea
           id="answer"
-          placeholder="Detailed answer/solution..."
+          placeholder={t("enterAnswer")}
           className="min-h-[100px]"
           value={formData.answer}
           onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
@@ -154,10 +164,12 @@ export function QuestionForm({
 
       <div className="flex justify-end space-x-2 pt-4">
         <Button variant="outline" type="button" onClick={onCancel} disabled={isSubmitting}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? (isEditMode ? "Updating..." : "Adding...") : isEditMode ? "Update Question" : "Add Question"}
+          {isSubmitting
+            ? (isEditMode ? t("updating") : t("creating"))
+            : (isEditMode ? t("updateQuestion") : t("createQuestion"))}
         </Button>
       </div>
     </form>

@@ -14,6 +14,7 @@ import type {
   CreatePracticeLogDto,
   PracticeStats,
   PracticeLogEntry,
+  DueQuestion,
 } from '@/types';
 
 let currentLocale = 'en';
@@ -47,6 +48,7 @@ export function useApiLocale() {
 export const topicsApi = {
   getAll: () => api.get<Topic[]>('/topics').then((res) => res.data),
   getById: (id: string) => api.get<Topic>(`/topics/${id}`).then((res) => res.data),
+  getBySlug: (slug: string) => api.get<Topic>(`/topics/slug/${slug}`).then((res) => res.data),
   create: (data: CreateTopicDto) => api.post<Topic>('/topics', data).then((res) => res.data),
   update: (id: string, data: UpdateTopicDto) => api.put<Topic>(`/topics/${id}`, data).then((res) => res.data),
   delete: (id: string) => api.delete(`/topics/${id}`).then((res) => res.data),
@@ -57,12 +59,15 @@ export const questionsApi = {
   getAll: (params?: QueryQuestionsDto) =>
     api.get<Question[]>('/questions', { params }).then((res) => res.data),
   getById: (id: string) => api.get<Question>(`/questions/${id}`).then((res) => res.data),
+  getByTopicSlug: (slug: string, params?: QueryQuestionsDto) =>
+    api.get<Question[]>(`/questions/by-topic-slug/${slug}`, { params }).then((res) => res.data),
   create: (data: CreateQuestionDto) => api.post<Question>('/questions', data).then((res) => res.data),
   update: (id: string, data: UpdateQuestionDto) => api.put<Question>(`/questions/${id}`, data).then((res) => res.data),
   delete: (id: string) => api.delete(`/questions/${id}`).then((res) => res.data),
   updateStatus: (id: string, status: string) =>
     api.patch(`/questions/${id}/status`, { status }).then((res) => res.data),
-  toggleFavorite: (id: string) => api.patch(`/questions/${id}/favorite`).then((res) => res.data),
+  toggleFavorite: (id: string) =>
+    api.patch<{ isFavorite: boolean }>(`/questions/${id}/favorite`).then((res) => res.data),
 };
 
 // Practice
@@ -70,7 +75,7 @@ export const practiceApi = {
   getRandomQuestion: (params?: { topicId?: string; level?: string; status?: string; excludeQuestionId?: string }) =>
     api.get<Question>('/practice/random', { params }).then((res) => res.data),
   getQuestionsDueForReview: (limit = 20) =>
-    api.get<Question[]>('/practice/due', { params: { limit } }).then((res) => res.data),
+    api.get<DueQuestion[]>('/practice/due', { params: { limit } }).then((res) => res.data),
   logPractice: (data: CreatePracticeLogDto) =>
     api.post<PracticeLog>('/practice/log', data).then((res) => res.data),
   getStats: () => api.get<PracticeStats>('/practice/stats').then((res) => res.data),
