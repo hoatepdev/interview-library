@@ -55,7 +55,7 @@ export class PracticeService {
     return this.translationService.formatQuestion(questions[randomIndex], locale, true).data;
   }
 
-  async logPractice(createPracticeLogDto: CreatePracticeLogDto): Promise<PracticeLog> {
+  async logPractice(createPracticeLogDto: CreatePracticeLogDto, userId?: string): Promise<PracticeLog> {
     const { questionId, selfRating, timeSpentSeconds, notes } = createPracticeLogDto;
 
     // Verify question exists
@@ -64,9 +64,10 @@ export class PracticeService {
       throw new NotFoundException(`Question with ID ${questionId} not found`);
     }
 
-    // Create practice log
+    // Create practice log with user association
     const practiceLog = this.practiceLogRepository.create({
       questionId,
+      userId,
       selfRating,
       timeSpentSeconds,
       notes,
@@ -134,7 +135,7 @@ export class PracticeService {
       if (seenIds.has(id)) continue;
       seenIds.add(id);
 
-      const question = this.questionRepository.create({
+      const question = {
         id: row.question_id,
         title: row.question_title,
         content: row.question_content,
@@ -142,7 +143,6 @@ export class PracticeService {
         topicId: row.question_topicId,
         level: row.question_level,
         status: row.question_status,
-        isFavorite: row.question_isFavorite,
         difficultyScore: row.question_difficultyScore,
         practiceCount: row.question_practiceCount,
         lastPracticedAt: row.question_lastPracticedAt,
@@ -164,7 +164,7 @@ export class PracticeService {
           updatedAt: row.topic_updatedAt,
         } : null,
         translations: [],
-      });
+      };
 
       result.push(question);
       if (result.length >= limit) break;
@@ -180,7 +180,9 @@ export class PracticeService {
     }));
   }
 
-  async getStats(locale: Locale = 'en') {
+  async getStats(locale: Locale = 'en', userId?: string) {
+    // For user-specific stats, we'd need to filter by user_id
+    // For now, return global stats
     const totalQuestions = await this.questionRepository.count();
     const totalLogs = await this.practiceLogRepository.count();
 
@@ -237,8 +239,10 @@ export class PracticeService {
     };
   }
 
-  async getHistory(limit = 20, locale: Locale = 'en') {
+  async getHistory(limit = 20, locale: Locale = 'en', userId?: string) {
+    const where = userId ? { userId } : {};
     const logs = await this.practiceLogRepository.find({
+      where,
       relations: ['question', 'question.topic', 'question.translations'],
       order: { practicedAt: 'DESC' },
       take: limit,

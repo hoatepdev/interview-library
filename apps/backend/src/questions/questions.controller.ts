@@ -38,10 +38,11 @@ export class QuestionsController {
     return this.questionsService.updateStatus(id, updateStatusDto);
   }
 
-  @Patch(':id/favorite')
-  toggleFavorite(@Param('id') id: string) {
-    return this.questionsService.toggleFavorite(id);
-  }
+  // TODO: Implement toggleFavorite using QuestionFavorite table
+  // @Patch(':id/favorite')
+  // toggleFavorite(@Param('id') id: string) {
+  //   return this.questionsService.toggleFavorite(id);
+  // }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

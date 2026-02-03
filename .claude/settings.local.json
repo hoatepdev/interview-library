@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm add @nestjs/passport passport passport-google-oauth20 passport-github2 express-session)",
+      "Bash(npm install @nestjs/passport passport passport-google-oauth20 passport-github2 express-session @types/express-session @types/passport @types/passport-google-oauth20 @types/passport-github2 --save)",
+      "Bash(pg_isready -h localhost -p 5432)",
+      "Bash(docker-compose up -d postgres)",
+      "Bash(docker ps --filter \"name=interview-library-db\" --format \"table {{.Names}}\\\\t{{.Status}}\\\\t{{.Ports}}\")",
+      "Bash(lsof -i :3000 -i :3001)",
+      "Bash(curl -s http://localhost:3001/api/auth/me)",
+      "Bash(docker logs interview-library-db)"
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Topic } from './topic.entity';
 import { QuestionTranslation } from './question-translation.entity';
+import { User } from './user.entity';
 
 export enum QuestionLevel {
   JUNIOR = 'junior',
@@ -50,8 +51,12 @@ export class Question {
   })
   status: QuestionStatus;
 
-  @Column({ name: 'is_favorite', default: false })
-  isFavorite: boolean;
+  @Column({ name: 'user_id', nullable: true })
+  userId: string;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: true })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Column({ name: 'difficulty_score', default: 0 })
   difficultyScore: number;

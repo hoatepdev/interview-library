@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { practiceApi } from "@/lib/api";
 import { useTranslations } from "next-intl";
-import { Clock, ChevronRight } from "lucide-react";
+import { Clock, ChevronRight, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/auth-context";
+import { useLoginDialog } from "@/contexts/login-dialog-context";
 
 interface DueQuestion {
   id: string;
@@ -30,12 +32,21 @@ interface DueQuestion {
 
 export function DueForReview() {
   const t = useTranslations("practice");
+  const tAuth = useTranslations("auth");
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  const { openDialog } = useLoginDialog();
   const [questions, setQuestions] = useState<DueQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
+    // Only load questions if user is authenticated
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
+
     const loadDueQuestions = async () => {
       try {
         const data = await practiceApi.getQuestionsDueForReview(10);
@@ -48,7 +59,46 @@ export function DueForReview() {
     };
 
     loadDueQuestions();
-  }, []);
+  }, [user]);
+
+  // Show loading state while checking auth
+  if (authLoading || isLoading) {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+          <Clock className="w-5 h-5" />
+          {t("dueForReview")}
+        </h3>
+        <div className="animate-pulse space-y-3">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!user) {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">{t("dueForReview")}</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+            <button
+              onClick={openDialog}
+              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+            >
+              {tAuth("login")}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

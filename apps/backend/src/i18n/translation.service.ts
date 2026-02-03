@@ -195,7 +195,6 @@ export class TranslationService {
       topicId: question.topicId,
       level: question.level,
       status: question.status,
-      isFavorite: question.isFavorite,
       difficultyScore: question.difficultyScore,
       practiceCount: question.practiceCount,
       lastPracticedAt: question.lastPracticedAt,

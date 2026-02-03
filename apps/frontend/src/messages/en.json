@@ -147,5 +147,12 @@
     "title": "Language",
     "en": "English",
     "vi": "Tiếng Việt"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Log out",
+    "settings": "Settings",
+    "loginRequired": "Login Required",
+    "loginRequiredDesc": "Sign in to continue with this action"
   }
 }

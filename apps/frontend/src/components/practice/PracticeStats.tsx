@@ -4,15 +4,26 @@ import { useEffect, useState } from "react";
 import { practiceApi } from "@/lib/api";
 import { PracticeStats } from "@/types";
 import { useTranslations } from "next-intl";
-import { BarChart3, Clock, Target, TrendingUp } from "lucide-react";
+import { BarChart3, Clock, Target, TrendingUp, Lock } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import { useLoginDialog } from "@/contexts/login-dialog-context";
 
 export function PracticeStatsComponent() {
   const t = useTranslations("practice");
   const tStats = useTranslations("stats");
+  const tAuth = useTranslations("auth");
+  const { user, loading: authLoading } = useAuth();
+  const { openDialog } = useLoginDialog();
   const [stats, setStats] = useState<PracticeStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Only load stats if user is authenticated
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
+
     const loadStats = async () => {
       try {
         const data = await practiceApi.getStats();
@@ -25,7 +36,44 @@ export function PracticeStatsComponent() {
     };
 
     loadStats();
-  }, []);
+  }, [user]);
+
+  // Show loading state while checking auth
+  if (authLoading || isLoading) {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 flex flex-col space-y-4">
+        <h3 className="font-semibold text-gray-900 dark:text-gray-100">{tStats("overallStats")}</h3>
+        <div className="animate-pulse space-y-3">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!user) {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+        <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+            <Lock className="w-6 h-6 text-gray-400 dark:text-gray-500" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{tStats("overallStats")}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{tAuth("loginRequiredDesc")}</p>
+          </div>
+          <button
+            onClick={openDialog}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            {tAuth("login")}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading || !stats) {
     return (

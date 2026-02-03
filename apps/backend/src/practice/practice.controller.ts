@@ -12,38 +12,46 @@ import { Request } from "express";
 import { PracticeService } from "./practice.service";
 import { CreatePracticeLogDto } from "./dto/create-practice-log.dto";
 import { QueryPracticeDto } from "./dto/query-practice.dto";
+import { User } from "../database/entities/user.entity";
+
+interface AuthenticatedRequest extends Request {
+  user?: User;
+}
 
 @Controller("practice")
 export class PracticeController {
   constructor(private readonly practiceService: PracticeService) {}
 
   @Get("random")
-  getRandomQuestion(@Req() req: Request, @Query() query: QueryPracticeDto) {
+  getRandomQuestion(@Req() req: AuthenticatedRequest, @Query() query: QueryPracticeDto) {
     const lang = req.i18n?.lang || 'en';
     return this.practiceService.getRandomQuestion(query, lang);
   }
 
   @Get("due")
-  getQuestionsDueForReview(@Req() req: Request, @Query("limit") limit?: string) {
+  getQuestionsDueForReview(@Req() req: AuthenticatedRequest, @Query("limit") limit?: string) {
     const lang = req.i18n?.lang || 'en';
     return this.practiceService.getQuestionsDueForReview(lang, limit ? parseInt(limit) : 20);
   }
 
   @Post("log")
   @HttpCode(HttpStatus.CREATED)
-  logPractice(@Body() createPracticeLogDto: CreatePracticeLogDto) {
-    return this.practiceService.logPractice(createPracticeLogDto);
+  logPractice(@Req() req: AuthenticatedRequest, @Body() createPracticeLogDto: CreatePracticeLogDto) {
+    const userId = req.user?.id;
+    return this.practiceService.logPractice(createPracticeLogDto, userId);
   }
 
   @Get("stats")
-  getStats(@Req() req: Request) {
+  getStats(@Req() req: AuthenticatedRequest) {
     const lang = req.i18n?.lang || 'en';
-    return this.practiceService.getStats(lang);
+    const userId = req.user?.id;
+    return this.practiceService.getStats(lang, userId);
   }
 
   @Get("history")
-  getHistory(@Req() req: Request, @Query("limit") limit?: string) {
+  getHistory(@Req() req: AuthenticatedRequest, @Query("limit") limit?: string) {
     const lang = req.i18n?.lang || 'en';
-    return this.practiceService.getHistory(limit ? parseInt(limit) : 20, lang);
+    const userId = req.user?.id;
+    return this.practiceService.getHistory(limit ? parseInt(limit) : 20, lang, userId);
   }
 }

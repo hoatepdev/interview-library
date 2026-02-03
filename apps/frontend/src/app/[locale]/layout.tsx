@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
-import { MainLayout } from "@/components/layout/MainLayout";
+
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ApiLocaleProvider } from "@/components/providers/ApiLocaleProvider";
+import { AuthProvider } from "@/contexts/auth-context";
+import { LoginDialogProvider } from "@/components/providers/login-dialog-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,17 +40,21 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
         <NextIntlClientProvider messages={messages}>
-          <ApiLocaleProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <MainLayout>{children}</MainLayout>
-              <Toaster richColors position="top-right" />
-            </ThemeProvider>
-          </ApiLocaleProvider>
+          <AuthProvider>
+            <LoginDialogProvider>
+              <ApiLocaleProvider>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="system"
+                  enableSystem
+                  disableTransitionOnChange
+                >
+                  {children}
+                  <Toaster richColors position="top-right" />
+                </ThemeProvider>
+              </ApiLocaleProvider>
+            </LoginDialogProvider>
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

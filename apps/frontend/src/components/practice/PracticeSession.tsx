@@ -7,6 +7,7 @@ import { SelfRating } from "@/types";
 import { QuestionCard } from "./QuestionCard";
 import { AnswerReveal } from "./AnswerReveal";
 import { SelfRatingComponent } from "./SelfRating";
+import { useRequireAuth } from "@/hooks/use-require-auth";
 
 export function PracticeSession() {
   const [question, setQuestion] = useState<Question | null>(null);
@@ -14,6 +15,7 @@ export function PracticeSession() {
   const [isLoading, setIsLoading] = useState(true);
   const [sessionId] = useState(() => Date.now()); // Track session start time
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
+  const { requireAuth } = useRequireAuth();
 
   const loadQuestion = useCallback(async (excludeQuestionId?: string) => {
     setIsLoading(true);
@@ -33,23 +35,25 @@ export function PracticeSession() {
     loadQuestion();
   }, [loadQuestion]);
 
-  const handleRate = async (rating: SelfRating) => {
+  const handleRate = (rating: SelfRating) => {
     if (!question) return;
 
     const timeSpentSeconds = Math.round((Date.now() - questionStartTime) / 1000);
 
-    try {
-      await practiceApi.logPractice({
-        questionId: question.id,
-        selfRating: rating,
-        timeSpentSeconds,
-      });
-    } catch (error) {
-      console.error("Failed to log practice", error);
-    }
+    requireAuth(async () => {
+      try {
+        await practiceApi.logPractice({
+          questionId: question.id,
+          selfRating: rating,
+          timeSpentSeconds,
+        });
+      } catch (error) {
+        console.error("Failed to log practice", error);
+      }
 
-    // Load next question, excluding current one
-    await loadQuestion(question.id);
+      // Load next question, excluding current one
+      await loadQuestion(question.id);
+    }, 'practice');
   };
 
   if (isLoading) {

@@ -148,5 +148,12 @@
     "title": "Ngôn ngữ",
     "en": "English",
     "vi": "Tiếng Việt"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "settings": "Cài đặt",
+    "loginRequired": "Cần Đăng Nhập",
+    "loginRequiredDesc": "Đăng nhập để tiếp tục hành động này"
   }
 }

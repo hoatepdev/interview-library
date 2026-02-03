@@ -27,6 +27,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Send cookies for authentication
 });
 
 // Request interceptor to add Accept-Language header
@@ -75,6 +76,12 @@ export const practiceApi = {
   getStats: () => api.get<PracticeStats>('/practice/stats').then((res) => res.data),
   getHistory: (limit = 20) =>
     api.get<PracticeLogEntry[]>('/practice/history', { params: { limit } }).then((res) => res.data),
+};
+
+// Auth
+export const authApi = {
+  getProfile: () => api.get('/auth/me').then((res) => res.data),
+  logout: () => api.post('/auth/logout').then((res) => res.data),
 };
 
 // Convenience functions for backward compatibility

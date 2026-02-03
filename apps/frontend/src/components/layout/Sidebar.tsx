@@ -5,6 +5,7 @@ import { BookOpen, HelpCircle, Swords, LayoutDashboard, Settings } from "lucide-
 import { cn } from "@/lib/utils";
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
+import { LoginModal } from "@/components/auth/LoginModal";
 
 const navigation = [
   { nameKey: "nav.home", href: "/", icon: LayoutDashboard },
@@ -49,7 +50,8 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+      <div className="border-t border-gray-200 dark:border-gray-800 p-4 space-y-2">
+        <LoginModal />
         <Link
           href="/settings"
           className="group flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-400 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"

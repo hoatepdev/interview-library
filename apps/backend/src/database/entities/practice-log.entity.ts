@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Question } from './question.entity';
+import { User } from './user.entity';
 
 export enum SelfRating {
   POOR = 'poor',
@@ -19,6 +20,13 @@ export class PracticeLog {
   @ManyToOne(() => Question, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'question_id' })
   question: Question;
+
+  @Column({ name: 'user_id', nullable: true })
+  userId: string;
+
+  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Column({
     type: 'enum',

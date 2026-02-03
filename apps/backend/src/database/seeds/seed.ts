@@ -72,7 +72,6 @@ async function runSeed() {
         ...questionData,
         topicId: topic.id,
         status: 'new' as any,
-        isFavorite: false,
         difficultyScore: 0,
         practiceCount: 0,
         order: 0,

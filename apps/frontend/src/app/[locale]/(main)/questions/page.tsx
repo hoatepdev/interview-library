@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/popover";
 import { QuestionForm } from "@/components/questions/QuestionForm";
 import { Button } from "@/components/ui/button";
+import { useRequireAuth } from "@/hooks/use-require-auth";
 
 // Filter presets
 type FilterPreset = "all" | "favorites" | "need-practice" | "mastered";
@@ -50,6 +51,7 @@ function QuestionsContent() {
   const tCommon = useTranslations("common");
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { requireAuth } = useRequireAuth();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -255,14 +257,16 @@ function QuestionsContent() {
     }
   };
 
-  const handleToggleFavorite = async (id: string) => {
-    try {
-      await questionsApi.toggleFavorite(id);
-      await fetchQuestions();
-    } catch (error) {
-      console.error("Failed to toggle favorite:", error);
-      toast.error(tNotif("error"));
-    }
+  const handleToggleFavorite = (id: string) => {
+    requireAuth(async () => {
+      try {
+        await questionsApi.toggleFavorite(id);
+        await fetchQuestions();
+      } catch (error) {
+        console.error("Failed to toggle favorite:", error);
+        toast.error(tNotif("error"));
+      }
+    }, 'favorite');
   };
 
   const handleEditClick = (question: Question) => {

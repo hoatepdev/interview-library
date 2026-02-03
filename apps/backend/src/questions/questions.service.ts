@@ -22,7 +22,7 @@ export class QuestionsService {
   }
 
   async findAll(query: QueryQuestionsDto, locale: Locale = 'en'): Promise<any[]> {
-    const { topicId, level, status, favorite, search } = query;
+    const { topicId, level, status, search } = query;
 
     const where: any = {};
 
@@ -38,9 +38,8 @@ export class QuestionsService {
       where.status = status;
     }
 
-    if (favorite !== undefined) {
-      where.isFavorite = favorite;
-    }
+    // TODO: Implement favorites filtering using QuestionFavorite table
+    // if (favorite !== undefined) {
 
     let questions: Question[];
 
@@ -99,16 +98,17 @@ export class QuestionsService {
     return this.questionRepository.save(question);
   }
 
-  async toggleFavorite(id: string): Promise<Question> {
-    const question = await this.questionRepository.findOne({
-      where: { id },
-    });
-    if (!question) {
-      throw new NotFoundException(`Question with ID ${id} not found`);
-    }
-    question.isFavorite = !question.isFavorite;
-    return this.questionRepository.save(question);
-  }
+  // TODO: Implement toggleFavorite using QuestionFavorite table
+  // async toggleFavorite(id: string): Promise<Question> {
+  //   const question = await this.questionRepository.findOne({
+  //     where: { id },
+  //   });
+  //   if (!question) {
+  //     throw new NotFoundException(`Question with ID ${id} not found`);
+  //   }
+  //   question.isFavorite = !question.isFavorite;
+  //   return this.questionRepository.save(question);
+  // }
 
   async remove(id: string): Promise<void> {
     const question = await this.questionRepository.findOne({
