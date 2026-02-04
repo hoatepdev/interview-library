@@ -1,10 +1,16 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/routing";
-import { BookOpen, HelpCircle, Swords, LayoutDashboard, Settings } from "lucide-react";
+import {
+  BookOpen,
+  HelpCircle,
+  Swords,
+  LayoutDashboard,
+  Settings,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTranslations } from 'next-intl';
-import { useLocale } from 'next-intl';
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { LoginModal } from "@/components/auth/LoginModal";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -18,8 +24,6 @@ const navigation = [
 export function Sidebar() {
   const t = useTranslations();
   const pathname = usePathname();
-  const locale = useLocale();
-  const { user } = useAuth();
 
   return (
     <div className="flex h-full w-64 flex-col bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-r border-slate-200/60 dark:border-white/5 transition-colors duration-500 z-10">
@@ -43,7 +47,9 @@ export function Sidebar() {
               <item.icon
                 className={cn(
                   "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
-                  isActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
+                  isActive
+                    ? "text-blue-600 dark:text-blue-400"
+                    : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
                 )}
                 aria-hidden="true"
               />
@@ -53,7 +59,6 @@ export function Sidebar() {
         })}
       </nav>
       <div className="border-t border-slate-200/60 dark:border-white/5 p-4 space-y-2">
-        {!user && <LoginModal />}
         <Link
           href="/settings"
           className="group flex items-center px-3 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-colors"
@@ -62,7 +67,7 @@ export function Sidebar() {
             className="mr-3 h-5 w-5 flex-shrink-0 text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
             aria-hidden="true"
           />
-          {t('nav.settings')}
+          {t("nav.settings")}
         </Link>
       </div>
     </div>

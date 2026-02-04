@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { questionsApi, Question, getTopics, Topic } from "@/lib/api";
+import { QuestionLevel } from "@/types";
 import { QuestionList } from "@/components/questions/QuestionList";
 import {
   Search,
@@ -199,7 +200,13 @@ function QuestionsContent() {
     currentFavorites ||
     currentSearch;
 
-  const handleCreateQuestion = async (data: Question) => {
+  const handleCreateQuestion = async (data: {
+    title: string;
+    content: string;
+    answer: string;
+    topicId: string;
+    level: string;
+  }) => {
     setIsSubmitting(true);
     try {
       await questionsApi.create({
@@ -207,7 +214,7 @@ function QuestionsContent() {
         content: data.content,
         answer: data.answer || undefined,
         topicId: data.topicId,
-        level: data.level,
+        level: data.level as QuestionLevel,
       });
 
       setIsDialogOpen(false);
@@ -221,7 +228,13 @@ function QuestionsContent() {
     }
   };
 
-  const handleEditQuestion = async (data: Question) => {
+  const handleEditQuestion = async (data: {
+    title: string;
+    content: string;
+    answer: string;
+    topicId: string;
+    level: string;
+  }) => {
     if (!editingQuestion) return;
 
     setIsSubmitting(true);
@@ -231,7 +244,7 @@ function QuestionsContent() {
         content: data.content,
         answer: data.answer || undefined,
         topicId: data.topicId,
-        level: data.level,
+        level: data.level as QuestionLevel,
       });
 
       setIsDialogOpen(false);

@@ -38,7 +38,7 @@ export function QuestionForm({
   onCancel,
   onSubmit,
   isSubmitting = false,
-  initialData
+  initialData,
 }: QuestionFormProps) {
   const t = useTranslations("form");
   const tQuestions = useTranslations("questions");
@@ -76,7 +76,7 @@ export function QuestionForm({
     }
   }, [initialData]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     await onSubmit(formData);
   };
@@ -102,7 +102,9 @@ export function QuestionForm({
           <Label htmlFor="topic">{t("topic")}</Label>
           <Select
             value={formData.topicId}
-            onValueChange={(value: string) => setFormData({ ...formData, topicId: value })}
+            onValueChange={(value: string) =>
+              setFormData({ ...formData, topicId: value })
+            }
             disabled={isSubmitting}
           >
             <SelectTrigger>
@@ -122,16 +124,24 @@ export function QuestionForm({
           <Label htmlFor="level">{t("level")}</Label>
           <Select
             value={formData.level}
-            onValueChange={(value: string) => setFormData({ ...formData, level: value })}
+            onValueChange={(value: string) =>
+              setFormData({ ...formData, level: value })
+            }
             disabled={isSubmitting}
           >
             <SelectTrigger>
               <SelectValue placeholder={t("selectLevel")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="junior">{tQuestions("levels.junior")}</SelectItem>
-              <SelectItem value="middle">{tQuestions("levels.middle")}</SelectItem>
-              <SelectItem value="senior">{tQuestions("levels.senior")}</SelectItem>
+              <SelectItem value="junior">
+                {tQuestions("levels.junior")}
+              </SelectItem>
+              <SelectItem value="middle">
+                {tQuestions("levels.middle")}
+              </SelectItem>
+              <SelectItem value="senior">
+                {tQuestions("levels.senior")}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -142,9 +152,11 @@ export function QuestionForm({
         <Textarea
           id="content"
           placeholder={t("enterContent")}
-          className="min-h-[100px]"
+          className="min-h-25"
           value={formData.content}
-          onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, content: e.target.value })
+          }
           required
           disabled={isSubmitting}
         />
@@ -155,7 +167,7 @@ export function QuestionForm({
         <Textarea
           id="answer"
           placeholder={t("enterAnswer")}
-          className="min-h-[100px]"
+          className="min-h-25"
           value={formData.answer}
           onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
           disabled={isSubmitting}
@@ -163,13 +175,22 @@ export function QuestionForm({
       </div>
 
       <div className="flex justify-end space-x-2 pt-4">
-        <Button variant="outline" type="button" onClick={onCancel} disabled={isSubmitting}>
+        <Button
+          variant="outline"
+          type="button"
+          onClick={onCancel}
+          disabled={isSubmitting}
+        >
           {tCommon("cancel")}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting
-            ? (isEditMode ? t("updating") : t("creating"))
-            : (isEditMode ? t("updateQuestion") : t("createQuestion"))}
+            ? isEditMode
+              ? t("updating")
+              : t("creating")
+            : isEditMode
+              ? t("updateQuestion")
+              : t("createQuestion")}
         </Button>
       </div>
     </form>

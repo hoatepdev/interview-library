@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { topicsApi, questionsApi, Topic, Question } from "@/lib/api";
+import { QuestionLevel } from "@/types";
 import { QuestionList } from "@/components/questions/QuestionList";
 import { QuestionForm } from "@/components/questions/QuestionForm";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ export default function TopicDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
 
-  const fetchTopic = async () => {
+  const fetchTopic = useCallback(async () => {
     try {
       const data = await topicsApi.getBySlug(slug);
       setTopic(data);
@@ -42,9 +43,9 @@ export default function TopicDetailPage() {
       console.error("Failed to fetch topic:", error);
       toast.error(tNotif("error"));
     }
-  };
+  }, [slug, tNotif]);
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await questionsApi.getByTopicSlug(slug);
@@ -55,20 +56,27 @@ export default function TopicDetailPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [slug, tNotif]);
 
   useEffect(() => {
     if (slug) {
       fetchTopic();
       fetchQuestions();
     }
-  }, [slug]);
+  }, [slug, fetchTopic, fetchQuestions]);
 
-  const handleCreateQuestion = async (data: any) => {
+  const handleCreateQuestion = async (data: {
+    title: string;
+    content: string;
+    answer: string;
+    topicId: string;
+    level: string;
+  }) => {
     setIsSubmitting(true);
     try {
       await questionsApi.create({
         ...data,
+        level: data.level as QuestionLevel,
         topicId: topic?.id || "",
       });
 
@@ -83,12 +91,21 @@ export default function TopicDetailPage() {
     }
   };
 
-  const handleEditQuestion = async (data: any) => {
+  const handleEditQuestion = async (data: {
+    title: string;
+    content: string;
+    answer: string;
+    topicId: string;
+    level: string;
+  }) => {
     if (!editingQuestion) return;
 
     setIsSubmitting(true);
     try {
-      await questionsApi.update(editingQuestion.id, data);
+      await questionsApi.update(editingQuestion.id, {
+        ...data,
+        level: data.level as QuestionLevel,
+      });
 
       setIsDialogOpen(false);
       setEditingQuestion(null);
