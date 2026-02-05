@@ -5,6 +5,7 @@
 Personal interview question management application for storing, categorizing, and practicing interview questions.
 
 ### Tech Stack
+
 - **Frontend**: Next.js 14 (App Router), React, TypeScript, Tailwind CSS, next-intl
 - **Backend**: NestJS, TypeScript, TypeORM, Passport.js
 - **Database**: PostgreSQL (Docker)
@@ -20,18 +21,18 @@ Personal interview question management application for storing, categorizing, an
 
 ### Tasks Completed
 
-| Task | Status | Description |
-|------|--------|-------------|
-| Project Setup | ✅ | Monorepo structure with Next.js + NestJS |
-| Database | ✅ | PostgreSQL with Docker Compose |
-| DB Schema | ✅ | Tables: topics, questions, users with migrations |
-| Topics CRUD | ✅ | API + UI for topic management |
-| Questions CRUD | ✅ | API + UI for question management |
-| Layout & Navigation | ✅ | Header, Sidebar, MainLayout |
-| Home Dashboard | ✅ | Redesigned with stats & activity |
-| Practice UI (Frontend) | ✅ | Components created & API connected |
-| Multi-language (i18n) | ✅ | English & Vietnamese support |
-| Dark Mode | ✅ | Full dark mode support with theme toggle |
+| Task                   | Status | Description                                      |
+| ---------------------- | ------ | ------------------------------------------------ |
+| Project Setup          | ✅     | Monorepo structure with Next.js + NestJS         |
+| Database               | ✅     | PostgreSQL with Docker Compose                   |
+| DB Schema              | ✅     | Tables: topics, questions, users with migrations |
+| Topics CRUD            | ✅     | API + UI for topic management                    |
+| Questions CRUD         | ✅     | API + UI for question management                 |
+| Layout & Navigation    | ✅     | Header, Sidebar, MainLayout                      |
+| Home Dashboard         | ✅     | Redesigned with stats & activity                 |
+| Practice UI (Frontend) | ✅     | Components created & API connected               |
+| Multi-language (i18n)  | ✅     | English & Vietnamese support                     |
+| Dark Mode              | ✅     | Full dark mode support with theme toggle         |
 
 ### Backend API Endpoints
 
@@ -53,12 +54,12 @@ PATCH  /api/questions/:id/status   - Update learning status
 
 ### Frontend Pages
 
-| Page | Route | Status |
-|------|-------|--------|
-| Home/Dashboard | `/` | ✅ Complete |
-| Topics List | `/topics` | ✅ Complete |
+| Page           | Route        | Status      |
+| -------------- | ------------ | ----------- |
+| Home/Dashboard | `/`          | ✅ Complete |
+| Topics List    | `/topics`    | ✅ Complete |
 | Questions List | `/questions` | ✅ Complete |
-| Practice Mode | `/practice` | ✅ Complete |
+| Practice Mode  | `/practice`  | ✅ Complete |
 
 ### Frontend Components Created
 
@@ -202,7 +203,7 @@ cd apps/frontend
 npm run dev
 ```
 
-Visit http://localhost:3000
+Visit http://localhost:9000
 
 ---
 
@@ -213,21 +214,22 @@ Visit http://localhost:3000
 
 ### Progress
 
-| Task | Status | Description |
-|------|--------|-------------|
-| Practice UI Components | ✅ | All components created |
-| Practice Page | ✅ | `/practice` page created |
-| practice_logs table | ✅ | Migration created & run |
-| Practice Module | ✅ | Backend module complete |
-| Random question API | ✅ | GET /api/practice/random |
-| Practice logging API | ✅ | POST /api/practice/log |
-| Practice stats API | ✅ | GET /api/practice/stats |
-| Practice history API | ✅ | GET /api/practice/history |
-| Connect Frontend → Backend | ✅ | API client updated & flow tested |
+| Task                       | Status | Description                      |
+| -------------------------- | ------ | -------------------------------- |
+| Practice UI Components     | ✅     | All components created           |
+| Practice Page              | ✅     | `/practice` page created         |
+| practice_logs table        | ✅     | Migration created & run          |
+| Practice Module            | ✅     | Backend module complete          |
+| Random question API        | ✅     | GET /api/practice/random         |
+| Practice logging API       | ✅     | POST /api/practice/log           |
+| Practice stats API         | ✅     | GET /api/practice/stats          |
+| Practice history API       | ✅     | GET /api/practice/history        |
+| Connect Frontend → Backend | ✅     | API client updated & flow tested |
 
 ### Backend Implementation Complete
 
 **Files Created:**
+
 ```
 apps/backend/src/
 ├── practice/
@@ -246,6 +248,7 @@ apps/backend/src/
 ### Frontend Implementation Complete
 
 **Files Updated/Created:**
+
 ```
 apps/frontend/src/
 ├── types/index.ts                 ✅ All TypeScript types & enums
@@ -260,6 +263,7 @@ apps/frontend/src/
 ```
 
 **Features Implemented:**
+
 - Random question loading with exclude option (no repeats in session)
 - Time tracking per question (auto-calculated)
 - Practice logging with self-rating
@@ -302,6 +306,7 @@ GET    /api/practice/history      - Get practice history
 ### Auto-Update Logic
 
 When logging practice:
+
 - `practice_count` increments
 - `last_practiced_at` updates to now
 - Status auto-updates based on rating:
@@ -332,15 +337,16 @@ When logging practice:
 
 ### Tasks Completed
 
-| Priority | Task | Status | Description |
-|----------|------|--------|-------------|
-| P0 | Full-text search | ✅ Done | Client-side search by title/content/answer/level/status |
-| P0 | Search UI | ✅ Done | Connected search inputs with real-time filtering |
-| P1 | Topics search | ✅ Done | Search by name and description |
-| P1 | Advanced filters | ⏳ | Multi-filter support (future) |
-| P1 | Better Filter UI | ⏳ | Improved filter sidebar (future) |
+| Priority | Task             | Status  | Description                                             |
+| -------- | ---------------- | ------- | ------------------------------------------------------- |
+| P0       | Full-text search | ✅ Done | Client-side search by title/content/answer/level/status |
+| P0       | Search UI        | ✅ Done | Connected search inputs with real-time filtering        |
+| P1       | Topics search    | ✅ Done | Search by name and description                          |
+| P1       | Advanced filters | ⏳      | Multi-filter support (future)                           |
+| P1       | Better Filter UI | ⏳      | Improved filter sidebar (future)                        |
 
 ### Current State
+
 - **Questions page**: Search filters title, content, answer, level, status
 - **Topics page**: Search filters name, description
 - Real-time filtering as user types
@@ -355,17 +361,17 @@ When logging practice:
 
 ### Tasks Completed
 
-| Priority | Task | Status | Description |
-|----------|------|--------|-------------|
-| P1 | Dashboard stats | ✅ Done | Nice gradient design |
-| P1 | Activity feed | ✅ Done | Recent activity on home |
-| P1 | Loading states | ✅ Done | Skeleton screens on all pages |
-| P1 | Delete & Edit | ✅ Done | Full CRUD with dialogs |
-| P2 | Dark mode | ✅ Done | Full dark mode support |
-| P2 | Toast notifications | ✅ Done | Sonner toasts for all actions |
-| P1 | Responsive design | ⏳ | Mobile-friendly tweaks |
-| P2 | Keyboard shortcuts | ⏳ | Power user features |
-| P2 | Export/Import | ⏳ | JSON backup/restore |
+| Priority | Task                | Status  | Description                   |
+| -------- | ------------------- | ------- | ----------------------------- |
+| P1       | Dashboard stats     | ✅ Done | Nice gradient design          |
+| P1       | Activity feed       | ✅ Done | Recent activity on home       |
+| P1       | Loading states      | ✅ Done | Skeleton screens on all pages |
+| P1       | Delete & Edit       | ✅ Done | Full CRUD with dialogs        |
+| P2       | Dark mode           | ✅ Done | Full dark mode support        |
+| P2       | Toast notifications | ✅ Done | Sonner toasts for all actions |
+| P1       | Responsive design   | ⏳      | Mobile-friendly tweaks        |
+| P2       | Keyboard shortcuts  | ⏳      | Power user features           |
+| P2       | Export/Import       | ⏳      | JSON backup/restore           |
 
 ### Features Completed
 
@@ -384,20 +390,21 @@ When logging practice:
 
 ### Tasks Completed
 
-| Priority | Task | Status | Description |
-|----------|------|--------|-------------|
-| P0 | User Authentication | ✅ Done | OAuth with Google & GitHub |
-| P0 | Session Management | ✅ Done | Passport.js session-based auth |
-| P0 | User CRUD | ✅ Done | Users table & entities |
-| P0 | User-specific Questions | ✅ Done | Row-level security for user data |
-| P0 | Multi-language Support | ✅ Done | i18n with English & Vietnamese |
-| P1 | Language Switcher | ✅ Done | Toggle between en/vi |
-| P1 | Login Modal | ✅ Done | OAuth login UI |
-| P1 | Protected Routes | ✅ Done | Session auth guard |
+| Priority | Task                    | Status  | Description                      |
+| -------- | ----------------------- | ------- | -------------------------------- |
+| P0       | User Authentication     | ✅ Done | OAuth with Google & GitHub       |
+| P0       | Session Management      | ✅ Done | Passport.js session-based auth   |
+| P0       | User CRUD               | ✅ Done | Users table & entities           |
+| P0       | User-specific Questions | ✅ Done | Row-level security for user data |
+| P0       | Multi-language Support  | ✅ Done | i18n with English & Vietnamese   |
+| P1       | Language Switcher       | ✅ Done | Toggle between en/vi             |
+| P1       | Login Modal             | ✅ Done | OAuth login UI                   |
+| P1       | Protected Routes        | ✅ Done | Session auth guard               |
 
 ### Backend Implementation Complete
 
 **Files Created:**
+
 ```
 apps/backend/src/
 ├── auth/
@@ -428,6 +435,7 @@ apps/backend/src/
 ### Frontend Implementation Complete
 
 **Files Updated/Created:**
+
 ```
 apps/frontend/src/
 ├── app/
@@ -470,7 +478,7 @@ apps/frontend/src/
   - Row-level security on all user data
 
 - **Multi-language Support**:
-  - Locale-based routing (/en/*, /vi/*)
+  - Locale-based routing (/en/_, /vi/_)
   - next-intl integration
   - Language switcher in header
   - Translations for all UI elements
@@ -506,11 +514,11 @@ Add to `.env`:
 # OAuth Credentials
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_CALLBACK_URL=http://localhost:3001/api/auth/google/callback
+GOOGLE_CALLBACK_URL=http://localhost:9001/api/auth/google/callback
 
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
-GITHUB_CALLBACK_URL=http://localhost:3001/api/auth/github/callback
+GITHUB_CALLBACK_URL=http://localhost:9001/api/auth/github/callback
 
 # Session
 SESSION_SECRET=your_random_secret_string
@@ -578,6 +586,7 @@ Tech: Chart.js / Recharts
 
 > **Note**: Multi-user support with authentication has been implemented in Phase 5.
 > Current implementation includes:
+>
 > - OAuth authentication (Google & GitHub)
 > - User-specific data isolation
 > - Session-based authentication
@@ -699,13 +708,15 @@ chore: update dependencies
 ## API Documentation
 
 ### Base URL
+
 ```
-http://localhost:3001/api
+http://localhost:9001/api
 ```
 
 ### Current Endpoints
 
 #### Topics
+
 ```
 POST   /api/topics              - Create topic
 GET    /api/topics              - List all topics
@@ -715,6 +726,7 @@ DELETE /api/topics/:id          - Delete topic
 ```
 
 #### Questions
+
 ```
 POST   /api/questions           - Create question
 GET    /api/questions           - List questions (with filters)
@@ -726,6 +738,7 @@ PATCH  /api/questions/:id/status   - Update learning status
 ```
 
 #### Practice
+
 ```
 GET    /api/practice/random       - Get random question
 POST   /api/practice/log          - Save practice result
@@ -736,6 +749,7 @@ GET    /api/practice/history      - Get practice history
 ### Response Format
 
 Success:
+
 ```json
 {
   "id": "uuid",
@@ -745,6 +759,7 @@ Success:
 ```
 
 Error:
+
 ```json
 {
   "statusCode": 404,
@@ -758,10 +773,11 @@ Error:
 ## Environment Variables
 
 ### Backend (.env)
+
 ```env
-PORT=3001
+PORT=9001
 NODE_ENV=development
-FRONTEND_URL=http://localhost:3000
+FRONTEND_URL=http://localhost:9000
 
 DB_HOST=localhost
 DB_PORT=5432
@@ -771,8 +787,9 @@ DB_NAME=interview_library
 ```
 
 ### Frontend (.env.local)
+
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
+NEXT_PUBLIC_API_URL=http://localhost:9001/api
 ```
 
 ---
@@ -802,18 +819,19 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 
 ## Status Summary
 
-| Phase | Status | Completion |
-|-------|--------|------------|
-| Phase 1: Foundation | ✅ Complete | 100% |
-| Phase 2: Practice Mode | ✅ Complete | 100% |
-| Phase 3: Search & Filter | ✅ Complete | 80% (basic search done) |
-| Phase 4: Polish & UX | ✅ Complete | 80% (core UX done) |
-| Phase 5: Authentication & User Features | ✅ Complete | 100% |
-| Phase 6: Extended Features | ⏳ Pending | 0% |
+| Phase                                   | Status      | Completion              |
+| --------------------------------------- | ----------- | ----------------------- |
+| Phase 1: Foundation                     | ✅ Complete | 100%                    |
+| Phase 2: Practice Mode                  | ✅ Complete | 100%                    |
+| Phase 3: Search & Filter                | ✅ Complete | 80% (basic search done) |
+| Phase 4: Polish & UX                    | ✅ Complete | 80% (core UX done)      |
+| Phase 5: Authentication & User Features | ✅ Complete | 100%                    |
+| Phase 6: Extended Features              | ⏳ Pending  | 0%                      |
 
 ### Current Development State
 
 **Frontend**: Fully connected to backend APIs ✅
+
 - `lib/api.ts` uses axios with real backend endpoints
 - `topicsApi`, `questionsApi`, `practiceApi`, `authApi` fully implemented
 - `TopicForm` connected to backend with loading states
@@ -823,6 +841,7 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 - Login modal with OAuth integration
 
 **Backend**: Full implementation ready ✅
+
 - All CRUD endpoints functional
 - Practice mode APIs complete
 - OAuth authentication (Google & GitHub)
@@ -832,6 +851,7 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 - Tested and working
 
 ### Completed Features
+
 - ✅ Frontend → Backend API connection
 - ✅ Create Topic via Dialog form
 - ✅ Create Question via Dialog form
@@ -853,7 +873,7 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 - ✅ User-specific question data (favorites, status)
 - ✅ Multi-language support (English, Vietnamese)
 - ✅ Language switcher in header
-- ✅ Locale-based routing (/en/*, /vi/*)
+- ✅ Locale-based routing (/en/_, /vi/_)
 - ✅ Localized UI messages
 - ✅ Login popup for protected actions
 - ✅ Multi-language QuestionForm (labels, placeholders, buttons)
@@ -881,4 +901,4 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 
 ---
 
-*Last updated: February 3, 2026 - Login Popup, Multi-language Forms, Topic Slug Feature Complete*
+_Last updated: February 3, 2026 - Login Popup, Multi-language Forms, Topic Slug Feature Complete_

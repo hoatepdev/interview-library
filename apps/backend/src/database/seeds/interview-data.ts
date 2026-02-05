@@ -9,7 +9,7 @@
  * Questions: 60 (balanced across junior/middle/senior levels)
  */
 
-import { QuestionLevel } from '../entities/question.entity';
+import { QuestionLevel } from "../entities/question.entity";
 
 export interface TopicSeed {
   name: string;
@@ -33,61 +33,64 @@ export interface QuestionSeed {
 
 export const topics: TopicSeed[] = [
   {
-    name: 'JavaScript',
-    slug: 'javascript',
-    description: 'Core JavaScript concepts, ES6+, async programming, DOM manipulation',
-    icon: 'Code',
-    color: '#F59E0B'
+    name: "JavaScript",
+    slug: "javascript",
+    description:
+      "Core JavaScript concepts, ES6+, async programming, DOM manipulation",
+    icon: "Code",
+    color: "#F59E0B",
   },
   {
-    name: 'TypeScript',
-    slug: 'typescript',
-    description: 'Type system, generics, utility types, advanced TypeScript patterns',
-    icon: 'FileCode',
-    color: '#3B82F6'
+    name: "TypeScript",
+    slug: "typescript",
+    description:
+      "Type system, generics, utility types, advanced TypeScript patterns",
+    icon: "FileCode",
+    color: "#3B82F6",
   },
   {
-    name: 'React',
-    slug: 'react',
-    description: 'Components, hooks, state management, performance optimization',
-    icon: 'Atom',
-    color: '#06B6D4'
+    name: "React",
+    slug: "react",
+    description:
+      "Components, hooks, state management, performance optimization",
+    icon: "Atom",
+    color: "#06B6D4",
   },
   {
-    name: 'Next.js',
-    slug: 'nextjs',
-    description: 'SSR, SSG, API routes, App Router, server components',
-    icon: 'Zap',
-    color: '#000000'
+    name: "Next.js",
+    slug: "nextjs",
+    description: "SSR, SSG, API routes, App Router, server components",
+    icon: "Zap",
+    color: "#000000",
   },
   {
-    name: 'Node.js',
-    slug: 'nodejs',
-    description: 'Event loop, streams, buffers, file system, modules',
-    icon: 'Server',
-    color: '#22C55E'
+    name: "Node.js",
+    slug: "nodejs",
+    description: "Event loop, streams, buffers, file system, modules",
+    icon: "Server",
+    color: "#22C55E",
   },
   {
-    name: 'NestJS',
-    slug: 'nestjs',
-    description: 'Architecture, modules, providers, guards, interceptors',
-    icon: 'Layers',
-    color: '#EF4444'
+    name: "NestJS",
+    slug: "nestjs",
+    description: "Architecture, modules, providers, guards, interceptors",
+    icon: "Layers",
+    color: "#EF4444",
   },
   {
-    name: 'PostgreSQL',
-    slug: 'postgresql',
-    description: 'SQL queries, indexes, transactions, optimization',
-    icon: 'Database',
-    color: '#6366F1'
+    name: "PostgreSQL",
+    slug: "postgresql",
+    description: "SQL queries, indexes, transactions, optimization",
+    icon: "Database",
+    color: "#6366F1",
   },
   {
-    name: 'System Design',
-    slug: 'system-design',
-    description: 'Scalability, caching, load balancing, microservices',
-    icon: 'Sitemap',
-    color: '#A855F7'
-  }
+    name: "System Design",
+    slug: "system-design",
+    description: "Scalability, caching, load balancing, microservices",
+    icon: "Sitemap",
+    color: "#A855F7",
+  },
 ];
 
 // ============================================
@@ -97,8 +100,9 @@ export const topics: TopicSeed[] = [
 const javascriptQuestions: QuestionSeed[] = [
   // Junior
   {
-    title: 'Explain the difference between var, let, and const',
-    content: 'What are the key differences between var, let, and const in JavaScript? When would you use each one?',
+    title: "Explain the difference between var, let, and const",
+    content:
+      "What are the key differences between var, let, and const in JavaScript? When would you use each one?",
     answer: `**var**:
 - Function-scoped (not block-scoped)
 - Can be redeclared and updated
@@ -116,11 +120,12 @@ const javascriptQuestions: QuestionSeed[] = [
 
 **Usage**: Prefer const by default, use let when you need to reassign, avoid var in modern code.`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'What is the difference between == and ===?',
-    content: 'Explain the difference between loose equality (==) and strict equality (===) in JavaScript.',
+    title: "What is the difference between == and ===?",
+    content:
+      "Explain the difference between loose equality (==) and strict equality (===) in JavaScript.",
     answer: `**== (Loose Equality)**:
 - Performs type coercion before comparison
 - '5' == 5 is true
@@ -135,11 +140,12 @@ const javascriptQuestions: QuestionSeed[] = [
 
 The Abstract Equality Comparison Algorithm for == is complex and can produce surprising results. Always prefer ===.`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'Explain array methods: map, filter, and reduce',
-    content: 'Describe the purpose and usage of map, filter, and reduce array methods with examples.',
+    title: "Explain array methods: map, filter, and reduce",
+    content:
+      "Describe the purpose and usage of map, filter, and reduce array methods with examples.",
     answer: `**map()** - Transforms each element:
 \`\`\`js
 const doubled = [1, 2, 3].map(x => x * 2); // [2, 4, 6]
@@ -157,11 +163,12 @@ const sum = [1, 2, 3].reduce((acc, x) => acc + x, 0); // 6
 
 All three methods are non-mutating and return new arrays. They accept a callback function (and optional thisArg) and are chainable.`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'What are arrow functions?',
-    content: 'Explain arrow function syntax and how they differ from regular functions.',
+    title: "What are arrow functions?",
+    content:
+      "Explain arrow function syntax and how they differ from regular functions.",
     answer: `**Syntax**:
 \`\`\`js
 const add = (a, b) => a + b;
@@ -182,13 +189,14 @@ setTimeout(() => {
 }, 100);
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
 
   // Middle
   {
-    title: 'Explain JavaScript\'s Event Loop',
-    content: 'How does the Event Loop work in JavaScript? Describe call stack, task queue, and microtask queue.',
+    title: "Explain JavaScript's Event Loop",
+    content:
+      "How does the Event Loop work in JavaScript? Describe call stack, task queue, and microtask queue.",
     answer: `JavaScript is single-threaded with an Event Loop that handles async operations:
 
 **Call Stack**: LIFO stack where synchronous code executes
@@ -213,11 +221,12 @@ Promise.resolve().then(() => console.log('3'));
 console.log('4'); // Output: 1, 4, 3, 2
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'What are closures and how are they used?',
-    content: 'Explain closures in JavaScript with practical examples of their use cases.',
+    title: "What are closures and how are they used?",
+    content:
+      "Explain closures in JavaScript with practical examples of their use cases.",
     answer: `A **closure** is created when a function remembers variables from its outer scope even after the outer function has returned.
 
 \`\`\`js
@@ -249,11 +258,11 @@ function debounce(fn, delay) {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'Explain Promises and async/await',
-    content: 'How do Promises work? Compare Promises with async/await syntax.',
+    title: "Explain Promises and async/await",
+    content: "How do Promises work? Compare Promises with async/await syntax.",
     answer: `**Promises**: Represent eventual completion/failure of async operation.
 
 \`\`\`js
@@ -285,11 +294,12 @@ async function getUserPosts() {
 - Try/catch for error handling instead of .catch()
 - Sequential code is easier to read and debug`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'What is prototypal inheritance?',
-    content: 'Explain JavaScript\'s prototype chain and how objects inherit from each other.',
+    title: "What is prototypal inheritance?",
+    content:
+      "Explain JavaScript's prototype chain and how objects inherit from each other.",
     answer: `JavaScript uses prototypal inheritance - objects inherit directly from other objects.
 
 **Prototype Chain**:
@@ -322,13 +332,14 @@ class Person {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
 
   // Senior
   {
-    title: 'Memory Management & Garbage Collection',
-    content: 'How does JavaScript handle memory management? What causes memory leaks?',
+    title: "Memory Management & Garbage Collection",
+    content:
+      "How does JavaScript handle memory management? What causes memory leaks?",
     answer: `**Memory Lifecycle**:
 1. **Allocation**: Memory is allocated when variables/objects are created
 2. **Use**: Read/write operations
@@ -349,11 +360,12 @@ class Person {
 
 **Detection**: Chrome DevTools Memory tab, heap snapshots`,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'Explain the Temporal Dead Zone',
-    content: 'What is the Temporal Dead Zone (TDZ) in JavaScript? How does it relate to hoisting?',
+    title: "Explain the Temporal Dead Zone",
+    content:
+      "What is the Temporal Dead Zone (TDZ) in JavaScript? How does it relate to hoisting?",
     answer: `The **Temporal Dead Zone** is the period between entering a scope and variable declaration where accessing let/const throws a ReferenceError.
 
 **Hoisting**:
@@ -380,8 +392,8 @@ typeof x; // ReferenceError if x in TDZ
 typeof x; // "undefined" if x never declared
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'javascript'
-  }
+    topicSlug: "javascript",
+  },
 ];
 
 // ============================================
@@ -391,8 +403,9 @@ typeof x; // "undefined" if x never declared
 const typescriptQuestions: QuestionSeed[] = [
   // Junior
   {
-    title: 'Basic types in TypeScript',
-    content: 'What are the basic types in TypeScript? How do you define typed variables?',
+    title: "Basic types in TypeScript",
+    content:
+      "What are the basic types in TypeScript? How do you define typed variables?",
     answer: `**Primitive Types**:
 \`\`\`ts
 let name: string = "John";
@@ -416,11 +429,11 @@ let x = 5; // inferred as number
 let y = "hello"; // inferred as string
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
   {
-    title: 'What are interfaces and type aliases?',
-    content: 'Explain the difference between interface and type in TypeScript.',
+    title: "What are interfaces and type aliases?",
+    content: "Explain the difference between interface and type in TypeScript.",
     answer: `**interface**: For object shapes, extensible, supports declaration merging
 
 \`\`\`ts
@@ -448,11 +461,11 @@ type User = {
 - interface: Public APIs, objects that can be extended
 - type: Unions, intersections, mapped types, utility types`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
   {
-    title: 'Function types in TypeScript',
-    content: 'How do you type functions in TypeScript?',
+    title: "Function types in TypeScript",
+    content: "How do you type functions in TypeScript?",
     answer: `**Function Declaration**:
 \`\`\`ts
 function add(a: number, b: number): number {
@@ -481,13 +494,14 @@ function greet(name: string, greeting?: string): string {
 function createConfig(url: string, timeout = 5000) {}
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
 
   // Middle
   {
-    title: 'What are generics?',
-    content: 'Explain TypeScript generics and provide examples of when to use them.',
+    title: "What are generics?",
+    content:
+      "Explain TypeScript generics and provide examples of when to use them.",
     answer: `**Generics** allow creating reusable components that work with multiple types.
 
 **Basic Generic Function**:
@@ -522,11 +536,11 @@ function logLength<T extends Lengthwise>(arg: T): void {
 
 **Use Cases**: API responses, data structures, utility functions`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
   {
-    title: 'Union and Intersection Types',
-    content: 'Explain union (|) and intersection (&) types with examples.',
+    title: "Union and Intersection Types",
+    content: "Explain union (|) and intersection (&) types with examples.",
     answer: `**Union Types (|)**: Value can be one of several types
 
 \`\`\`ts
@@ -566,11 +580,12 @@ const ceo: ManagerEmployee = {
 };
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
   {
-    title: 'What are utility types?',
-    content: 'Describe commonly used TypeScript utility types like Partial, Required, Pick, and Omit.',
+    title: "What are utility types?",
+    content:
+      "Describe commonly used TypeScript utility types like Partial, Required, Pick, and Omit.",
     answer: `**Partial<T>**: Makes all properties optional
 
 \`\`\`ts
@@ -602,13 +617,13 @@ type CreateUserDto = Omit<User, "id">;
 
 **Readonly<T>**: Make all properties readonly`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
 
   // Senior
   {
-    title: 'Advanced TypeScript: Conditional Types',
-    content: 'Explain conditional types and provide practical examples.',
+    title: "Advanced TypeScript: Conditional Types",
+    content: "Explain conditional types and provide practical examples.",
     answer: `**Conditional Types**: Select type based on condition
 
 \`\`\`ts
@@ -640,11 +655,11 @@ type EventMap<T extends EventType> = T extends 'click'
   : { target: HTMLElement };
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
   {
-    title: 'TypeScript Decorators',
-    content: 'What are decorators in TypeScript? How do they work?',
+    title: "TypeScript Decorators",
+    content: "What are decorators in TypeScript? How do they work?",
     answer: `**Decorators**: Special syntax for class declarations and members
 
 \`\`\`ts
@@ -685,8 +700,8 @@ function Log(
 
 Note: Requires \`experimentalDecorators\` in tsconfig`,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'typescript'
-  }
+    topicSlug: "typescript",
+  },
 ];
 
 // ============================================
@@ -696,8 +711,8 @@ Note: Requires \`experimentalDecorators\` in tsconfig`,
 const reactQuestions: QuestionSeed[] = [
   // Junior
   {
-    title: 'What are React components?',
-    content: 'Explain functional components vs class components in React.',
+    title: "What are React components?",
+    content: "Explain functional components vs class components in React.",
     answer: `**Functional Components** (modern approach):
 \`\`\`js
 function Welcome(props) {
@@ -725,11 +740,11 @@ class Welcome extends React.Component {
 
 Hooks have made class components largely obsolete.`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'react'
+    topicSlug: "react",
   },
   {
-    title: 'What is JSX?',
-    content: 'Explain JSX syntax and how it works in React.',
+    title: "What is JSX?",
+    content: "Explain JSX syntax and how it works in React.",
     answer: `**JSX**: Syntax extension for JavaScript that looks like HTML
 
 \`\`\`js
@@ -759,11 +774,11 @@ function Greeting({ name }) {
 }
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'react'
+    topicSlug: "react",
   },
   {
-    title: 'Explain useState hook',
-    content: 'How does the useState hook work in React?',
+    title: "Explain useState hook",
+    content: "How does the useState hook work in React?",
     answer: `**useState**: Adds state to functional components
 
 \`\`\`js
@@ -795,13 +810,13 @@ setCount(prev => prev + 1);
 
 Can hold any type: objects, arrays, primitives`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'react'
+    topicSlug: "react",
   },
 
   // Middle
   {
-    title: 'Explain useEffect hook',
-    content: 'How does useEffect work? What are dependency arrays?',
+    title: "Explain useEffect hook",
+    content: "How does useEffect work? What are dependency arrays?",
     answer: `**useEffect**: Handle side effects in functional components
 
 \`\`\`js
@@ -835,11 +850,12 @@ function UserProfile({ userId }) {
 
 **Cleanup**: Return function from useEffect`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'react'
+    topicSlug: "react",
   },
   {
-    title: 'What are controlled and uncontrolled components?',
-    content: 'Explain the difference between controlled and uncontrolled components in React forms.',
+    title: "What are controlled and uncontrolled components?",
+    content:
+      "Explain the difference between controlled and uncontrolled components in React forms.",
     answer: `**Controlled Components**: Form data handled by React state
 
 \`\`\`js
@@ -873,11 +889,11 @@ function Form() {
 - Controlled: Validation, dynamic forms, multi-field
 - Uncontrolled: Simple forms, integrating with non-React code`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'react'
+    topicSlug: "react",
   },
   {
-    title: 'What is prop drilling?',
-    content: 'Explain prop drilling and how to avoid it.',
+    title: "What is prop drilling?",
+    content: "Explain prop drilling and how to avoid it.",
     answer: `**Prop Drilling**: Passing props through multiple levels
 
 \`\`\`js
@@ -914,13 +930,13 @@ function App() {
 2. **State Management** (Redux, Zustand)
 3. **Composition** (passing components as props)`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'react'
+    topicSlug: "react",
   },
 
   // Senior
   {
-    title: 'Explain React Fiber',
-    content: 'What is React Fiber and why was it introduced?',
+    title: "Explain React Fiber",
+    content: "What is React Fiber and why was it introduced?",
     answer: `**React Fiber**: Complete rewrite of React's reconciliation algorithm (React 16+)
 
 **Previous Stack Reconciler Issues**:
@@ -948,11 +964,11 @@ startTransition(() => {
 setInput(value); // High priority - urgent update
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'react'
+    topicSlug: "react",
   },
   {
-    title: 'React performance optimization techniques',
-    content: 'What are common performance optimization techniques in React?',
+    title: "React performance optimization techniques",
+    content: "What are common performance optimization techniques in React?",
     answer: `**1. Memoization**:
 \`\`\`js
 // useMemo - cache expensive calculations
@@ -989,8 +1005,8 @@ const LazyComponent = React.lazy(() => import('./Component'));
 
 **5. Key Prop**: Use stable, unique keys`,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'react'
-  }
+    topicSlug: "react",
+  },
 ];
 
 // ============================================
@@ -1000,8 +1016,8 @@ const LazyComponent = React.lazy(() => import('./Component'));
 const nextjsQuestions: QuestionSeed[] = [
   // Junior
   {
-    title: 'What is Next.js?',
-    content: 'Explain what Next.js is and what problems it solves.',
+    title: "What is Next.js?",
+    content: "Explain what Next.js is and what problems it solves.",
     answer: `**Next.js**: React framework for production
 
 **Key Features**:
@@ -1027,11 +1043,11 @@ app/
   page.tsx         // /
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'nextjs'
+    topicSlug: "nextjs",
   },
   {
-    title: 'Pages Router vs App Router',
-    content: 'What are the differences between Pages Router and App Router?',
+    title: "Pages Router vs App Router",
+    content: "What are the differences between Pages Router and App Router?",
     answer: `**Pages Router** (previous default):
 \`\`\`
 pages/
@@ -1059,11 +1075,12 @@ app/
 - Streaming & Suspense
 - Better performance`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'nextjs'
+    topicSlug: "nextjs",
   },
   {
-    title: 'SSR vs SSG vs ISR',
-    content: 'Explain Server-Side Rendering, Static Site Generation, and Incremental Static Regeneration.',
+    title: "SSR vs SSG vs ISR",
+    content:
+      "Explain Server-Side Rendering, Static Site Generation, and Incremental Static Regeneration.",
     answer: `**SSR (Server-Side Rendering)**: Generated on each request
 \`\`\`ts
 // Page renders on every request
@@ -1093,13 +1110,14 @@ export async function getStaticProps() {
 }
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'nextjs'
+    topicSlug: "nextjs",
   },
 
   // Middle
   {
-    title: 'Server Components vs Client Components',
-    content: 'Explain the difference between Server and Client Components in App Router.',
+    title: "Server Components vs Client Components",
+    content:
+      "Explain the difference between Server and Client Components in App Router.",
     answer: `**Server Components** (default in App Router):
 - Render on server
 - No JavaScript sent to client
@@ -1130,11 +1148,11 @@ export function LikeButton() {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nextjs'
+    topicSlug: "nextjs",
   },
   {
-    title: 'What are API Routes?',
-    content: 'Explain how API Routes work in Next.js.',
+    title: "What are API Routes?",
+    content: "Explain how API Routes work in Next.js.",
     answer: `**API Routes**: Build API endpoints as part of Next.js app
 
 **Pages Router**:
@@ -1169,11 +1187,11 @@ export async function POST(request: Request) {
 - Authentication
 - Proxy requests to hide API keys`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nextjs'
+    topicSlug: "nextjs",
   },
   {
-    title: 'Dynamic Routes in Next.js',
-    content: 'How do you create dynamic routes in Next.js?',
+    title: "Dynamic Routes in Next.js",
+    content: "How do you create dynamic routes in Next.js?",
     answer: `**App Router Dynamic Segments**:
 \`\`\`
 app/
@@ -1209,13 +1227,13 @@ export async function generateStaticParams() {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nextjs'
+    topicSlug: "nextjs",
   },
 
   // Senior
   {
-    title: 'Next.js Rendering Strategies',
-    content: 'When should you use SSR vs SSG vs CSR vs ISR?',
+    title: "Next.js Rendering Strategies",
+    content: "When should you use SSR vs SSG vs CSR vs ISR?",
     answer: `**Decision Matrix**:
 
 | Strategy | Use When | Example |
@@ -1252,8 +1270,8 @@ export const dynamic = 'force-dynamic';
 export const dynamic = 'force-static';
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'nextjs'
-  }
+    topicSlug: "nextjs",
+  },
 ];
 
 // ============================================
@@ -1263,8 +1281,8 @@ export const dynamic = 'force-static';
 const nodejsQuestions: QuestionSeed[] = [
   // Junior
   {
-    title: 'What is Node.js?',
-    content: 'Explain what Node.js is and its key features.',
+    title: "What is Node.js?",
+    content: "Explain what Node.js is and its key features.",
     answer: `**Node.js**: JavaScript runtime built on V8 engine
 
 **Key Features**:
@@ -1289,14 +1307,15 @@ const server = createServer((req, res) => {
   res.end('Hello World');
 });
 
-server.listen(3000);
+server.listen(9000);
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'nodejs'
+    topicSlug: "nodejs",
   },
   {
-    title: 'CommonJS vs ES Modules',
-    content: 'Explain the difference between CommonJS and ES Modules in Node.js.',
+    title: "CommonJS vs ES Modules",
+    content:
+      "Explain the difference between CommonJS and ES Modules in Node.js.",
     answer: `**CommonJS** (CJS) - Node's original module system:
 \`\`\`js
 // Exporting
@@ -1325,11 +1344,11 @@ import { myVar } from './myModule.js';
 - ESM: top-level await support
 - Enable ESM: "type": "module" in package.json`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'nodejs'
+    topicSlug: "nodejs",
   },
   {
-    title: 'What is the package.json file?',
-    content: 'Explain the purpose of package.json and its key fields.',
+    title: "What is the package.json file?",
+    content: "Explain the purpose of package.json and its key fields.",
     answer: `**package.json**: Project manifest file
 
 **Key Fields**:
@@ -1360,13 +1379,13 @@ import { myVar } from './myModule.js';
 - \`4.18.0\`: Exact version
 - \`*\`: Any version`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'nodejs'
+    topicSlug: "nodejs",
   },
 
   // Middle
   {
-    title: 'Explain Node.js Event Emitter',
-    content: 'How does EventEmitter work in Node.js?',
+    title: "Explain Node.js Event Emitter",
+    content: "How does EventEmitter work in Node.js?",
     answer: `**EventEmitter**: Core pattern for handling events
 
 \`\`\`js
@@ -1399,11 +1418,11 @@ myEmitter.off('event', handler);
 
 **Best Practice**: Always handle 'error' events to avoid crashes`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nodejs'
+    topicSlug: "nodejs",
   },
   {
-    title: 'What are Streams in Node.js?',
-    content: 'Explain the four types of streams and when to use them.',
+    title: "What are Streams in Node.js?",
+    content: "Explain the four types of streams and when to use them.",
     answer: `**Streams**: Handle data piece by piece (chunks)
 
 **Four Types**:
@@ -1437,11 +1456,11 @@ await pipeline(
 );
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nodejs'
+    topicSlug: "nodejs",
   },
   {
-    title: 'What is the Buffer class?',
-    content: 'Explain the Buffer class in Node.js and its use cases.',
+    title: "What is the Buffer class?",
+    content: "Explain the Buffer class in Node.js and its use cases.",
     answer: `**Buffer**: Fixed-size raw binary data
 
 \`\`\`js
@@ -1469,13 +1488,13 @@ buf.slice(0, 3);
 
 **Note**: In Node.js, Buffer is a global - no need to import`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nodejs'
+    topicSlug: "nodejs",
   },
 
   // Senior
   {
-    title: 'Node.js Worker Threads',
-    content: 'Explain Worker Threads and CPU-bound tasks in Node.js.',
+    title: "Node.js Worker Threads",
+    content: "Explain Worker Threads and CPU-bound tasks in Node.js.",
     answer: `**Problem**: Node.js is single-threaded - CPU tasks block event loop
 
 **Worker Threads**: Run JavaScript in parallel threads
@@ -1514,8 +1533,8 @@ parentPort.postMessage(result);
 
 **Limitation**: Workers have overhead - not for I/O`,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'nodejs'
-  }
+    topicSlug: "nodejs",
+  },
 ];
 
 // ============================================
@@ -1525,8 +1544,8 @@ parentPort.postMessage(result);
 const nestjsQuestions: QuestionSeed[] = [
   // Junior
   {
-    title: 'What is NestJS?',
-    content: 'Explain what NestJS is and why you would use it.',
+    title: "What is NestJS?",
+    content: "Explain what NestJS is and why you would use it.",
     answer: `**NestJS**: Progressive Node.js framework for building server-side applications
 
 **Key Features**:
@@ -1557,11 +1576,11 @@ export class CatsController {
 }
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'nestjs'
+    topicSlug: "nestjs",
   },
   {
-    title: 'Explain Modules in NestJS',
-    content: 'What are modules and how do they organize a NestJS application?',
+    title: "Explain Modules in NestJS",
+    content: "What are modules and how do they organize a NestJS application?",
     answer: `**Module**: Class annotated with @Module() that organizes application
 
 \`\`\`ts
@@ -1593,11 +1612,11 @@ export class AppModule {}
 - Shared providers in a CoreModule
 - Lazy load modules with \`load()\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'nestjs'
+    topicSlug: "nestjs",
   },
   {
-    title: 'What are Providers?',
-    content: 'Explain providers and dependency injection in NestJS.',
+    title: "What are Providers?",
+    content: "Explain providers and dependency injection in NestJS.",
     answer: `**Provider**: Class that can be injected as a dependency
 
 **Services as Providers**:
@@ -1637,13 +1656,13 @@ export class CatsController {
 - REQUEST: New instance per request
 - TRANSIENT: New instance each time injected`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'nestjs'
+    topicSlug: "nestjs",
   },
 
   // Middle
   {
-    title: 'Guards and Interceptors',
-    content: 'Explain Guards and Interceptors in NestJS with examples.',
+    title: "Guards and Interceptors",
+    content: "Explain Guards and Interceptors in NestJS with examples.",
     answer: `**Guards**: Determine if request should proceed (auth/roles)
 
 \`\`\`ts
@@ -1684,11 +1703,11 @@ export class TransformInterceptor implements NestInterceptor {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nestjs'
+    topicSlug: "nestjs",
   },
   {
-    title: 'What are Pipes in NestJS?',
-    content: 'Explain Pipes for validation and transformation.',
+    title: "What are Pipes in NestJS?",
+    content: "Explain Pipes for validation and transformation.",
     answer: `**Pipes**: Transform input data or validate it
 
 **Built-in Pipes**:
@@ -1729,11 +1748,11 @@ export class CreateCatDto {
 app.useGlobalPipes(new ValidationPipe());
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nestjs'
+    topicSlug: "nestjs",
   },
   {
-    title: 'Exception Filters',
-    content: 'How do you handle exceptions in NestJS?',
+    title: "Exception Filters",
+    content: "How do you handle exceptions in NestJS?",
     answer: `**Exception Filters**: Catch and format exceptions
 
 \`\`\`ts
@@ -1770,13 +1789,13 @@ export class CatNotFoundException extends NotFoundException {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nestjs'
+    topicSlug: "nestjs",
   },
 
   // Senior
   {
-    title: 'NestJS Microservices',
-    content: 'Explain how NestJS handles microservices architecture.',
+    title: "NestJS Microservices",
+    content: "Explain how NestJS handles microservices architecture.",
     answer: `**NestJS Microservices**: Build distributed systems easily
 
 **Transporters Supported**:
@@ -1823,8 +1842,8 @@ export class AppController {
 
 **Hybrid App**: HTTP + Microservice in same app`,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'nestjs'
-  }
+    topicSlug: "nestjs",
+  },
 ];
 
 // ============================================
@@ -1834,8 +1853,8 @@ export class AppController {
 const postgresqlQuestions: QuestionSeed[] = [
   // Junior
   {
-    title: 'What is PostgreSQL?',
-    content: 'Explain what PostgreSQL is and its key features.',
+    title: "What is PostgreSQL?",
+    content: "Explain what PostgreSQL is and its key features.",
     answer: `**PostgreSQL**: Open-source relational database system
 
 **Key Features**:
@@ -1865,11 +1884,11 @@ ORDER BY created_at DESC
 LIMIT 10;
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
   {
-    title: 'What are the different types of JOINs?',
-    content: 'Explain INNER, LEFT, RIGHT, and FULL JOINs in SQL.',
+    title: "What are the different types of JOINs?",
+    content: "Explain INNER, LEFT, RIGHT, and FULL JOINs in SQL.",
     answer: `**INNER JOIN**: Only matching rows
 \`\`\`sql
 SELECT u.name, o.order_date
@@ -1902,11 +1921,11 @@ FULL JOIN orders o ON u.id = o.user_id;
 -- Everything, NULLs where no match
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
   {
-    title: 'What are indexes?',
-    content: 'Explain database indexes and when to use them.',
+    title: "What are indexes?",
+    content: "Explain database indexes and when to use them.",
     answer: `**Index**: Data structure that improves query speed
 
 **Creating Indexes**:
@@ -1938,13 +1957,13 @@ CREATE UNIQUE INDEX idx_users_email ON users(email);
 SELECT * FROM pg_indexes WHERE tablename = 'users';
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
 
   // Middle
   {
-    title: 'Explain ACID properties',
-    content: 'What are ACID properties in database transactions?',
+    title: "Explain ACID properties",
+    content: "What are ACID properties in database transactions?",
     answer: `**ACID**: Four properties ensuring reliable transactions
 
 **Atomicity**: All-or-nothing execution
@@ -1976,11 +1995,11 @@ Isolation Levels:
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
   {
-    title: 'What are CTEs (Common Table Expressions)?',
-    content: 'Explain CTEs and provide examples of their use.',
+    title: "What are CTEs (Common Table Expressions)?",
+    content: "Explain CTEs and provide examples of their use.",
     answer: `**CTE**: Temporary result set referenced within SELECT, INSERT, UPDATE, DELETE
 
 **Basic CTE**:
@@ -2026,11 +2045,11 @@ WITH RECURSIVE subordinates AS (
 SELECT * FROM subordinates;
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
   {
-    title: 'JSONB vs JSON',
-    content: 'Explain the difference between JSON and JSONB in PostgreSQL.',
+    title: "JSONB vs JSON",
+    content: "Explain the difference between JSON and JSONB in PostgreSQL.",
     answer: `**JSON**: Stored as plain text, exact copy of input
 - Preserves whitespace, ordering
 - Faster to insert
@@ -2065,13 +2084,13 @@ UPDATE events SET data = jsonb_set(data, '{age}', '31');
 CREATE INDEX idx_events_data ON events USING GIN (data);
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
 
   // Senior
   {
-    title: 'Explain MVCC in PostgreSQL',
-    content: 'How does Multi-Version Concurrency Control work?',
+    title: "Explain MVCC in PostgreSQL",
+    content: "How does Multi-Version Concurrency Control work?",
     answer: `**MVCC**: PostgreSQL's approach to concurrent access
 
 **How It Works**:
@@ -2104,11 +2123,11 @@ SELECT schemaname, tablename, n_dead_tup
 FROM pg_stat_user_tables;
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
   {
-    title: 'Query Optimization and EXPLAIN ANALYZE',
-    content: 'How do you analyze and optimize slow PostgreSQL queries?',
+    title: "Query Optimization and EXPLAIN ANALYZE",
+    content: "How do you analyze and optimize slow PostgreSQL queries?",
     answer: `**EXPLAIN**: See query execution plan
 
 \`\`\`sql
@@ -2143,8 +2162,8 @@ CREATE INDEX idx_active_users ON users(email) WHERE active = true;
 CREATE INDEX idx_users_email_name ON users(email) INCLUDE (name);
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'postgresql'
-  }
+    topicSlug: "postgresql",
+  },
 ];
 
 // ============================================
@@ -2154,8 +2173,8 @@ CREATE INDEX idx_users_email_name ON users(email) INCLUDE (name);
 const systemDesignQuestions: QuestionSeed[] = [
   // Junior
   {
-    title: 'What is CAP theorem?',
-    content: 'Explain the CAP theorem in distributed systems.',
+    title: "What is CAP theorem?",
+    content: "Explain the CAP theorem in distributed systems.",
     answer: `**CAP Theorem**: In a distributed system, you can only have 2 of 3:
 
 **Consistency**: All nodes see same data simultaneously
@@ -2185,11 +2204,11 @@ const systemDesignQuestions: QuestionSeed[] = [
 
 In practice, P is always a given in distributed systems - you choose between C and A.`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'system-design'
+    topicSlug: "system-design",
   },
   {
-    title: 'What is load balancing?',
-    content: 'Explain load balancing and common algorithms.',
+    title: "What is load balancing?",
+    content: "Explain load balancing and common algorithms.",
     answer: `**Load Balancer**: Distributes incoming traffic across multiple servers
 
 **Why Use Load Balancers?**:
@@ -2217,11 +2236,11 @@ Clients → Load Balancer → [Server1, Server2, Server3]
                 Health Check
 \`\`\``,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'system-design'
+    topicSlug: "system-design",
   },
   {
-    title: 'What is caching?',
-    content: 'Explain caching strategies and common use cases.',
+    title: "What is caching?",
+    content: "Explain caching strategies and common use cases.",
     answer: `**Caching**: Store frequently accessed data in fast storage
 
 **Cache Locations**:
@@ -2259,13 +2278,13 @@ Clients → Load Balancer → [Server1, Server2, Server3]
 - Stale data
 - Memory limits`,
     level: QuestionLevel.JUNIOR,
-    topicSlug: 'system-design'
+    topicSlug: "system-design",
   },
 
   // Middle
   {
-    title: 'Vertical vs Horizontal Scaling',
-    content: 'Explain the difference between vertical and horizontal scaling.',
+    title: "Vertical vs Horizontal Scaling",
+    content: "Explain the difference between vertical and horizontal scaling.",
     answer: `**Vertical Scaling** (Scale Up):
 - Add more resources to single server
 - Better CPU, more RAM, faster disk
@@ -2296,11 +2315,12 @@ Horizontal: Server → [Server, Server] → [Server, Server, Server, Server]
 
 **Modern Approach**: Start vertical, move to horizontal when needed.`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'system-design'
+    topicSlug: "system-design",
   },
   {
-    title: 'Explain CDN and how it works',
-    content: 'What is a Content Delivery Network and what problems does it solve?',
+    title: "Explain CDN and how it works",
+    content:
+      "What is a Content Delivery Network and what problems does it solve?",
     answer: `**CDN**: Distributed network of servers delivering content
 
 **How It Works**:
@@ -2337,11 +2357,11 @@ Cache-Control: no-store
 
 **Edge Computing**: Run code at CDN edge (Cloudflare Workers)`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'system-design'
+    topicSlug: "system-design",
   },
   {
-    title: 'What is a database index and how does it work?',
-    content: 'Explain database indexes at a deeper level.',
+    title: "What is a database index and how does it work?",
+    content: "Explain database indexes at a deeper level.",
     answer: `**Index**: Data structure improving query speed (trade-off: space and write speed)
 
 **B-Tree Index** (most common):
@@ -2387,13 +2407,13 @@ CREATE INDEX idx_user_age_country ON users(age, country);
 -- NOT efficient for: WHERE country = ?
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'system-design'
+    topicSlug: "system-design",
   },
 
   // Senior
   {
-    title: 'Design a URL Shortener',
-    content: 'How would you design a system like bit.ly?',
+    title: "Design a URL Shortener",
+    content: "How would you design a system like bit.ly?",
     answer: `**Requirements**:
 - Generate short URLs from long URLs
 - Redirect short URLs to original
@@ -2436,11 +2456,11 @@ CREATE INDEX idx_short_code ON urls(short_code);
 - 301: Permanent redirect (browser caches)
 - 302: Temporary (no cache, tracks analytics)`,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'system-design'
+    topicSlug: "system-design",
   },
   {
-    title: 'Design a Rate Limiter',
-    content: 'How would you design a distributed rate limiting system?',
+    title: "Design a Rate Limiter",
+    content: "How would you design a distributed rate limiting system?",
     answer: `**Requirements**:
 - Limit requests per user/time window
 - Distributed (multiple servers)
@@ -2486,8 +2506,8 @@ function allowRequest() {
 
 **Distributed Challenge**: Clock sync, use atomic Redis operations`,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'system-design'
-  }
+    topicSlug: "system-design",
+  },
 ];
 
 // ============================================
@@ -2506,19 +2526,22 @@ export const allQuestions: QuestionSeed[] = [
 ];
 
 // Stats
-console.log('=== Interview Library Seed Data ===');
+console.log("=== Interview Library Seed Data ===");
 console.log(`Topics: ${topics.length}`);
 console.log(`Total Questions: ${allQuestions.length}`);
 
 // By topic
-topics.forEach(topic => {
-  const count = allQuestions.filter(q => q.topicSlug === topic.slug).length;
+topics.forEach((topic) => {
+  const count = allQuestions.filter((q) => q.topicSlug === topic.slug).length;
   console.log(`  ${topic.name}: ${count} questions`);
 });
 
 // By level
-const byLevel = allQuestions.reduce((acc, q) => {
-  acc[q.level] = (acc[q.level] || 0) + 1;
-  return acc;
-}, {} as Record<string, number>);
-console.log('By Level:', byLevel);
+const byLevel = allQuestions.reduce(
+  (acc, q) => {
+    acc[q.level] = (acc[q.level] || 0) + 1;
+    return acc;
+  },
+  {} as Record<string, number>
+);
+console.log("By Level:", byLevel);

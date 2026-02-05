@@ -24,7 +24,7 @@ export function setApiLocale(locale: string) {
 }
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9001/api',
   headers: {
     'Content-Type': 'application/json',
   },

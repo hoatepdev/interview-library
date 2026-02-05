@@ -10,9 +10,9 @@ import type {
   CreatePracticeLogDto,
   PracticeStats,
   PracticeLogEntry,
-} from '@/types';
+} from "@/types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9001/api";
 
 async function fetchApi<T>(
   endpoint: string,
@@ -23,7 +23,7 @@ async function fetchApi<T>(
 
   // Add locale as query parameter for server-side calls
   if (locale) {
-    url.searchParams.set('lang', locale);
+    url.searchParams.set("lang", locale);
   }
 
   // Add other query parameters
@@ -38,7 +38,7 @@ async function fetchApi<T>(
   const response = await fetch(url.toString(), {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...options?.headers,
     },
   });
@@ -52,14 +52,15 @@ async function fetchApi<T>(
 
 // Server-side Topics API with locale support
 export const topicsApiServer = {
-  getAll: (locale?: string) => fetchApi<Topic[]>('/topics', {}, locale),
-  getById: (id: string, locale?: string) => fetchApi<Topic>(`/topics/${id}`, {}, locale),
+  getAll: (locale?: string) => fetchApi<Topic[]>("/topics", {}, locale),
+  getById: (id: string, locale?: string) =>
+    fetchApi<Topic>(`/topics/${id}`, {}, locale),
 };
 
 // Server-side Questions API with locale support
 export const questionsApiServer = {
   getAll: (params?: QueryQuestionsDto, locale?: string) =>
-    fetchApi<Question[]>('/questions', { params }, locale),
+    fetchApi<Question[]>("/questions", { params }, locale),
   getById: (id: string, locale?: string) =>
     fetchApi<Question>(`/questions/${id}`, {}, locale),
 };
@@ -67,9 +68,14 @@ export const questionsApiServer = {
 // Server-side Practice API with locale support
 export const practiceApiServer = {
   getRandomQuestion: (
-    params?: { topicId?: string; level?: string; status?: string; excludeQuestionId?: string },
+    params?: {
+      topicId?: string;
+      level?: string;
+      status?: string;
+      excludeQuestionId?: string;
+    },
     locale?: string
-  ) => fetchApi<Question>('/practice/random', { params }, locale),
+  ) => fetchApi<Question>("/practice/random", { params }, locale),
 };
 
 // Convenience function for server components
@@ -77,12 +83,20 @@ export async function getTopicsServer(locale?: string): Promise<Topic[]> {
   return topicsApiServer.getAll(locale);
 }
 
-export async function getQuestionsServer(params?: QueryQuestionsDto, locale?: string): Promise<Question[]> {
+export async function getQuestionsServer(
+  params?: QueryQuestionsDto,
+  locale?: string
+): Promise<Question[]> {
   return questionsApiServer.getAll(params, locale);
 }
 
 export async function getRandomQuestionServer(
-  params?: { topicId?: string; level?: string; status?: string; excludeQuestionId?: string },
+  params?: {
+    topicId?: string;
+    level?: string;
+    status?: string;
+    excludeQuestionId?: string;
+  },
   locale?: string
 ): Promise<Question> {
   return practiceApiServer.getRandomQuestion(params, locale);
