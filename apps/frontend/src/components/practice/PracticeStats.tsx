@@ -102,92 +102,92 @@ export function PracticeStatsComponent() {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 flex flex-col space-y-5">
-      <h3 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-        <BarChart3 className="w-5 h-5" />
+    <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-2xl border border-slate-200/60 dark:border-white/5 p-6 flex flex-col space-y-5">
+      <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+        <BarChart3 className="w-5 h-5 text-blue-500" />
         {tStats("overallStats")}
       </h3>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
-          <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 text-xs font-medium mb-1">
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3">
+          <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider mb-1">
             <Target className="w-3 h-3" />
             {t("questionsReviewed")}
           </div>
-          <div className="text-xl font-bold text-gray-900 dark:text-white">{stats.totalPracticeSessions}</div>
+          <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{stats.totalPracticeSessions}</div>
         </div>
-        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
-          <div className="flex items-center gap-1 text-green-600 dark:text-green-400 text-xs font-medium mb-1">
+        <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-3">
+          <div className="flex items-center gap-1 text-green-600 dark:text-green-400 text-xs font-bold uppercase tracking-wider mb-1">
             <TrendingUp className="w-3 h-3" />
             {t("accuracy")}
           </div>
-          <div className="text-xl font-bold text-gray-900 dark:text-white">{accuracy}%</div>
+          <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{accuracy}%</div>
         </div>
-        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
-          <div className="flex items-center gap-1 text-purple-600 dark:text-purple-400 text-xs font-medium mb-1">
+        <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-3">
+          <div className="flex items-center gap-1 text-purple-600 dark:text-purple-400 text-xs font-bold uppercase tracking-wider mb-1">
             <Clock className="w-3 h-3" />
             {t("timeSpent")}
           </div>
-          <div className="text-xl font-bold text-gray-900 dark:text-white">{formatTime(stats.totalPracticeTimeMinutes)}</div>
+          <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{formatTime(stats.totalPracticeTimeMinutes)}</div>
         </div>
-        <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
-          <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400 text-xs font-medium mb-1">
+        <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-3">
+          <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400 text-xs font-bold uppercase tracking-wider mb-1">
             <Target className="w-3 h-3" />
             {tStats("needsReview")}
           </div>
-          <div className="text-xl font-bold text-gray-900 dark:text-white">{stats.questionsNeedingReview}</div>
+          <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{stats.questionsNeedingReview}</div>
         </div>
       </div>
 
       {/* Questions by Status */}
-      <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
-        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{tStats("byStatus")}</h4>
-        <div className="space-y-2">
+      <div className="border-t border-slate-200/60 dark:border-white/5 pt-4">
+        <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">{tStats("byStatus")}</h4>
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-gray-400"></div>
-              <span className="text-gray-500 dark:text-gray-400 text-sm">{t("statuses.new")}</span>
+              <div className="w-2 h-2 rounded-full bg-slate-400 shadow-[0_0_8px_rgba(148,163,184,0.5)]"></div>
+              <span className="text-slate-600 dark:text-slate-300 text-sm font-medium">{t("statuses.new")}</span>
             </div>
-            <span className="font-medium text-gray-900 dark:text-gray-100">{stats.questionsByStatus?.new || 0}</span>
+            <span className="font-bold text-slate-900 dark:text-white">{stats.questionsByStatus?.new || 0}</span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-              <span className="text-gray-500 dark:text-gray-400 text-sm">{t("statuses.learning")}</span>
+              <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+              <span className="text-slate-600 dark:text-slate-300 text-sm font-medium">{t("statuses.learning")}</span>
             </div>
-            <span className="font-medium text-gray-900 dark:text-gray-100">{stats.questionsByStatus?.learning || 0}</span>
+            <span className="font-bold text-slate-900 dark:text-white">{stats.questionsByStatus?.learning || 0}</span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              <span className="text-gray-500 dark:text-gray-400 text-sm">{t("statuses.mastered")}</span>
+              <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
+              <span className="text-slate-600 dark:text-slate-300 text-sm font-medium">{t("statuses.mastered")}</span>
             </div>
-            <span className="font-medium text-green-600 dark:text-green-400">{stats.questionsByStatus?.mastered || 0}</span>
+            <span className="font-bold text-green-600 dark:text-green-400">{stats.questionsByStatus?.mastered || 0}</span>
           </div>
         </div>
       </div>
 
       {/* Ratings Distribution */}
       {stats.practiceByRating && Object.keys(stats.practiceByRating).length > 0 && (
-        <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
-          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{tStats("byRating")}</h4>
+        <div className="border-t border-slate-200/60 dark:border-white/5 pt-4">
+          <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">{tStats("byRating")}</h4>
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-red-500 dark:text-red-400">😕 {t("ratings.poor")}</span>
-              <span className="font-medium text-gray-900 dark:text-gray-100">{stats.practiceByRating.poor || 0}</span>
+              <span className="text-red-500 dark:text-red-400 font-medium">😕 {t("ratings.poor")}</span>
+              <span className="font-bold text-slate-900 dark:text-white">{stats.practiceByRating.poor || 0}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-orange-500 dark:text-orange-400">😐 {t("ratings.fair")}</span>
-              <span className="font-medium text-gray-900 dark:text-gray-100">{stats.practiceByRating.fair || 0}</span>
+              <span className="text-orange-500 dark:text-orange-400 font-medium">😐 {t("ratings.fair")}</span>
+              <span className="font-bold text-slate-900 dark:text-white">{stats.practiceByRating.fair || 0}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-yellow-500 dark:text-yellow-400">😊 {t("ratings.good")}</span>
-              <span className="font-medium text-gray-900 dark:text-gray-100">{stats.practiceByRating.good || 0}</span>
+              <span className="text-yellow-500 dark:text-yellow-400 font-medium">😊 {t("ratings.good")}</span>
+              <span className="font-bold text-slate-900 dark:text-white">{stats.practiceByRating.good || 0}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-green-500 dark:text-green-400">🌟 {t("ratings.great")}</span>
-              <span className="font-medium text-gray-900 dark:text-gray-100">{stats.practiceByRating.great || 0}</span>
+              <span className="text-green-500 dark:text-green-400 font-medium">🌟 {t("ratings.great")}</span>
+              <span className="font-bold text-slate-900 dark:text-white">{stats.practiceByRating.great || 0}</span>
             </div>
           </div>
         </div>

@@ -102,73 +102,66 @@ export function DueForReview() {
   const totalCount = questions.length;
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+    <div className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-2xl border border-slate-200/60 dark:border-white/5 overflow-hidden">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between text-left cursor-pointer"
+        className="w-full p-6 flex items-center justify-between text-left cursor-pointer hover:bg-white/40 dark:hover:bg-white/5 transition-colors"
       >
-        <h3 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-          <Clock className="w-5 h-5 text-orange-500" />
-          {t("dueForReview")}
-        </h3>
-        <div className="flex items-center gap-2">
-          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-            dueCount > 0
-              ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400'
-              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-          }`}>
-            {dueCount} {t("due")}
-          </span>
-          <ChevronRight
-            className={`w-4 h-4 text-gray-400 transition-transform ${
-              isExpanded ? 'rotate-90' : ''
-            }`}
-          />
+        <div className="flex items-center gap-3">
+           <div className="p-2 bg-orange-500/10 rounded-lg">
+             <Clock className="w-5 h-5 text-orange-500" />
+           </div>
+           <div>
+              <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                {t("dueForReview")}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-mono">
+                {dueCount} {t("due")} • {totalCount} total
+              </p>
+           </div>
         </div>
+        
+        <ChevronRight
+          className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${
+            isExpanded ? 'rotate-90' : ''
+          }`}
+        />
       </button>
 
       {isExpanded && (
-        <div className="mt-4 space-y-2">
+        <div className="bg-slate-50/50 dark:bg-black/20 border-t border-slate-200/60 dark:border-white/5">
           {questions.map((question) => (
             <button
               key={question.id}
               onClick={() => router.push(`/practice?question=${question.id}`)}
-              className="w-full text-left p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group cursor-pointer"
+              className="w-full text-left p-4 border-b border-slate-200/50 dark:border-white/5 last:border-0 hover:bg-blue-50/50 dark:hover:bg-blue-500/5 transition-all group cursor-pointer"
             >
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white line-clamp-1 group-hover:text-blue-500 transition-colors">
                     {question.title}
                   </p>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                     {question.topic && (
                       <span
-                        className="text-xs px-2 py-0.5 rounded-full"
+                        className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border"
                         style={{
-                          backgroundColor: question.topic.color + '20',
-                          color: question.topic.color,
+                          backgroundColor: question.topic.color ? `${question.topic.color}10` : 'rgba(148, 163, 184, 0.1)',
+                          borderColor: question.topic.color ? `${question.topic.color}20` : 'rgba(148, 163, 184, 0.2)',
+                          color: question.topic.color || '#94a3b8',
                         }}
                       >
                         {question.topic.name}
                       </span>
                     )}
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      question.level === 'senior'
-                        ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
-                        : question.level === 'middle'
-                        ? 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
-                        : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                    }`}>
-                      {question.level}
-                    </span>
                   </div>
                 </div>
-                <div className="flex flex-col items-end">
+                <div className="flex flex-col items-end shrink-0">
                   <span
-                    className={`text-xs font-medium ${
+                    className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full ${
                       question.dueStatus.isDue
-                        ? 'text-orange-600 dark:text-orange-400'
-                        : 'text-gray-500 dark:text-gray-400'
+                        ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
                     }`}
                   >
                     {question.dueStatus.text}
@@ -179,7 +172,7 @@ export function DueForReview() {
           ))}
 
           {totalCount > questions.length && (
-            <button className="w-full text-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mt-2">
+            <button className="w-full p-3 text-center text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors hover:bg-blue-50/50 dark:hover:bg-blue-500/5">
               {t("viewAll")} ({totalCount})
             </button>
           )}

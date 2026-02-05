@@ -319,12 +319,14 @@ function QuestionsContent() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div className="container mx-auto px-4 py-8">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
             {t("title")}
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg">
             {t("subtitle")}
           </p>
         </div>
@@ -369,171 +371,156 @@ function QuestionsContent() {
         </Dialog>
       </div>
 
-      {/* Filter Presets */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <button
-          onClick={() => applyPreset("all")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            activePreset === "all" && !hasActiveFilters
-              ? "bg-blue-600 text-white"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-          }`}
-        >
-          {t("allQuestions")}
-        </button>
-        <button
-          onClick={() => applyPreset("favorites")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-            activePreset === "favorites"
-              ? "bg-yellow-500 text-white"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-          }`}
-        >
-          <Star className="w-4 h-4" />
-          {t("myFavorites")}
-        </button>
-        <button
-          onClick={() => applyPreset("need-practice")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-            activePreset === "need-practice"
-              ? "bg-orange-500 text-white"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-          }`}
-        >
-          <AlertCircle className="w-4 h-4" />
-          {t("needPractice")}
-        </button>
-        <button
-          onClick={() => applyPreset("mastered")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-            activePreset === "mastered"
-              ? "bg-green-500 text-white"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-          }`}
-        >
-          <CheckCircle2 className="w-4 h-4" />
-          {t("mastered")}
-        </button>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="relative flex-1">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-          </div>
-          <input
-            type="text"
-            value={currentSearch}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="block w-full pl-10 pr-10 py-3 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm dark:shadow-none"
-            placeholder={t("searchPlaceholder")}
-          />
-          {currentSearch && (
-            <button
-              onClick={() => handleSearchChange("")}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
-            >
-              <X className="w-4 h-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
-            </button>
-          )}
-        </div>
-        <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-          <PopoverTrigger asChild>
-            <button className="flex items-center justify-center space-x-2 px-5 py-3 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 bg-white dark:bg-gray-800 transition-colors text-gray-700 dark:text-gray-200 font-medium">
-              <Filter className="w-5 h-5" />
-              <span>{t("filters")}</span>
-              {activeFilterCount > 0 && (
-                <span className="ml-2 bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
-                  {activeFilterCount}
-                </span>
+      {/* Floating Filter Dock */}
+      <div className="sticky top-4 z-40 mb-8 p-2 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 shadow-xl transition-all duration-300">
+        <div className="flex flex-col md:flex-row gap-2">
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-slate-400" />
+              </div>
+              <input
+                type="text"
+                value={currentSearch}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="block w-full pl-10 pr-10 py-2.5 rounded-xl border-none bg-slate-100/50 dark:bg-white/5 placeholder-slate-500 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-900 dark:text-white transition-all"
+                placeholder={t("searchPlaceholder")}
+              />
+              {currentSearch && (
+                <button
+                  onClick={() => handleSearchChange("")}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  <X className="w-4 h-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" />
+                </button>
               )}
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-72 p-4" align="end">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {t("filters")}
-                </h3>
-                {hasActiveFilters && (
-                  <button
-                    onClick={clearFilters}
-                    className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                  >
-                    {t("clearAll")}
-                  </button>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t("level")}
-                </label>
-                <select
-                  value={currentLevel}
-                  onChange={(e) => handleLevelChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                >
-                  <option value="all">{t("allLevels")}</option>
-                  <option value="junior">{t("levels.junior")}</option>
-                  <option value="middle">{t("levels.middle")}</option>
-                  <option value="senior">{t("levels.senior")}</option>
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t("status")}
-                </label>
-                <select
-                  value={currentStatus}
-                  onChange={(e) => handleStatusChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                >
-                  <option value="all">{t("allStatuses")}</option>
-                  <option value="new">{t("statuses.new")}</option>
-                  <option value="learning">{t("statuses.learning")}</option>
-                  <option value="mastered">{t("statuses.mastered")}</option>
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t("topic")}
-                </label>
-                <select
-                  value={currentTopic}
-                  onChange={(e) => handleTopicChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                >
-                  <option value="all">{t("allTopics")}</option>
-                  {topics.map((topic) => (
-                    <option key={topic.id} value={topic.id}>
-                      {topic.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="favorites"
-                  checked={currentFavorites}
-                  onChange={handleFavoritesToggle}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                />
-                <label
-                  htmlFor="favorites"
-                  className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2"
-                >
-                  <Star className="w-4 h-4" />
-                  {t("favoritesOnly")}
-                </label>
-              </div>
             </div>
-          </PopoverContent>
-        </Popover>
+
+            {/* Presets - Desktop */}
+            <div className="hidden md:flex items-center gap-1">
+                 <div className="h-8 w-px bg-slate-200 dark:bg-white/10 mx-2" />
+                <button
+                onClick={() => applyPreset("all")}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    activePreset === "all" && !hasActiveFilters
+                    ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md transform scale-105"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5"
+                }`}
+                >
+                {t("allQuestions")}
+                </button>
+                <button
+                onClick={() => applyPreset("favorites")}
+                className={`p-2 rounded-xl transition-all duration-200 ${
+                    activePreset === "favorites"
+                    ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 shadow-sm"
+                    : "text-slate-400 hover:text-yellow-500 hover:bg-yellow-500/10"
+                }`}
+                title={t("myFavorites")}
+                >
+                <Star className={`w-5 h-5 ${activePreset === "favorites" ? "fill-current" : ""}`} />
+                </button>
+            </div>
+
+             {/* Advanced Filter Trigger */}
+             <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                <PopoverTrigger asChild>
+                    <button className={`w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200/50 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors relative ${activeFilterCount > 0 ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" : "text-slate-500 dark:text-slate-400"}`}>
+                        <Filter className="w-5 h-5" />
+                        {activeFilterCount > 0 && (
+                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-600 rounded-full border-2 border-white dark:border-slate-900" />
+                        )}
+                    </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-5 rounded-2xl shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700" align="end">
+                    <div className="space-y-5">
+                    <div className="flex items-center justify-between">
+                        <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <Filter className="w-4 h-4" />
+                            {t("filters")}
+                        </h3>
+                        {hasActiveFilters && (
+                        <button
+                            onClick={clearFilters}
+                            className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                        >
+                            {t("clearAll")}
+                        </button>
+                        )}
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            {t("level")}
+                            </label>
+                            <select
+                            value={currentLevel}
+                            onChange={(e) => handleLevelChange(e.target.value)}
+                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                            >
+                            <option value="all">{t("allLevels")}</option>
+                            <option value="junior">{t("levels.junior")}</option>
+                            <option value="middle">{t("levels.middle")}</option>
+                            <option value="senior">{t("levels.senior")}</option>
+                            </select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            {t("status")}
+                            </label>
+                            <select
+                            value={currentStatus}
+                            onChange={(e) => handleStatusChange(e.target.value)}
+                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                            >
+                            <option value="all">{t("allStatuses")}</option>
+                            <option value="new">{t("statuses.new")}</option>
+                            <option value="learning">{t("statuses.learning")}</option>
+                            <option value="mastered">{t("statuses.mastered")}</option>
+                            </select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            {t("topic")}
+                            </label>
+                            <select
+                            value={currentTopic}
+                            onChange={(e) => handleTopicChange(e.target.value)}
+                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                            >
+                            <option value="all">{t("allTopics")}</option>
+                            {topics.map((topic) => (
+                                <option key={topic.id} value={topic.id}>
+                                {topic.name}
+                                </option>
+                            ))}
+                            </select>
+                        </div>
+
+                         <label
+                            htmlFor="favorites"
+                            className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                        >
+                             <input
+                                type="checkbox"
+                                id="favorites"
+                                checked={currentFavorites}
+                                onChange={handleFavoritesToggle}
+                                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                            />
+                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                                <Star className="w-4 h-4 text-yellow-500" />
+                                {t("favoritesOnly")}
+                            </span>
+                        </label>
+                    </div>
+                  </div>
+                </PopoverContent>
+            </Popover>
+        </div>
       </div>
 
       {isLoading ? (
@@ -557,6 +544,7 @@ function QuestionsContent() {
           onToggleFavorite={handleToggleFavorite}
         />
       )}
+    </div>
     </div>
   );
 }
