@@ -87,7 +87,7 @@ export function QuestionList({ questions, onEdit, onDelete, onToggleFavorite }: 
                  className={`p-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                    question.isFavorite
                      ? "text-yellow-500 bg-yellow-500/10"
-                     : "text-slate-400 hover:text-yellow-500 hover:bg-yellow-500/10 opacity-0 group-hover:opacity-100"
+                     : "text-slate-400 hover:text-yellow-500 hover:bg-yellow-500/10 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                  }`}
                >
                  <Star className={`w-4 h-4 ${question.isFavorite ? 'fill-current' : ''}`} />

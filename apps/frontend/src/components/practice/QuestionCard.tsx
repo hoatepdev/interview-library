@@ -7,7 +7,7 @@ interface QuestionCardProps {
 
 export function QuestionCard({ question }: QuestionCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-none border border-gray-100 dark:border-gray-700 p-8 mb-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-none border border-gray-100 dark:border-gray-700 p-6 sm:p-8 mb-6">
       <div className="flex items-center justify-between mb-4">
         <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs font-medium px-2.5 py-0.5 rounded-full uppercase tracking-wide">
           {question.level}

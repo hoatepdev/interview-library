@@ -103,11 +103,11 @@ export function TopicCard({ topic, onEdit, onDelete }: TopicCardProps) {
           </div>
 
           {(onEdit || onDelete) && (
-            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
               {onEdit && (
                 <button
                   onClick={handleEdit}
-                  className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                  className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
                   title={t("editTopic")}
                 >
                   <Pencil className="w-4 h-4" />
@@ -116,7 +116,7 @@ export function TopicCard({ topic, onEdit, onDelete }: TopicCardProps) {
               {onDelete && (
                 <button
                   onClick={handleDelete}
-                  className="p-2 text-sl"
+                  className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
                   title={t("deleteConfirm", { name: topic.name })}
                 >
                   <Trash2 className="w-4 h-4" />

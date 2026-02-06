@@ -169,7 +169,7 @@ export default function TopicDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
@@ -188,7 +188,7 @@ export default function TopicDetailPage() {
 
   if (!topic) {
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
+      <div className="container mx-auto text-center">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Topic not found
         </h1>
@@ -204,7 +204,7 @@ export default function TopicDetailPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto">
       {/* Header */}
       <div className="mb-8">
         <Link
@@ -215,10 +215,10 @@ export default function TopicDetailPage() {
           {tTopics("title")}
         </Link>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div
-              className="w-16 h-16 rounded-xl flex items-center justify-center"
+              className="w-16 h-16 rounded-xl flex items-center justify-center shrink-0"
               style={{
                 backgroundColor: topic.color ? `${topic.color}20` : "#64748b20",
                 color: topic.color || "#64748b",
@@ -227,10 +227,10 @@ export default function TopicDetailPage() {
               <span className="text-2xl">📁</span>
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white break-words">
                 {topic.name}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
                 {topic.description || tTopics("subtitle")}
               </p>
             </div>
@@ -243,12 +243,12 @@ export default function TopicDetailPage() {
             }
           >
             <DialogTrigger asChild>
-              <Button onClick={handleCreateQuestionClick}>
+              <Button onClick={handleCreateQuestionClick} className="w-full md:w-auto mt-4 md:mt-0">
                 <Plus className="w-5 h-5 mr-2" />
                 {t("addQuestion")}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="w-[95%] max-w-2xl">
               <DialogHeader>
                 <DialogTitle>
                   {editingQuestion ? t("editQuestion") : t("addNewQuestion")}

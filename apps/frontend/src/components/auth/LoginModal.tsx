@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/
 import { LoginButton } from "@/components/auth/login-button";
 import { Sparkles, Terminal, LogIn } from "lucide-react";
 import { useState } from "react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useTranslations } from "next-intl";
 
 export interface LoginModalProps {
@@ -33,10 +32,8 @@ export function LoginModal({ open: controlledOpen, onOpenChange: controlledOnOpe
         </DialogTrigger>
       )}
       
-      <DialogContent className="max-w-md p-0 overflow-hidden bg-transparent border-none shadow-2xl sm:rounded-2xl ring-0">
-        <VisuallyHidden>
-          <DialogTitle>{t('login')}</DialogTitle>
-        </VisuallyHidden>
+      <DialogContent className="max-w-md w-[95%] p-0 overflow-hidden bg-transparent border-none shadow-2xl sm:rounded-2xl ring-0">
+        <DialogTitle className="sr-only">{t('login')}</DialogTitle>
         
         <div className="relative w-full overflow-hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border border-white/20 dark:border-white/10 rounded-2xl shadow-[0_0_40px_-10px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_-10px_rgba(0,0,0,0.5)]">
           {/* Subtle top glow */}

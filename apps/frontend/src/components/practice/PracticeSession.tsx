@@ -112,11 +112,11 @@ export function PracticeSession() {
   return (
     <div className="max-w-3xl mx-auto">
       {/* Practice Mode Selector */}
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 w-full sm:w-auto">
           <button
             onClick={() => handleModeChange("smart")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
               practiceMode === "smart"
                 ? "bg-blue-500 text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -136,7 +136,7 @@ export function PracticeSession() {
           </button>
           <button
             onClick={() => handleModeChange("random")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
               practiceMode === "random"
                 ? "bg-slate-700 dark:bg-slate-600 text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -149,7 +149,7 @@ export function PracticeSession() {
 
         {/* Priority indicator */}
         {question.isPrioritized && practiceMode === "smart" && (
-          <div className="flex items-center gap-1.5 text-xs font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-full">
+          <div className="self-start sm:self-auto flex items-center gap-1.5 text-xs font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-full">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Due for review</span>
           </div>

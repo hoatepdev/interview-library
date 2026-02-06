@@ -14,7 +14,7 @@ import { useLocale } from "next-intl";
 import { LoginModal } from "@/components/auth/LoginModal";
 import { useAuth } from "@/hooks/use-auth";
 
-const navigation = [
+export const navigation = [
   { nameKey: "nav.home", href: "/", icon: LayoutDashboard },
   { nameKey: "nav.topics", href: "/topics", icon: BookOpen },
   { nameKey: "nav.questions", href: "/questions", icon: HelpCircle },

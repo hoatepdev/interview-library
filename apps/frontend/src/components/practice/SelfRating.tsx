@@ -14,7 +14,7 @@ export function SelfRatingComponent({ onRate }: SelfRatingComponentProps) {
   return (
     <div className="mt-8">
       <h3 className="text-center text-gray-500 dark:text-gray-400 font-medium mb-4">{t("rateYourself")}</h3>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <button
           onClick={() => onRate(SelfRating.POOR)}
           className="flex flex-col items-center justify-center p-4 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:scale-105 transition-all"
