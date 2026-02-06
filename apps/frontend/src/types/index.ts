@@ -45,6 +45,10 @@ export interface Question {
   order: number;
   createdAt: string;
   updatedAt: string;
+  // Spaced repetition fields (optional, from user_questions)
+  nextReviewAt?: string | null;
+  dueStatus?: DueStatus;
+  isPrioritized?: boolean;
 }
 
 export interface CreateTopicDto {

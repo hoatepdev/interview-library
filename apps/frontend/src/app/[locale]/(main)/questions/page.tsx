@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense, useCallback } from "react";
 import { toast } from "sonner";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { questionsApi, Question, getTopics, Topic } from "@/lib/api";
+import { questionsApi, practiceApi, Question, getTopics, Topic } from "@/lib/api";
 import { QuestionLevel } from "@/types";
 import { QuestionList } from "@/components/questions/QuestionList";
 import {
@@ -16,6 +16,7 @@ import {
   AlertCircle,
   CheckCircle2,
   X,
+  Clock,
 } from "lucide-react";
 import {
   Dialog,
@@ -34,7 +35,7 @@ import { Button } from "@/components/ui/button";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 
 // Filter presets
-type FilterPreset = "all" | "favorites" | "need-practice" | "mastered";
+type FilterPreset = "all" | "favorites" | "need-practice" | "mastered" | "due";
 
 const FILTER_PRESETS: Record<
   FilterPreset,
@@ -44,6 +45,7 @@ const FILTER_PRESETS: Record<
   favorites: { favorite: true },
   "need-practice": { status: "new" },
   mastered: { status: "mastered" },
+  due: {}, // Special case - fetches from different endpoint
 };
 
 function QuestionsContent() {
@@ -61,6 +63,7 @@ function QuestionsContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [activePreset, setActivePreset] = useState<FilterPreset>("all");
+  const [dueCount, setDueCount] = useState<number>(0);
 
   // Build query params from URL
   const buildQueryParams = useCallback(() => {
@@ -98,6 +101,17 @@ function QuestionsContent() {
   useEffect(() => {
     fetchQuestions();
     getTopics().then(setTopics);
+
+    // Load due count for authenticated users
+    const loadDueCount = async () => {
+      try {
+        const res = await practiceApi.getDueQuestionsCount();
+        setDueCount(res.count);
+      } catch {
+        // Ignore error - likely not authenticated
+      }
+    };
+    loadDueCount();
   }, [fetchQuestions]);
 
   // Detect active preset from URL
@@ -116,6 +130,13 @@ function QuestionsContent() {
       setActivePreset("all");
     }
   }, [searchParams]);
+
+  // Fetch questions when switching away from due preset
+  useEffect(() => {
+    if (activePreset !== "due") {
+      fetchQuestions();
+    }
+  }, [activePreset, fetchQuestions]);
 
   // Update URL when filters change
   const updateFilters = (
@@ -144,6 +165,11 @@ function QuestionsContent() {
 
     if (preset === "all") {
       router.push("/questions", { scroll: false });
+    } else if (preset === "due") {
+      // Fetch due questions from different endpoint
+      fetchDueQuestions();
+      setIsFilterOpen(false);
+      return; // Don't update URL
     } else {
       const params: Record<string, string> = {};
       if (config.favorite) params.favorites = "true";
@@ -152,6 +178,23 @@ function QuestionsContent() {
       router.push(`?${query}`, { scroll: false });
     }
     setIsFilterOpen(false);
+  };
+
+  // Fetch due questions (special case)
+  const fetchDueQuestions = async () => {
+    setIsLoading(true);
+    try {
+      const data = await practiceApi.getQuestionsDueForReview(100);
+      setQuestions(data);
+      // Update due count
+      const countRes = await practiceApi.getDueQuestionsCount();
+      setDueCount(countRes.count);
+    } catch (error) {
+      console.error("Failed to fetch due questions", error);
+      toast.error(tNotif("error"));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Individual filter handlers
@@ -401,7 +444,7 @@ function QuestionsContent() {
                  <div className="h-8 w-px bg-slate-200 dark:bg-white/10 mx-2" />
                 <button
                 onClick={() => applyPreset("all")}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
                     activePreset === "all" && !hasActiveFilters
                     ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md transform scale-105"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5"
@@ -411,7 +454,7 @@ function QuestionsContent() {
                 </button>
                 <button
                 onClick={() => applyPreset("favorites")}
-                className={`p-2 rounded-xl transition-all duration-200 ${
+                className={`p-2 rounded-xl transition-all duration-200 cursor-pointer ${
                     activePreset === "favorites"
                     ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 shadow-sm"
                     : "text-slate-400 hover:text-yellow-500 hover:bg-yellow-500/10"
@@ -420,12 +463,35 @@ function QuestionsContent() {
                 >
                 <Star className={`w-5 h-5 ${activePreset === "favorites" ? "fill-current" : ""}`} />
                 </button>
+                <button
+                onClick={() => applyPreset("due")}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                    activePreset === "due"
+                    ? "bg-orange-500 text-white shadow-md transform scale-105"
+                    : dueCount > 0
+                    ? "text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10"
+                    : "text-slate-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-500/10"
+                }`}
+                title="Due for review"
+                >
+                <Clock className="w-4 h-4" />
+                <span>Due</span>
+                {dueCount > 0 && (
+                    <span className={`ml-1 px-1.5 py-0.5 rounded text-xs ${
+                        activePreset === "due"
+                        ? "bg-orange-600 text-white"
+                        : "bg-orange-500 text-white"
+                    }`}>
+                    {dueCount}
+                    </span>
+                )}
+                </button>
             </div>
 
              {/* Advanced Filter Trigger */}
              <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
                 <PopoverTrigger asChild>
-                    <button className={`w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200/50 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors relative ${activeFilterCount > 0 ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" : "text-slate-500 dark:text-slate-400"}`}>
+                    <button className={`w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200/50 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors relative cursor-pointer ${activeFilterCount > 0 ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" : "text-slate-500 dark:text-slate-400"}`}>
                         <Filter className="w-5 h-5" />
                         {activeFilterCount > 0 && (
                             <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-600 rounded-full border-2 border-white dark:border-slate-900" />
@@ -442,7 +508,7 @@ function QuestionsContent() {
                         {hasActiveFilters && (
                         <button
                             onClick={clearFilters}
-                            className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                            className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 cursor-pointer"
                         >
                             {t("clearAll")}
                         </button>

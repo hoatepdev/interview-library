@@ -1,5 +1,5 @@
 import { Question } from "@/types";
-import { Pencil, Trash2, Star, LayoutGrid } from "lucide-react";
+import { Pencil, Trash2, Star, LayoutGrid, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 
@@ -62,8 +62,22 @@ export function QuestionList({ questions, onEdit, onDelete, onToggleFavorite }: 
               >
                 {question.level}
               </span>
+              {/* Due Status Badge */}
+              {question.dueStatus && (
+                <span
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                    question.dueStatus.isDue
+                      ? "bg-orange-500/10 border-orange-500/20 text-orange-600 dark:text-orange-400"
+                      : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300"
+                  }`}
+                  title={question.dueStatus.text}
+                >
+                  <Clock className="w-3 h-3" />
+                  {question.dueStatus.isDue ? "Due" : question.dueStatus.daysUntil === 1 ? "Tomorrow" : `${question.dueStatus.daysUntil}d`}
+                </span>
+              )}
             </div>
-            
+
             {onToggleFavorite && (
                <button
                  onClick={(e) => {
@@ -105,6 +119,11 @@ export function QuestionList({ questions, onEdit, onDelete, onToggleFavorite }: 
                 >
                   {question.status}
                 </span>
+                {question.practiceCount > 0 && (
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                    {question.practiceCount}x
+                  </span>
+                )}
              </div>
 
              <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 transform translate-x-2 sm:translate-x-4 sm:group-hover:translate-x-0">

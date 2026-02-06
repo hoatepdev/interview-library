@@ -75,7 +75,8 @@ components/
 │   ├── QuestionCard.tsx       - Question display with topic & practice count
 │   ├── AnswerReveal.tsx       - Show/hide answer (handles optional answers)
 │   ├── SelfRating.tsx         - Rating buttons using SelfRating enum
-│   └── PracticeStats.tsx      - Stats display (currently mock data)
+│   ├── PracticeStats.tsx      - Stats display (connected to real API)
+│   └── DueForReview.tsx       - Questions due for review list
 │
 ├── topics/
 │   ├── TopicCard.tsx          - Topic card component
@@ -92,6 +93,9 @@ components/
     ├── Textarea.tsx           - Textarea
     ├── Select.tsx             - Select dropdown
     ├── Dialog.tsx             - Dialog/modal component
+    ├── Popover.tsx            - Popover/dropdown component
+    ├── DropdownMenu.tsx       - Dropdown menu component
+    ├── Avatar.tsx             - User avatar component
     ├── theme-toggle.tsx       - Dark mode toggle
     └── theme-provider.tsx     - Theme context provider
 
@@ -114,6 +118,7 @@ types/
     ├── SelfRating             - POOR, FAIR, GOOD, GREAT
     ├── Topic, Question        - Entity interfaces
     ├── PracticeLog, PracticeStats, PracticeLogEntry
+    ├── DueQuestion, DueStatus - Spaced repetition types
     └── DTOs for create/update operations
 ```
 
@@ -271,6 +276,7 @@ apps/frontend/src/
 - Real-time stats display (total questions, sessions, time spent, by status)
 - Loading states and error handling
 - Type-safe API calls with full TypeScript support
+- Due for review questions list with due status tracking
 
 ### Database Schema
 
@@ -301,6 +307,10 @@ GET    /api/practice/stats        - Get practice statistics
 GET    /api/practice/history      - Get practice history
        Query params: limit (default: 20)
        Returns: Array of practice logs with question details
+
+GET    /api/practice/due          - Get questions due for review
+       Query params: limit (default: 20)
+       Returns: Array of DueQuestion with dueStatus
 ```
 
 ### Auto-Update Logic
@@ -365,6 +375,7 @@ When logging practice:
 | -------- | ------------------- | ------- | ----------------------------- |
 | P1       | Dashboard stats     | ✅ Done | Nice gradient design          |
 | P1       | Activity feed       | ✅ Done | Recent activity on home       |
+| P1       | Homepage redesign   | ✅ Done | Animated hero section         |
 | P1       | Loading states      | ✅ Done | Skeleton screens on all pages |
 | P1       | Delete & Edit       | ✅ Done | Full CRUD with dialogs        |
 | P2       | Dark mode           | ✅ Done | Full dark mode support        |
@@ -528,8 +539,49 @@ SESSION_SECRET=your_random_secret_string
 
 ## Phase 6: Extended Features (Post-MVP)
 
-**Status**: ⏳ Optional
+**Status**: 🚧 In Progress
 **Duration**: Variable
+
+### Spaced Repetition
+
+**Status**: 🚧 Partial Complete
+**Duration**: ~2-3 days
+
+| Task                    | Status  | Description                              |
+| ----------------------- | ------- | ---------------------------------------- |
+| Due questions API       | ✅ Done | GET /api/practice/due endpoint           |
+| DueForReview component  | ✅ Done | Shows questions due for review on home   |
+| Due status calculation  | ✅ Done | Calculates when questions are due        |
+| Full SM-2 algorithm     | ⏳      | Complete spaced repetition scheduling    |
+| Review notifications    | ⏳      | Notify users of due questions            |
+
+**Backend Implementation Complete:**
+
+```
+apps/backend/src/practice/
+├── practice.service.ts         - Added getQuestionsDueForReview() ✅
+└── dto/
+    └── due-question.dto.ts     - DueQuestion response DTO ✅
+```
+
+**Frontend Implementation Complete:**
+
+```
+apps/frontend/src/
+├── components/practice/
+│   └── DueForReview.tsx        - Due questions list component ✅
+├── lib/api.ts
+│   └── practiceApi             - Added getQuestionsDueForReview() ✅
+└── types/index.ts
+    └── DueQuestion, DueStatus  - TypeScript types ✅
+```
+
+**API Endpoint:**
+
+```
+GET    /api/practice/due?limit=10  - Get questions due for review
+Returns: Array of DueQuestion with dueStatus
+```
 
 ### AI-Assisted Practice
 
@@ -541,17 +593,6 @@ Features:
 - Suggest knowledge gaps
 
 Tech: OpenAI API / Anthropic API
-```
-
-### Spaced Repetition
-
-```
-Features:
-- Algorithm to schedule reviews
-- Notifications for due questions
-- Priority queue for weak areas
-
-Algorithm: SM-2 or custom
 ```
 
 ### Tags System
@@ -819,14 +860,14 @@ NEXT_PUBLIC_API_URL=http://localhost:9001/api
 
 ## Status Summary
 
-| Phase                                   | Status      | Completion              |
-| --------------------------------------- | ----------- | ----------------------- |
-| Phase 1: Foundation                     | ✅ Complete | 100%                    |
-| Phase 2: Practice Mode                  | ✅ Complete | 100%                    |
-| Phase 3: Search & Filter                | ✅ Complete | 80% (basic search done) |
-| Phase 4: Polish & UX                    | ✅ Complete | 80% (core UX done)      |
-| Phase 5: Authentication & User Features | ✅ Complete | 100%                    |
-| Phase 6: Extended Features              | ⏳ Pending  | 0%                      |
+| Phase                                   | Status      | Completion                    |
+| --------------------------------------- | ----------- | ----------------------------- |
+| Phase 1: Foundation                     | ✅ Complete | 100%                          |
+| Phase 2: Practice Mode                  | ✅ Complete | 100%                          |
+| Phase 3: Search & Filter                | ✅ Complete | 80% (basic search done)       |
+| Phase 4: Polish & UX                    | ✅ Complete | 85% (homepage redesign done)  |
+| Phase 5: Authentication & User Features | ✅ Complete | 100%                          |
+| Phase 6: Extended Features              | 🚧 In Progress | 15% (spaced repetition started) |
 
 ### Current Development State
 
@@ -881,24 +922,31 @@ NEXT_PUBLIC_API_URL=http://localhost:9001/api
 - ✅ Questions count per topic
 - ✅ Topic detail page with slug routing
 - ✅ Auth guards (toggle favorite, create/edit/delete)
+- ✅ Homepage redesign with animated hero section
+- ✅ DueForReview component for spaced repetition
+- ✅ Questions due API endpoint
 
 ### Immediate Next Steps
 
-1. **Advanced Filters (Phase 3)**
+1. **Complete Spaced Repetition (Phase 6)**
+   - Implement full SM-2 algorithm for review scheduling
+   - Add review notifications for due questions
+   - Priority queue for weak areas
+
+2. **Advanced Filters (Phase 3)**
    - Add filter dropdowns for level, status, topic
    - URL query params for shareable filtered views
    - Filter presets (favorites, due for review, etc.)
 
-2. **Remaining UX (Phase 4)**
+3. **Remaining UX (Phase 4)**
    - Mobile responsive navigation improvements
    - Keyboard shortcuts (k for practice, t for topics, q for questions)
 
-3. **Extended Features (Phase 6)**
+4. **Extended Features (Phase 6)**
    - AI-assisted practice with follow-up questions
-   - Spaced repetition algorithm for review scheduling
    - Tags system for better question organization
    - Statistics & analytics dashboard
 
 ---
 
-_Last updated: February 3, 2026 - Login Popup, Multi-language Forms, Topic Slug Feature Complete_
+_Last updated: February 6, 2026 - Homepage Redesign, DueForReview Component, Spaced Repetition Started_

@@ -25,6 +25,19 @@ export class UserQuestion {
   @Column({ name: 'is_public', default: false })
   isPublic: boolean;
 
+  // Spaced repetition tracking (user-specific)
+  @Column({ name: 'next_review_at', nullable: true })
+  nextReviewAt: Date;
+
+  @Column({ name: 'ease_factor', default: 2.5 })
+  easeFactor: number;
+
+  @Column({ name: 'interval_days', default: 0 })
+  intervalDays: number;
+
+  @Column({ name: 'repetitions', default: 0 })
+  repetitions: number;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

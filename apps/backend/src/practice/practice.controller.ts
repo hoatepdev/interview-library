@@ -28,10 +28,24 @@ export class PracticeController {
     return this.practiceService.getRandomQuestion(query, lang);
   }
 
+  @Get("next")
+  getNextQuestion(@Req() req: AuthenticatedRequest, @Query() query: QueryPracticeDto) {
+    const lang = req.i18n?.lang || 'en';
+    const userId = req.user?.id;
+    return this.practiceService.getNextQuestionForPractice(query, lang, userId);
+  }
+
+  @Get("due-count")
+  getDueQuestionsCount(@Req() req: AuthenticatedRequest) {
+    const userId = req.user?.id;
+    return this.practiceService.getDueQuestionsCount(userId);
+  }
+
   @Get("due")
   getQuestionsDueForReview(@Req() req: AuthenticatedRequest, @Query("limit") limit?: string) {
     const lang = req.i18n?.lang || 'en';
-    return this.practiceService.getQuestionsDueForReview(lang, limit ? parseInt(limit) : 20);
+    const userId = req.user?.id;
+    return this.practiceService.getQuestionsDueForReview(lang, limit ? parseInt(limit) : 20, userId);
   }
 
   @Post("log")
