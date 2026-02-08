@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Patch, Query, HttpCode, HttpStatus, Req } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Patch, Query, HttpCode, HttpStatus, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { QuestionsService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
@@ -6,6 +6,7 @@ import { UpdateQuestionDto } from './dto/update-question.dto';
 import { UpdateQuestionStatusDto } from './dto/update-question-status.dto';
 import { QueryQuestionsDto } from './dto/query-questions.dto';
 import { User } from '../database/entities/user.entity';
+import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
 
 interface AuthenticatedRequest extends Request {
   user?: User;
@@ -62,8 +63,9 @@ export class QuestionsController {
   }
 
   @Delete(':id')
+  @UseGuards(SessionAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string) {
-    await this.questionsService.remove(id);
+  async remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    await this.questionsService.remove(id, req.user?.id);
   }
 }

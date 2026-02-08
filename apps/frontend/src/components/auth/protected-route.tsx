@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/hooks/use-auth';
 import { useLoginDialog } from '@/contexts/login-dialog-context';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,10 +12,14 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, fallback = null }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const { openDialog } = useLoginDialog();
+  const hasOpenedDialog = useRef(false);
 
   useEffect(() => {
-    if (!loading && !user) {
-      openDialog();
+    if (!loading && !user && !hasOpenedDialog.current) {
+      // Capture the current URL for redirect after login
+      const currentUrl = window.location.pathname + window.location.search;
+      openDialog(currentUrl);
+      hasOpenedDialog.current = true;
     }
   }, [user, loading, openDialog]);
 

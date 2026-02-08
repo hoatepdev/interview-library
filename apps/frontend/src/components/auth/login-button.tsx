@@ -1,12 +1,35 @@
 "use client";
 
 import clsx from "clsx";
+import { useMemo } from "react";
 
+/**
+ * LoginButton - renders OAuth login buttons (Google, GitHub)
+ * The redirect URL is saved to sessionStorage when the login dialog opens
+ */
 export function LoginButton() {
+  // Generate OAuth URLs with locale parameter
+  const { googleUrl, githubUrl } = useMemo(() => {
+    // Extract locale from current path (e.g., /en or /vi)
+    const pathLocale = window.location.pathname.split('/')[1];
+    const locale = ['en', 'vi'].includes(pathLocale) ? pathLocale : 'en';
+
+    // Build backend OAuth URL with locale parameter
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api$', '') || 'http://localhost:9001';
+
+    const google = new URL("/api/auth/google", apiBaseUrl);
+    google.searchParams.set('locale', locale);
+
+    const github = new URL("/api/auth/github", apiBaseUrl);
+    github.searchParams.set('locale', locale);
+
+    return { googleUrl: google.toString(), githubUrl: github.toString() };
+  }, []);
+
   return (
     <div className="flex flex-col gap-4 w-full">
       <a
-        href="/api/auth/google"
+        href={googleUrl}
         className={clsx(
           "group relative flex items-center justify-center gap-3 px-6 py-3.5",
           "bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10",
@@ -48,7 +71,7 @@ export function LoginButton() {
       </a>
 
       <a
-        href="/api/auth/github"
+        href={githubUrl}
         className={clsx(
           "group relative flex items-center justify-center gap-3 px-6 py-3.5",
           "bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl",

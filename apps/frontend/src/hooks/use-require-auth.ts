@@ -20,8 +20,9 @@ export function useRequireAuth() {
         // User is authenticated, execute immediately
         callback();
       } else {
-        // User not authenticated, open login dialog
-        openDialog();
+        // User not authenticated, open login dialog with current URL for redirect
+        const currentUrl = window.location.pathname + window.location.search;
+        openDialog(currentUrl);
       }
     },
     [user, openDialog]

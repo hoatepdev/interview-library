@@ -14,6 +14,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useRequireAuth } from "@/hooks/use-require-auth";
 
 const icons: Record<string, any> = {
   code: Code,
@@ -34,6 +35,8 @@ interface TopicCardProps {
 
 export function TopicCard({ topic, onEdit, onDelete }: TopicCardProps) {
   const t = useTranslations("topics");
+  const { requireAuth } = useRequireAuth();
+
   const Icon = topic.icon && icons[topic.icon] ? icons[topic.icon] : Code;
 
   // Generate color styles dynamically or fallback to default Slate
@@ -58,15 +61,17 @@ export function TopicCard({ topic, onEdit, onDelete }: TopicCardProps) {
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (window.confirm(t("deleteConfirm", { name: topic.name }))) {
+    requireAuth(() => {
       onDelete?.(topic.id);
-    }
+    });
   };
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onEdit?.(topic);
+    requireAuth(() => {
+      onEdit?.(topic);
+    });
   };
 
   return (

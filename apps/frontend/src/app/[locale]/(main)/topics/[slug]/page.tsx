@@ -159,14 +159,6 @@ export default function TopicDetailPage() {
     });
   };
 
-  const handleDeleteQuestionClick = (id: string) => {
-    requireAuth(() => {
-      if (window.confirm(`Are you sure you want to delete this question?`)) {
-        handleDeleteQuestion(id);
-      }
-    });
-  };
-
   if (isLoading) {
     return (
       <div className="container mx-auto">
@@ -238,12 +230,13 @@ export default function TopicDetailPage() {
 
           <Dialog
             open={isDialogOpen}
-            onOpenChange={(open: boolean) =>
-              requireAuth(() => setIsDialogOpen(open))
-            }
+            onOpenChange={(open: boolean) => setIsDialogOpen(open)}
           >
             <DialogTrigger asChild>
-              <Button onClick={handleCreateQuestionClick} className="w-full md:w-auto mt-4 md:mt-0">
+              <Button
+                onClick={handleCreateQuestionClick}
+                className="w-full md:w-auto mt-4 md:mt-0"
+              >
                 <Plus className="w-5 h-5 mr-2" />
                 {t("addQuestion")}
               </Button>
@@ -287,7 +280,7 @@ export default function TopicDetailPage() {
       <QuestionList
         questions={questions}
         onEdit={handleEditQuestionClick}
-        onDelete={handleDeleteQuestionClick}
+        onDelete={(id) => handleDeleteQuestion(id)}
         onToggleFavorite={handleToggleFavorite}
       />
     </div>

@@ -111,7 +111,7 @@ export function Header() {
             <UserMenu />
           ) : (
             <button
-              onClick={openDialog}
+              onClick={() => openDialog()}
               className="flex items-center rounded-full p-2 text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-white/10 cursor-pointer"
             >
               <LogIn className="h-5 w-5" />

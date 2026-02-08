@@ -39,6 +39,8 @@
     "searchPlaceholder": "Search topics...",
     "questionsCount": "{count} questions",
     "deleteConfirm": "Are you sure you want to delete \"{name}\"? This will also delete all associated questions.",
+    "deleteTopicConfirm": "Are you sure you want to delete this topic? This action cannot be undone.",
+    "deleteTopic": "Delete Topic",
     "viewQuestions": "View Questions"
   },
   "questions": {
@@ -62,6 +64,8 @@
     "needPractice": "Need Practice",
     "mastered": "Mastered",
     "deleteConfirm": "Are you sure you want to delete this question?",
+    "deleteQuestionConfirm": "Are you sure you want to delete this question? This action cannot be undone.",
+    "deleteQuestion": "Delete Question",
     "levels": {
       "junior": "Junior",
       "middle": "Middle",

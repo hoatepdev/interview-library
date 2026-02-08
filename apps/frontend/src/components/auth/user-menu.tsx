@@ -22,7 +22,6 @@ export function UserMenu() {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       await refetch();
-      router.push('/');
     } catch (error) {
       console.error('Logout failed:', error);
     }

@@ -10,6 +10,7 @@ import { notFound } from 'next/navigation';
 import { ApiLocaleProvider } from "@/components/providers/ApiLocaleProvider";
 import { AuthProvider } from "@/contexts/auth-context";
 import { LoginDialogProvider } from "@/components/providers/login-dialog-provider";
+import { AuthRedirectHandler } from "@/components/auth/auth-redirect-handler";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,6 +50,7 @@ export default async function RootLayout({
                   enableSystem
                   disableTransitionOnChange
                 >
+                  <AuthRedirectHandler />
                   {children}
                   <Toaster richColors position="top-right" />
                 </ThemeProvider>

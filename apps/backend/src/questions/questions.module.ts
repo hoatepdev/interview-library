@@ -6,9 +6,10 @@ import { Question } from '../database/entities/question.entity';
 import { QuestionFavorite } from '../database/entities/question-favorite.entity';
 import { Topic } from '../database/entities/topic.entity';
 import { I18nModule } from '../i18n/i18n.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Question, QuestionFavorite, Topic]), I18nModule],
+  imports: [TypeOrmModule.forFeature([Question, QuestionFavorite, Topic]), I18nModule, AuthModule],
   controllers: [QuestionsController],
   providers: [QuestionsService],
   exports: [QuestionsService],

@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TopicForm } from "@/components/topics/TopicForm";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { Button } from "@/components/ui/button";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 
@@ -119,6 +120,12 @@ export default function TopicsPage() {
     );
   });
 
+  const [deletingTopicId, setDeletingTopicId] = useState<string | null>(null);
+
+  const confirmDelete = (id: string) => {
+    setDeletingTopicId(id);
+  };
+
   return (
     <div className="container mx-auto py-4">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
@@ -133,9 +140,7 @@ export default function TopicsPage() {
 
         <Dialog
           open={isDialogOpen}
-          onOpenChange={(open: boolean) =>
-            requireAuth(() => setIsDialogOpen(open))
-          }
+          onOpenChange={(open: boolean) => setIsDialogOpen(open)}
         >
           <DialogTrigger asChild>
             <Button
@@ -205,11 +210,25 @@ export default function TopicsPage() {
               key={topic.id}
               topic={topic}
               onEdit={handleEditClick}
-              onDelete={handleDeleteTopic}
+              onDelete={confirmDelete}
             />
           ))}
         </div>
       )}
+
+      <ConfirmModal
+        open={!!deletingTopicId}
+        onOpenChange={(open) => !open && setDeletingTopicId(null)}
+        title={t("deleteTopic")}
+        description={t("deleteTopicConfirm")}
+        onConfirm={() => {
+          if (deletingTopicId) {
+            handleDeleteTopic(deletingTopicId);
+            setDeletingTopicId(null);
+          }
+        }}
+        variant="destructive"
+      />
     </div>
   );
 }

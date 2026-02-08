@@ -39,6 +39,8 @@
     "searchPlaceholder": "Tìm kiếm chủ đề...",
     "questionsCount": "{count} câu hỏi",
     "deleteConfirm": "Bạn có chắc chắn muốn xóa \"{name}\"? Điều này sẽ xóa cả tất cả câu hỏi liên quan.",
+    "deleteTopicConfirm": "Bạn có chắc chắn muốn xóa chủ đề này? Hành động này không thể hoàn tác.",
+    "deleteTopic": "Xóa Chủ đề",
     "viewQuestions": "Xem Câu hỏi"
   },
   "questions": {
@@ -62,6 +64,8 @@
     "needPractice": "Cần luyện tập",
     "mastered": "Đã thành thạo",
     "deleteConfirm": "Bạn có chắc chắn muốn xóa câu hỏi này?",
+    "deleteQuestionConfirm": "Bạn có chắc chắn muốn xóa câu hỏi này? Hành động này không thể hoàn tác.",
+    "deleteQuestion": "Xóa Câu hỏi",
     "levels": {
       "junior": "Junior",
       "middle": "Middle",

@@ -191,13 +191,19 @@ export class QuestionsService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string, userId?: string): Promise<void> {
     const question = await this.questionRepository.findOne({
       where: { id },
     });
     if (!question) {
       throw new NotFoundException(`Question with ID ${id} not found`);
     }
+
+    // Check ownership: only the creator can delete the question
+    if (question.userId && question.userId !== userId) {
+      throw new UnauthorizedException('You do not have permission to delete this question');
+    }
+
     await this.questionRepository.remove(question);
   }
 }

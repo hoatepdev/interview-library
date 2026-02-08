@@ -8,6 +8,7 @@ import {
   HttpCode,
   HttpStatus,
   Logger,
+  Query,
 } from "@nestjs/common";
 import { Response } from "express";
 import { AuthGuard } from "@nestjs/passport";
@@ -21,17 +22,25 @@ export class AuthController {
 
   constructor(private readonly authService: AuthService) {}
 
+  /**
+   * Store locale in session before OAuth redirect
+   */
   @Get("google")
   @UseGuards(AuthGuard("google"))
-  googleLogin() {}
+  googleLogin(@Req() req: any, @Query('locale') locale?: string) {
+    // Store locale in session for use in callback
+    if (locale) {
+      req.session.oauthLocale = locale;
+    }
+  }
 
   @Get("google/callback")
   @UseGuards(AuthGuard("google"))
   googleAuthCallback(
-    @Req() req: Request & { user: User },
+    @Req() req: Request & { user: User; session: any },
     @Res() res: Response
   ) {
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:9000";
+    const redirectUrl = this.buildRedirectUrl(req.session);
 
     // Manually login to establish session (triggers serializeUser)
     (req as any).login(req.user, (err: any) => {
@@ -39,21 +48,29 @@ export class AuthController {
         this.logger.error(`OAuth login error: ${err}`);
         return res.status(500).json({ error: "Login failed" });
       }
-      res.redirect(frontendUrl);
+      res.redirect(redirectUrl);
     });
   }
 
+  /**
+   * Store locale in session before OAuth redirect
+   */
   @Get("github")
   @UseGuards(AuthGuard("github"))
-  githubLogin() {}
+  githubLogin(@Req() req: any, @Query('locale') locale?: string) {
+    // Store locale in session for use in callback
+    if (locale) {
+      req.session.oauthLocale = locale;
+    }
+  }
 
   @Get("github/callback")
   @UseGuards(AuthGuard("github"))
   githubAuthCallback(
-    @Req() req: Request & { user: User },
+    @Req() req: Request & { user: User; session: any },
     @Res() res: Response
   ) {
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:9000";
+    const redirectUrl = this.buildRedirectUrl(req.session);
 
     // Manually login to establish session (triggers serializeUser)
     (req as any).login(req.user, (err: any) => {
@@ -61,8 +78,21 @@ export class AuthController {
         this.logger.error(`OAuth login error: ${err}`);
         return res.status(500).json({ error: "Login failed" });
       }
-      res.redirect(frontendUrl);
+      res.redirect(redirectUrl);
     });
+  }
+
+  /**
+   * Build the redirect URL with locale and auth_success flag
+   */
+  private buildRedirectUrl(session: any): string {
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:9000";
+    // Get locale from session (stored during OAuth init), default to 'en'
+    const locale = session.oauthLocale || 'en';
+    // Clear the stored locale
+    delete session.oauthLocale;
+    // Add locale and auth_success flag
+    return `${frontendUrl}/${locale}?auth_success=1`;
   }
 
   @Get("me")

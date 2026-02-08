@@ -31,14 +31,14 @@ export function LoginModal({ open: controlledOpen, onOpenChange: controlledOnOpe
           </button>
         </DialogTrigger>
       )}
-      
+
       <DialogContent className="max-w-md w-[95%] p-0 overflow-hidden bg-transparent border-none shadow-2xl sm:rounded-2xl ring-0">
         <DialogTitle className="sr-only">{t('login')}</DialogTitle>
-        
+
         <div className="relative w-full overflow-hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border border-white/20 dark:border-white/10 rounded-2xl shadow-[0_0_40px_-10px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_-10px_rgba(0,0,0,0.5)]">
           {/* Subtle top glow */}
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-50" />
-          
+
           {/* Ambient background accent */}
           <div className="absolute -top-[100px] -right-[100px] w-[200px] h-[200px] bg-blue-500/20 blur-[80px] pointer-events-none" />
           <div className="absolute -bottom-[100px] -left-[100px] w-[200px] h-[200px] bg-purple-500/20 blur-[80px] pointer-events-none" />
