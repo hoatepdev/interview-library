@@ -15,10 +15,10 @@ import { LoginModal } from "@/components/auth/LoginModal";
 import { useAuth } from "@/hooks/use-auth";
 
 export const navigation = [
-  { nameKey: "nav.home", href: "/", icon: LayoutDashboard },
-  { nameKey: "nav.topics", href: "/topics", icon: BookOpen },
-  { nameKey: "nav.questions", href: "/questions", icon: HelpCircle },
-  { nameKey: "nav.practice", href: "/practice", icon: Swords },
+  { nameKey: "nav.home", href: "/" as const, icon: LayoutDashboard },
+  { nameKey: "nav.topics", href: "/topics" as const, icon: BookOpen },
+  { nameKey: "nav.questions", href: "/questions" as const, icon: HelpCircle },
+  { nameKey: "nav.practice", href: "/practice" as const, icon: Swords },
 ];
 
 export function Sidebar() {

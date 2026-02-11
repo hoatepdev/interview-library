@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { TranslationService, CreateTopicTranslationDto, UpdateTopicTranslationDto, CreateQuestionTranslationDto, UpdateQuestionTranslationDto } from './translation-crud.service';
-import { Locale } from '../i18n/translation.service';
+import { type Locale } from '@interview-library/shared/i18n';
 
 @Controller('translations')
 export class TranslationController {

@@ -1,12 +1,13 @@
 import { defineRouting } from 'next-intl/routing';
 import { createNavigation } from 'next-intl/navigation';
+import { LOCALES, DEFAULT_LOCALE } from '@interview-library/shared/i18n';
 
 export const routing = defineRouting({
   // A list of all locales that are supported
-  locales: ['en', 'vi'],
+  locales: [...LOCALES],
 
   // Used when no locale matches
-  defaultLocale: 'en',
+  defaultLocale: DEFAULT_LOCALE,
 
   // The `pathnames` object holds the mappings of internal route paths
   // to their localized pathnames (optional, can be omitted)
@@ -23,7 +24,9 @@ export const routing = defineRouting({
     '/practice': {
       en: '/practice',
       vi: '/luyen-tap'
-    }
+    },
+    '/settings': '/settings',
+    '/history': '/history'
   }
 });
 

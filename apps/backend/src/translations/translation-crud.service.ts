@@ -5,7 +5,7 @@ import { Topic } from '../database/entities/topic.entity';
 import { Question } from '../database/entities/question.entity';
 import { TopicTranslation } from '../database/entities/topic-translation.entity';
 import { QuestionTranslation } from '../database/entities/question-translation.entity';
-import { Locale } from '../i18n/translation.service';
+import { type Locale } from '@interview-library/shared/i18n';
 
 // DTOs for translation CRUD
 export interface CreateTopicTranslationDto {

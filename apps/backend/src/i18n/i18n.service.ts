@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DEFAULT_LANGUAGE, SupportedLanguage } from './i18n.middleware';
+import { DEFAULT_LOCALE, type Locale } from '@interview-library/shared/i18n';
 
 export type TranslationField = 'name' | 'description' | 'title' | 'content' | 'answer';
 
@@ -24,7 +24,7 @@ export class I18nService {
   getTranslation<T extends Record<string, any>>(
     entity: T,
     field: TranslationField,
-    lang: SupportedLanguage = DEFAULT_LANGUAGE
+    lang: Locale = DEFAULT_LOCALE
   ): string {
     const originalValue = entity[field];
     const translations = this.getTranslations(entity);
@@ -55,7 +55,7 @@ export class I18nService {
   setTranslation(
     translations: Translations | string | null,
     field: TranslationField,
-    lang: SupportedLanguage,
+    lang: Locale,
     value: string
   ): Translations {
     let parsed: Translations;
@@ -83,12 +83,12 @@ export class I18nService {
    */
   formatResponse<T extends Record<string, any>>(
     entity: T,
-    lang: SupportedLanguage,
+    lang: Locale,
     fields: TranslationField[]
   ): Record<string, any> {
     const response: Record<string, any> = { ...entity };
 
-    if (lang === DEFAULT_LANGUAGE) {
+    if (lang === DEFAULT_LOCALE) {
       return response; // No need for translations if default is en
     }
 
@@ -110,8 +110,8 @@ export class I18nService {
     return response;
   }
 
-  private getLangSuffix(lang: SupportedLanguage): string {
-    const suffixes: Record<SupportedLanguage, string> = {
+  private getLangSuffix(lang: Locale): string {
+    const suffixes: Record<Locale, string> = {
       en: '',
       vi: 'Vi',
     };

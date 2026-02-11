@@ -1,7 +1,7 @@
 import { IsOptional, IsEnum, IsString, IsUUID, IsBoolean } from 'class-validator';
 import { QuestionLevel, QuestionStatus } from '../../database/entities/question.entity';
 import { Type } from 'class-transformer';
-import { SUPPORTED_LANGUAGES } from '../../i18n/i18n.middleware';
+import { LOCALES } from '@interview-library/shared/i18n';
 
 export class QueryQuestionsDto {
   @IsOptional()
@@ -26,6 +26,6 @@ export class QueryQuestionsDto {
   search?: string;
 
   @IsOptional()
-  @IsEnum(SUPPORTED_LANGUAGES)
-  lang?: typeof SUPPORTED_LANGUAGES[number];
+  @IsEnum(LOCALES)
+  lang?: typeof LOCALES[number];
 }

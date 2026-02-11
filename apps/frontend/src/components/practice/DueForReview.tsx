@@ -68,7 +68,7 @@ export function DueForReview() {
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
             <button
-              onClick={openDialog}
+              onClick={() => openDialog()}
               className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
             >
               {tAuth("login")}

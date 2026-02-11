@@ -15,7 +15,15 @@
       "Bash(ls -la /Users/hoatepdev/Developer/personal/interview-library/apps/frontend/src/app/[locale]/\\(main\\)/topics/)",
       "Bash(npm run seed:additional)",
       "Bash(psql -h localhost -U postgres -d interview_library -c \"SELECT t.slug, COUNT(q.id) as question_count FROM topics t LEFT JOIN questions q ON q.topic_id = t.id GROUP BY t.slug ORDER BY t.slug;\")",
-      "Bash(PGPASSWORD=postgres psql -h localhost -U postgres -d interview_library -c \"SELECT t.slug, COUNT(q.id) as question_count FROM topics t LEFT JOIN questions q ON q.topic_id = t.id GROUP BY t.slug ORDER BY t.slug;\")"
+      "Bash(PGPASSWORD=postgres psql -h localhost -U postgres -d interview_library -c \"SELECT t.slug, COUNT(q.id) as question_count FROM topics t LEFT JOIN questions q ON q.topic_id = t.id GROUP BY t.slug ORDER BY t.slug;\")",
+      "Bash(wc:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm build:*)",
+      "Bash(test:*)",
+      "Bash(PGPASSWORD=postgres psql:*)",
+      "Bash(curl:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm import:translations:*)"
     ]
   }
 }

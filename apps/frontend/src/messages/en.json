@@ -1,4 +1,8 @@
 {
+  "metadata": {
+    "title": "Interview Library - Master Your Interview Skills",
+    "description": "Comprehensive interview preparation platform with practice questions, topics, and spaced repetition learning."
+  },
   "common": {
     "loading": "Loading...",
     "search": "Search",

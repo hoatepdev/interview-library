@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { Question } from './question.entity';
-
-export type Locale = 'en' | 'vi';
+import { type Locale } from '@interview-library/shared/i18n';
 
 @Entity('question_translations')
 @Index(['questionId', 'locale'], { unique: true })

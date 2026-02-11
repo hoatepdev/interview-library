@@ -8,7 +8,8 @@ import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { UpdateQuestionStatusDto } from './dto/update-question-status.dto';
 import { QueryQuestionsDto } from './dto/query-questions.dto';
-import { TranslationService, Locale } from '../i18n/translation.service';
+import { type Locale } from '@interview-library/shared/i18n';
+import { TranslationService } from '../i18n/translation.service';
 
 @Injectable()
 export class QuestionsService {

@@ -6,7 +6,8 @@ import { PracticeLog, SelfRating } from '../database/entities/practice-log.entit
 import { UserQuestion } from '../database/entities/user-question.entity';
 import { CreatePracticeLogDto } from './dto/create-practice-log.dto';
 import { QueryPracticeDto } from './dto/query-practice.dto';
-import { TranslationService, Locale } from '../i18n/translation.service';
+import { type Locale } from '@interview-library/shared/i18n';
+import { TranslationService } from '../i18n/translation.service';
 import { SpacedRepetitionService } from './spaced-repetition.service';
 
 @Injectable()
@@ -77,7 +78,7 @@ export class PracticeService {
       const dueQuery = this.questionRepository
         .createQueryBuilder('question')
         .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
-        .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
+        .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now })
         .leftJoinAndSelect('question.topic', 'topic')
         .leftJoinAndSelect('question.translations', 'translations');
 
@@ -135,10 +136,10 @@ export class PracticeService {
     }
 
     const now = new Date();
-    return await this.userQuestionRepository
-      .createQueryBuilder('uq')
-      .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
-      .andWhere('uq.userId = :userId', { userId })
+    return await this.questionRepository
+      .createQueryBuilder('question')
+      .innerJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
+      .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now })
       .getCount();
   }
 
@@ -243,7 +244,7 @@ export class PracticeService {
       const rawQuestions = await this.questionRepository
         .createQueryBuilder('question')
         .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
-        .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
+        .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now })
         .leftJoinAndSelect('question.topic', 'topic')
         .leftJoinAndSelect('question.translations', 'translations')
         .limit(limit)
@@ -377,10 +378,10 @@ export class PracticeService {
     // Count questions due for review (user-specific or all)
     let questionsDueForReview: number;
     if (userId) {
-      questionsDueForReview = await this.userQuestionRepository
-        .createQueryBuilder('uq')
-        .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now: new Date() })
-        .andWhere('uq.userId = :userId', { userId })
+      questionsDueForReview = await this.questionRepository
+        .createQueryBuilder('question')
+        .innerJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
+        .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now: new Date() })
         .getCount();
     } else {
       questionsDueForReview = await this.questionRepository

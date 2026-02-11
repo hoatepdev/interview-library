@@ -5,19 +5,32 @@ import "../globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ApiLocaleProvider } from "@/components/providers/ApiLocaleProvider";
 import { AuthProvider } from "@/contexts/auth-context";
 import { LoginDialogProvider } from "@/components/providers/login-dialog-provider";
 import { AuthRedirectHandler } from "@/components/auth/auth-redirect-handler";
+import { isValidLocale, LOCALES } from '@interview-library/shared/i18n';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
-export const metadata: Metadata = {
-  title: "Interview Library",
-  description: "Master your interview skills",
-};
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'metadata' });
+
+  return {
+    title: {
+      template: `%s | ${t('title')}`,
+      default: t('title')
+    },
+    description: t('description')
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -29,7 +42,7 @@ export default async function RootLayout({
   const { locale } = await params;
   
   // Ensure that the incoming `locale` is valid
-  if (!['en', 'vi'].includes(locale as any)) {
+  if (!isValidLocale(locale)) {
     notFound();
   }
 

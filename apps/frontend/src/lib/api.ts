@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { useLocale } from 'next-intl';
+import { DEFAULT_LOCALE, isValidLocale } from '@interview-library/shared/i18n';
 import type {
   Topic,
   Question,
@@ -17,12 +17,6 @@ import type {
   DueQuestion,
 } from '@/types';
 
-let currentLocale = 'en';
-
-export function setApiLocale(locale: string) {
-  currentLocale = locale;
-}
-
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9001/api',
   headers: {
@@ -33,16 +27,14 @@ const api = axios.create({
 
 // Request interceptor to add Accept-Language header
 api.interceptors.request.use((config) => {
-  config.headers['Accept-Language'] = currentLocale;
+  if (typeof window !== 'undefined') {
+    const storedLocale = sessionStorage.getItem('i18n_locale');
+    const pathLocale = window.location.pathname.split('/')[1];
+    const locale = storedLocale || (isValidLocale(pathLocale) ? pathLocale : DEFAULT_LOCALE);
+    config.headers['Accept-Language'] = locale;
+  }
   return config;
 });
-
-// Hook for client components to sync locale
-export function useApiLocale() {
-  const locale = useLocale();
-  setApiLocale(locale);
-  return { locale };
-}
 
 // Topics
 export const topicsApi = {

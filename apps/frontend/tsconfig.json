@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@interview-library/shared": ["../../packages/shared/src"],
+      "@interview-library/shared/*": ["../../packages/shared/src/*"]
     }
   },
   "include": [

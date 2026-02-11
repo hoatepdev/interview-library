@@ -12,11 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Languages } from "lucide-react";
-
-const locales = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' },
-] as const;
+import { LOCALE_LIST } from '@interview-library/shared/i18n';
 
 export function LanguageToggle() {
   const router = useRouter();
@@ -40,7 +36,7 @@ export function LanguageToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {locales.map((loc) => (
+        {LOCALE_LIST.map((loc) => (
           <DropdownMenuItem
             key={loc.code}
             onClick={() => handleLanguageChange(loc.code)}

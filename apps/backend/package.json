@@ -21,6 +21,7 @@
     "seed:additional": "ts-node src/database/seeds/seed-additional.ts"
   },
   "dependencies": {
+    "@interview-library/shared": "workspace:*",
     "@nestjs/common": "^10.3.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.3.0",

@@ -98,7 +98,7 @@ export default async function Home() {
              </div>
              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('recentActivity')}</h2>
           </div>
-          <Link href="/history" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors flex items-center gap-1 group">
+          <Link href="/practice" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors flex items-center gap-1 group">
             {tCommon('viewAll')}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>

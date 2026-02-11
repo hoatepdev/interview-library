@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import { useMemo } from "react";
+import { resolveLocale } from '@interview-library/shared/i18n';
 
 /**
  * LoginButton - renders OAuth login buttons (Google, GitHub)
@@ -12,7 +13,7 @@ export function LoginButton() {
   const { googleUrl, githubUrl } = useMemo(() => {
     // Extract locale from current path (e.g., /en or /vi)
     const pathLocale = window.location.pathname.split('/')[1];
-    const locale = ['en', 'vi'].includes(pathLocale) ? pathLocale : 'en';
+    const locale = resolveLocale(pathLocale);
 
     // Build backend OAuth URL with locale parameter
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api$', '') || 'http://localhost:9001';

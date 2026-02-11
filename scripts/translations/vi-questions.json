@@ -1,0 +1,144 @@
+{
+  "translations": [
+    {
+      "questionId": "029c0191-10f7-4a4c-8465-9fd347288cca",
+      "locale": "vi",
+      "title": "Giải thích Guards, Interceptors và Pipes trong NestJS",
+      "content": "So sánh Guards, Interceptors và Pipes. Khi nào nên dùng mỗi cái?",
+      "answer": "**Guards**: Xác định xem request có nên tiếp tục hay không (xác thực)\n\n```ts\n@Injectable()\nexport class AuthGuard implements CanActivate {\n  canActivate(context: ExecutionContext): boolean {\n    const request = context.switchToHttp().getRequest();\n    return !!request.user;\n  }\n}\n```\n\n**Interceptors**: Transform request/response trước/sau khi xử lý\n\n```ts\n@Injectable()\nexport class TransformInterceptor implements NestInterceptor {\n  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {\n    return next.handle().pipe(map(data => ({ data })));\n  }\n}\n```\n\n**Pipes**: Validate và transform input data\n\n```ts@Injectable()\nexport class ValidationPipe implements PipeTransform {\n  transform(value: any, metadata: ArgumentMetadata) {\n    return value;\n  }\n}\n```\n\n**Thứ tự thực hiện**: Guards → Pipes → Interceptors (request), Interceptors → Pipes (response)"
+    },
+    {
+      "questionId": "064c0098-d988-4c21-bd4a-e2380073a92d",
+      "locale": "vi",
+      "title": "Giải thích prototypal inheritance và prototype chain",
+      "content": "Prototypal inheritance trong JavaScript hoạt động như thế nào? Giải thích quá trình lookup trong prototype chain.",
+      "answer": "**Prototype Chain**: Cơ chế inheritance của JavaScript cho phép objects kế thừa properties từ các objects khác.\n\n**Prototype Chain Lookup**:\n```js\nconst parent = { name: 'Parent' };\nconst child = Object.create(parent);\nchild.ownProp = 'Child';\n\nconsole.log(child.ownProp);    // 'Child' (found on child)\nconsole.log(child.name);        // 'Parent' (walks up prototype chain)\nconsole.log(child.unknown);     // undefined (reached end of chain)\n```\n\n**Quá trình Lookup**:\n1. Kiểm tra properties của object\n2. Nếu không tìm thấy, kiểm tra `Object.getPrototypeOf(obj)`\n3. Lặp lại cho đến khi đến `null` (kết thúc chain)"
+    },
+    {
+      "questionId": "1a8d14c0-1f51-4b25-b67d-0acf0e9943d3",
+      "locale": "vi",
+      "title": "Giải thích TypeScript utility types: Pick, Omit, Partial, Required",
+      "content": "Giải thích các utility types của TypeScript: Pick, Omit, Partial và Required.",
+      "answer": "**Pick**: Chọn các keys cụ thể từ type\n\n```ts\ntype User = { id: number; name: string; email: string };\ntype UserPreview = Pick<User, 'id' | 'name'>; // { id: number; name: string }\n```\n\n**Omit**: Loại bỏ các keys cụ thể\n\n```ts\ntype UserPublic = Omit<User, 'email'>; // { id: number; name: string }\n```\n\n**Partial**: Làm cho tất cả properties trở thành optional\n\n```ts\nfunction updateUser(id: number, data: Partial<User>) {\n  // data có thể chứa bất kỳ property nào của User\n}\n```\n\n**Required**: Làm cho tất cả properties trở thành required\n\n```ts\ntype UserRequired = Required<Partial<User>>;\n```"
+    },
+    {
+      "questionId": "2b526f87-ceae-46ff-80ab-23bf0351295c",
+      "locale": "vi",
+      "title": "Discriminated unions trong TypeScript là gì?",
+      "content": "Giải thích discriminated unions trong TypeScript và cách sử dụng.",
+      "answer": "**Discriminated Union**: Type union có chung một property (discriminator) để phân biệt các type.\n\n```ts\ninterface Circle {\n  kind: 'circle';\n  radius: number;\n}\n\ninterface Square {\n  kind: 'square';\n  side: number;\n}\n\ntype Shape = Circle | Square;\n\nfunction area(shape: Shape): number {\n  switch (shape.kind) {\n    case 'circle': return Math.PI * shape.radius ** 2;\n    case 'square': return shape.side ** 2;\n  }\n}\n```\n\n**Lợi ích**:\n- Type narrowing tự động\n- Exhaustive checking\n- Code an toàn hơn"
+    },
+    {
+      "questionId": "3c21bb93-bf6b-4a00-8631-ca3b24c40654",
+      "locale": "vi",
+      "title": "Giải thích NestJS dependency injection và injection scopes",
+      "content": "Dependency injection trong NestJS hoạt động như thế nào? Giải thích các injection scopes khác nhau.",
+      "answer": "**Dependency Injection**: NestJS sử dụng DI để quản lý dependencies và tạo loosely coupled code.\n\n**Provider Registration**:\n```ts\n@Module({\n  providers: [AppService],\n})\n```\n\n**Injection Scopes**:\n\n1. **DEFAULT** (Singleton): Một instance cho toàn bộ app\n```ts\n@Injectable({ scope: Scope.DEFAULT })\n```\n\n2. **REQUEST**: Instance mới cho mỗi request\n```ts\n@Injectable({ scope: Scope.REQUEST })\n```\n\n3. **TRANSIENT**: Instance mới mỗi khi inject\n```ts\n@Injectable({ scope: Scope.TRANSIENT })\n```\n\n**Khi dùng scope nào**:\n- DEFAULT: Cho services, repositories (stateless)\n- REQUEST: Cho request-specific data (user, context)\n- TRANSIENT: Khi cần state isolation"
+    },
+    {
+      "questionId": "4cb9f514-e5bf-4f91-a491-0dd0886ac90a",
+      "locale": "vi",
+      "title": "Triển khai debounce và throttle từ đầu",
+      "content": "Viết implementation của debounce và throttle. Giải thích sự khác biệt và use cases cho mỗi cái.",
+      "answer": "**Debounce**: Delay execution cho đến sau khi ngừng input. Hữu ích cho search inputs, resize handlers.\n\n```js\nfunction debounce(fn, delay) {\n  let timeoutId;\n  return function(...args) {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => {\n      fn.apply(this, args);\n    }, delay);\n  };\n}\n```\n\n**Throttle**: Thực hiện tối đa một lần mỗi khoảng thời gian. Hữu ích cho scroll handlers, mousemove.\n\n```js\nfunction throttle(fn, limit) {\n  let inThrottle;\n  return function(...args) {\n    if (!inThrottle) {\n      fn.apply(this, args);\n      inThrottle = true;\n      setTimeout(() => inThrottle = false, limit);\n    }\n  };\n}\n```\n\n**Khác biệt chính**:\n- **Debounce**: Last call wins (chờ pause)\n- **Throttle**: First call wins (execute immediately)"
+    },
+    {
+      "questionId": "cde70000-6167-4988-991b-b731943c8d94",
+      "locale": "vi",
+      "title": "Giải thích closures và use cases thực tế",
+      "content": "Closures trong JavaScript là gì? Cho 3 use cases thực tế khi closures là cần thiết.",
+      "answer": "**Closure**: Function được kết hợp với lexical environment của nó. Cho phép function truy cập variables từ outer scope ngay cả khi outer function đã return.\n\n**Use Cases**:\n\n1. **Data Encapsulation/Privacy**:\n```js\nfunction createCounter() {\n  let count = 0; // private\n  return {\n    increment: () => ++count,\n    getCount: () => count\n  };\n}\n```\n\n2. **Function Factories**:\n```js\nfunction multiplier(factor) {\n  return function(num) {\n    return num * factor;\n  };\n}\nconst double = multiplier(2);\n```\n\n3. **Event Handlers**:\n```js\nfor (let i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 100); // 0, 1, 2\n}```"
+    },
+    {
+      "questionId": "e3ac0be3-824a-4de7-95c9-91b213556af2",
+      "locale": "vi",
+      "title": "Temporal Dead Zone (TDZ) là gì?",
+      "content": "Giải thích Temporal Dead Zone trong JavaScript. Khi nào TDZ xảy ra với let, const và var?",
+      "answer": "**TDZ**: Khoảng thời gian từ khi enter scope đến khi biến được khởi tạo. Chỉ áp dụng cho let và const.\n\n```js\n// TDZ starts here\nconsole.log(myVar);  // undefined (var được hoisted)\nconsole.log(myLet);  // ReferenceError (trong TDZ)\n\nlet myLet = 1;        // TDZ ends for myLet\nvar myVar = 3;\n```\n\n**Tại sao TDZ tồn tại**:\n1. Code dễ hiểu hơn (bắt lỗi sớm)\n2. Ngăn truy cập biến trước khi khai báo\n3. Đảm bảo let/const hoạt động predictable hơn var"
+    },
+    {
+      "questionId": "1aa801a1-c5de-4f8e-82ae-f0caf14a35f9",
+      "locale": "vi",
+      "title": "Giải thích PostgreSQL indexes và khi dùng B-tree, GIN, GiST",
+      "content": "Indexes trong PostgreSQL hoạt động như thế nào? Khi nào dùng B-tree, GIN, GiST?",
+      "answer": "**B-tree Index**: Default index, tốt cho equality và range queries\n\n```sql\nCREATE INDEX idx_email ON users(email);\n```\nDùng cho: `=`, `<`, `>`, `BETWEEN`, `ORDER BY`\n\n**GIN Index**: Tốt cho array và JSONB data\n\n```sql\nCREATE INDEX idx_tags ON articles USING GIN(tags);\n```\nDùng cho: `@>`, `?`, `?&`, `?|` trên arrays/JSONB\n\n**GiST Index**: Tốt cho geometric data và full-text search\n\n```sql\nCREATE INDEX idx_location ON places USING GiST(location);\n```\nDùng cho: `<<`, `>>`, `&&`, full-text search\n\n**Khi nào dùng index**:\n- Columns thường dùng trong WHERE, JOIN, ORDER BY\n- Large tables (small tables thường không cần)\n- Selective columns (nhiều distinct values)"
+    },
+    {
+      "questionId": "3dc2696b-d0de-44ce-b94f-a87c2d0ce794",
+      "locale": "vi",
+      "title": "Triển khai connection pool cho PostgreSQL trong Node.js",
+      "content": "Làm thế nào để implement connection pool cho PostgreSQL trong Node.js? Giải thích benefits và trade-offs.",
+      "answer": "**Connection Pool**: Tập hợp các reusable connections để tránh overhead của việc tạo mới connections.\n\n**Sử dụng pg library**:\n```js\nconst { Pool } = require('pg');\n\nconst pool = new Pool({\n  host: 'localhost',\n  database: 'mydb',\n  max: 20, // max connections\n  idleTimeoutMillis: 30000,\n  connectionTimeoutMillis: 2000,\n});\n\n// Query\nconst res = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);\n```\n\n**Benefits**:\n- Giảm latency (không tạo connection mỗi query)\n- Cải thiện throughput\n- Limit max connections để bảo vệ database\n\n**Trade-offs**:\n- Memory overhead (maintain idle connections)\n- Complexity trong tuning pool size\n- Potential connection exhaustion nếu misconfigured"
+    },
+    {
+      "questionId": "5ffa257a-f1f5-43ff-9881-f917480d392c",
+      "locale": "vi",
+      "title": "Giải thích generics với constraints và conditional types",
+      "content": "Giải thích TypeScript generics với constraints và conditional types.",
+      "answer": "**Generics với Constraints**:\n\n```ts\ninterface Lengthwise {\n  length: number;\n}\n\nfunction logLength<T extends Lengthwise>(arg: T): number {\n  return arg.length; // OK vì T có length\n}\n```\n\n**Conditional Types**:\n\n```ts\ntype NonNullable<T> = T extends null | undefined ? never : T;\n\n// Function return conditional type\nfunction processData<T>(data: T[]): T extends string ? string : number {\n  return data[0] as any;\n}\n```\n\n**Utility Conditional Types**:\n- `Extract<T, U>`: Extract từ T những assignable đến U\n- `Exclude<T, U>`: Loại bỏ từ T những assignable đến U\n- `ReturnType<T>`: Lấy return type của function"
+    },
+    {
+      "questionId": "820f7b59-f2c2-4947-ad85-22c8ecefb53c",
+      "locale": "vi",
+      "title": "Giải thích Node.js Event Loop phases",
+      "content": "Giải thích các phase của Node.js Event Loop và thứ tự thực hiện.",
+      "answer": "**Event Loop Phases** (thứ tự thực hiện):\n\n1. **Timers**: `setTimeout()`, `setInterval()`\n2. **Pending Callbacks**: I/O callbacks deferred\n3. **Idle/Prepare**: Internal use only\n4. **Poll**: Lấy new I/O events (blocking phase)\n5. **Check**: `setImmediate()` callbacks\n6. **Close Callbacks**: `socket.on('close', ...)`\n\n**Microtasks** (thực hiện sau mỗi phase):\n- `process.nextTick()` callback queue\n- Resolved Promises\n\n**Ví dụ**:\n```js\nconsole.log('1');\nsetTimeout(() => console.log('2'), 0);\nPromise.resolve().then(() => console.log('3'));\nprocess.nextTick(() => console.log('4'));\nconsole.log('5');\n\n// Output: 1, 5, 4, 3, 2\n```"
+    },
+    {
+      "questionId": "908e9ea0-9656-459d-a930-688a5aedf825",
+      "locale": "vi",
+      "title": "Giải thích async/await internals và error handling",
+      "content": "async/await hoạt động như thế nào dưới bề mặt? So sánh error handling patterns với Promises.",
+      "answer": "**Under the Hood**: `async` functions return Promises. `await` pauses execution cho đến khi Promise settles.\n\n**Error Handling Patterns**:\n\n1. **try/catch** (recommended):\n```js\nasync function fetch() {\n  try {\n    const data = await api.get();\n    return data;\n  } catch (error) {\n    return null;\n  }\n}\n```\n\n2. **catch() on Promise**:\n```js\nasync function fetch() {\n  const data = await api.get().catch(() => null);\n  return data;\n}\n```"
+    },
+    {
+      "questionId": "962802b8-a4f0-43ef-91d7-c35ee34c2b6e",
+      "locale": "vi",
+      "title": "Giải thích streams trong Node.js (Readable, Writable, Transform)",
+      "content": "Streams trong Node.js là gì? Giải thích Readable, Writable và Transform streams với ví dụ.",
+      "answer": "**Streams**: Xử lý data piece-by-piece thay vì load toàn bộ vào memory.\n\n**Readable Stream**:\n```js\nconst fs = require('fs');\nconst readStream = fs.createReadStream('large-file.txt');\n\nreadStream.on('data', (chunk) => {\n  console.log('Received chunk:', chunk.length);\n});\n```\n\n**Writable Stream**:\n```js\nconst writeStream = fs.createWriteStream('output.txt');\nreadStream.pipe(writeStream);\n```\n\n**Transform Stream**:\n```js\nconst { Transform } = require('stream');\n\nconst uppercase = new Transform({\n  transform(chunk, encoding, callback) {\n    callback(null, chunk.toString().toUpperCase());\n  }\n});\n\nreadStream.pipe(uppercase).pipe(writeStream);\n```"
+    },
+    {
+      "questionId": "9e36875b-1486-4b84-9b46-bf6733af1b6e",
+      "locale": "vi",
+      "title": "Tối ưu hóa slow queries trong PostgreSQL",
+      "content": "Làm thế nào để tối ưu hóa slow queries trong PostgreSQL? Cho ví dụ các kỹ thuật.",
+      "answer": "**Kỹ thuật tối ưu hóa**:\n\n1. **EXPLAIN ANALYZE**:\n```sql\nEXPLAIN ANALYZE SELECT * FROM orders WHERE user_id = 1;\n```\n\n2. **Add Indexes**:\n```sql\nCREATE INDEX idx_orders_user_id ON orders(user_id);\n```\n\n3. **Avoid SELECT ***:\n```sql\n-- Bad\nSELECT * FROM users;\n\n-- Good\nSELECT id, name FROM users;\n```\n\n4. **Use CTEs thay vì subqueries**:\n```sql\nWITH user_stats AS (\n  SELECT user_id, COUNT(*) as order_count\n  FROM orders\n  GROUP BY user_id\n)\nSELECT * FROM user_stats WHERE order_count > 10;\n```\n\n5. **Vacuum and Analyze**:\n```sql\nVACUUM ANALYZE orders;\n```"
+    },
+    {
+      "questionId": "c4854eda-b697-478b-ab7f-e6d12dcf1cda",
+      "locale": "vi",
+      "title": "Thiết kế URL Shortener service (kiểu bit.ly)",
+      "content": "Thiết kế một URL Shortener service như bit.ly. Giải thích architecture, database schema, và scaling considerations.",
+      "answer": "**Requirements**:\n- Generate short URLs từ long URLs\n- Redirect short URLs to original URLs\n- Handle high traffic\n\n**Architecture**:\n```\nClient → Load Balancer → API Servers → Database\n                           ↓\n                      Cache (Redis)\n```\n\n**Database Schema**:\n```sql\nCREATE TABLE urls (\n  id BIGSERIAL PRIMARY KEY,\n  code VARCHAR(10) UNIQUE NOT NULL,\n  original_url TEXT NOT NULL,\n  created_at TIMESTAMP DEFAULT NOW(),\n  expires_at TIMESTAMP\n);\n\nCREATE INDEX idx_code ON urls(code);\nCREATE INDEX idx_expires ON urls(expires_at);\n```\n\n**Short Code Generation**:\n```js\n// Base62 encoding\nfunction encode(id) {\n  return BigInt(id).toString(36);\n}\n```\n\n**Scaling**:\n- Database sharding by short code prefix\n- Redis cache cho popular URLs\n- CDN cho redirect endpoints"
+    },
+    {
+      "questionId": "cafd384e-bff6-4d27-9249-5c9a6c19e20e",
+      "locale": "vi",
+      "title": "Triển khai deep readonly utility type",
+      "content": "Làm thế nào để implement một deep readonly utility type trong TypeScript?",
+      "answer": "**Deep Readonly Utility Type**:\n\n```ts\ntype DeepReadOnly<T> = {\n  readonly [P in keyof T]: T[P] extends object\n    ? DeepReadOnly<T[P]>\n    : T[P];\n};\n\n// Usage\ntype User = {\n  id: number;\n  profile: {\n    name: string;\n    settings: {\n      theme: string;\n    };\n  };\n};\n\nconst user: DeepReadOnly<User> = {\n  id: 1,\n  profile: {\n    name: 'John',\n    settings: {\n      theme: 'dark'\n    }\n  }\n};\n\nuser.profile.name = 'Jane'; // Error!\n```\n\n**Built-in Readonly**:\n```ts\ntype DeepReadOnly<T> = {\n  readonly [P in keyof T]: DeepReadOnly<T[P]>;\n};\n```"
+    },
+    {
+      "questionId": "efbeb7aa-6093-4dd9-b5d7-9bc283291630",
+      "locale": "vi",
+      "title": "Giải thích MVCC và VACUUM trong PostgreSQL",
+      "content": "MVCC và VACUUM trong PostgreSQL hoạt động như thế nào? Tại sao chúng quan trọng?",
+      "answer": "**MVCC (Multi-Version Concurrency Control)**:\n- PostgreSQL giữ multiple versions của mỗi row\n- Readers không block writers và ngược lại\n- Mỗi transaction thấy snapshot của data tại thời điểm bắt đầu\n\n**How it works**:\n```sql\nBEGIN; -- Transaction starts\nSELECT * FROM users WHERE id = 1; -- Sees old version\n-- Another transaction updates...\nCOMMIT;\n```\n\n**VACUUM**:\n- Reclaims space từ dead tuples (rows không còn được sử dụng)\n- Updates statistics cho query planner\n- Prevents table bloat\n\n**Types**:\n1. **VACUUM**: Reclaims space, không lock table\n2. **VACUUM FULL**: Reclaims toàn bộ space, lock table\n3. **AUTOVACUUM**: Automatic vacuum daemon\n\n**Best Practices**:\n```sql\n-- Run manual vacuum\nVACUUM ANALYZE users;\n\n-- Configure autovacuum\nALTER TABLE users SET (autovacuum_vacuum_scale_factor = 0.1);\n```"
+    },
+    {
+      "questionId": "efeb875b-4849-4934-9670-4289f400558c",
+      "locale": "vi",
+      "title": "Giải thích memory leaks trong JavaScript và cách ngăn chặn",
+      "content": "Các nguyên nhân phổ biến của memory leaks trong JavaScript là gì? Làm thế nào để detect và fix?",
+      "answer": "**Common Memory Leaks**:\n\n1. **Accidental Global Variables**:\n```js\nfunction leak() {\n  leaked = 'I am global now'; // Creates window.leaked\n}\n// Fix: Use 'use strict' hoặc const/let\n```\n\n2. **Forgotten Timers**:\n```js\nconst data = fetchData();\nsetInterval(() => {\n  document.getElementById('update').innerHTML = data;\n}, 1000);\n// Fix: Clear timer khi unmount\n```\n\n3. **Closures**:\n```js\nfunction setup() {\n  const heavyData = new Array(1000000).fill('data');\n  return function() {\n    console.log('running'); // heavyData vẫn còn trong memory\n  };\n}\n```\n\n4. **Detached DOM Elements**:\n```js\nlet element = document.getElementById('button');\ndocument.body.removeChild(element);\n// element reference vẫn còn trong memory\n// Fix: Set reference to null\n```\n\n**Detection Tools**:\n- Chrome DevTools → Memory → Take heap snapshot\n- Look for \"Detached DOM nodes\""
+    },
+    {
+      "questionId": "f852b2d0-058a-4374-a200-d01a9585e19b",
+      "locale": "vi",
+      "title": "Thiết kế chat application (kiểu WhatsApp)",
+      "content": "Thiết kế một chat application như WhatsApp. Giải thích architecture, protocols, và scaling considerations.",
+      "answer": "**Requirements**:\n- Real-time messaging\n- Online/offline status\n- Media sharing\n- Group chats\n- Message persistence\n\n**Architecture**:\n```\nClient → Load Balancer → API Servers\n              ↓              ↓\n         WebSocket Server    Database\n              ↓              ↓\n           Cache (Redis)   S3 (Media)\n```\n\n**Protocols**:\n- **WebSocket**: Real-time messaging\n- **HTTP REST**: Authentication, profile\n- **MQTT**: Push notifications\n\n**Database Schema**:\n```sql\n-- Messages\nCREATE TABLE messages (\n  id BIGSERIAL PRIMARY KEY,\n  conversation_id BIGINT NOT NULL,\n  sender_id BIGINT NOT NULL,\n  content TEXT,\n  media_url TEXT,\n  created_at TIMESTAMP DEFAULT NOW()\n);\n\n-- Indexes\nCREATE INDEX idx_conversation ON messages(conversation_id, created_at);\n```\n\n**Scaling**:\n- Sharding conversations by user_id\n- CDN for media delivery\n- Message queues for offline delivery\n- Read replicas for message history"
+    }
+  ]
+}

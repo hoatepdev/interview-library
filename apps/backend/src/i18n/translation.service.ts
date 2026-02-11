@@ -3,22 +3,7 @@ import { Topic } from '../database/entities/topic.entity';
 import { Question } from '../database/entities/question.entity';
 import { TopicTranslation } from '../database/entities/topic-translation.entity';
 import { QuestionTranslation } from '../database/entities/question-translation.entity';
-
-export type Locale = 'en' | 'vi';
-
-export const DEFAULT_LOCALE: Locale = 'en';
-export const SUPPORTED_LOCALES: Locale[] = ['en', 'vi'];
-
-/**
- * Translation response with metadata
- */
-export interface TranslationResponse<T = any> {
-  id: string;
-  locale: Locale;
-  isFallback: boolean | Record<string, boolean>;
-  availableLocales: Locale[];
-  data: T;
-}
+import { DEFAULT_LOCALE, LOCALES, isValidLocale, type Locale, type TranslationResponse } from '@interview-library/shared/i18n';
 
 /**
  * Service for handling translations with fallback logic
@@ -29,7 +14,7 @@ export class TranslationService {
    * Check if a locale is supported
    */
   isLocaleSupported(locale: string): locale is Locale {
-    return SUPPORTED_LOCALES.includes(locale as Locale);
+    return isValidLocale(locale);
   }
 
   /**

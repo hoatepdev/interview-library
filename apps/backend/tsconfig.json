@@ -18,6 +18,10 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@interview-library/shared": ["../../packages/shared/dist"],
+      "@interview-library/shared/*": ["../../packages/shared/dist/*", "../../packages/shared/dist/i18n/*"]
+    }
   }
 }

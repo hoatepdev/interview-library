@@ -65,7 +65,7 @@ export function PracticeStatsComponent() {
             <p className="text-sm text-gray-500 dark:text-gray-400">{tAuth("loginRequiredDesc")}</p>
           </div>
           <button
-            onClick={openDialog}
+            onClick={() => openDialog()}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
           >
             {tAuth("login")}

@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { Topic } from '../database/entities/topic.entity';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
-import { TranslationService, Locale } from '../i18n/translation.service';
+import { type Locale } from '@interview-library/shared/i18n';
+import { TranslationService } from '../i18n/translation.service';
 
 @Injectable()
 export class TopicsService {

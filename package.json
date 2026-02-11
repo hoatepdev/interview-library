@@ -14,10 +14,13 @@
     "db:migrate": "pnpm --filter backend migration:run",
     "db:migrate:revert": "pnpm --filter backend migration:revert",
     "build": "pnpm --filter frontend build && pnpm --filter backend build",
-    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules"
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
+    "validate:i18n": "node scripts/validate-translations.js",
+    "import:translations": "node scripts/import-translations.js"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "tsx": "^4.21.0"
   },
   "engines": {
     "node": ">=20.0.0",

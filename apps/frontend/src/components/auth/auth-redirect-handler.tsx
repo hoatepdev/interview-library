@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { getRedirectUrl } from '@/lib/redirect';
+import { resolveLocale } from '@interview-library/shared/i18n';
 
 /**
  * Handles redirect after OAuth login.
@@ -26,7 +27,7 @@ export function AuthRedirectHandler() {
 
       // Extract current locale from pathname (e.g., /en or /vi)
       const pathLocale = pathname.split('/')[1];
-      const locale = ['en', 'vi'].includes(pathLocale) ? pathLocale : 'en';
+      const locale = resolveLocale(pathLocale);
 
       if (redirectUrl) {
         router.replace(redirectUrl);
