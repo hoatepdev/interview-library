@@ -15,7 +15,8 @@
     "close": "Close",
     "actions": "Actions",
     "viewAll": "View all",
-    "noData": "No data found"
+    "noData": "No data found",
+    "notFound": "Not Found"
   },
   "nav": {
     "home": "Home",
@@ -48,6 +49,9 @@
     "viewQuestions": "View Questions"
   },
   "questions": {
+    "edit": "Edit Question",
+    "delete": "Delete Question",
+    "actions": "Actions",
     "title": "Questions",
     "subtitle": "Browse and manage interview questions.",
     "addQuestion": "Add Question",
@@ -70,6 +74,17 @@
     "deleteConfirm": "Are you sure you want to delete this question?",
     "deleteQuestionConfirm": "Are you sure you want to delete this question? This action cannot be undone.",
     "deleteQuestion": "Delete Question",
+    "questionDetails": "Question Details",
+    "questionNotFound": "Question not found",
+    "addFavorite": "Add to favorites",
+    "removeFavorite": "Remove from favorites",
+    "practiceCount": "Practice Count",
+    "lastPracticed": "Last Practiced",
+    "createdAt": "Created At",
+    "startPractice": "Start Practice",
+    "preview": "Preview",
+    "information": "Information",
+    "answer": "Answer",
     "levels": {
       "junior": "Junior",
       "middle": "Middle",
@@ -135,6 +150,9 @@
     "updateQuestion": "Update Question",
     "creating": "Adding...",
     "updating": "Updating...",
+    "saving": "Saving...",
+    "save": "Save",
+    "createNewQuestion": "Add New Question",
     "createTopic": "Create Topic",
     "updateTopic": "Update Topic",
     "icons": {

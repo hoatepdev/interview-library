@@ -78,7 +78,7 @@ export class PracticeService {
       const dueQuery = this.questionRepository
         .createQueryBuilder('question')
         .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
-        .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now })
+        .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
         .leftJoinAndSelect('question.topic', 'topic')
         .leftJoinAndSelect('question.translations', 'translations');
 
@@ -139,7 +139,7 @@ export class PracticeService {
     return await this.questionRepository
       .createQueryBuilder('question')
       .innerJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
-      .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now })
+      .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
       .getCount();
   }
 
@@ -244,7 +244,7 @@ export class PracticeService {
       const rawQuestions = await this.questionRepository
         .createQueryBuilder('question')
         .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
-        .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now })
+        .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
         .leftJoinAndSelect('question.topic', 'topic')
         .leftJoinAndSelect('question.translations', 'translations')
         .limit(limit)
@@ -381,7 +381,7 @@ export class PracticeService {
       questionsDueForReview = await this.questionRepository
         .createQueryBuilder('question')
         .innerJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
-        .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now: new Date() })
+        .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now: new Date() })
         .getCount();
     } else {
       questionsDueForReview = await this.questionRepository

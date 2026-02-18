@@ -11,13 +11,29 @@ import {
   getTopics,
   Topic,
 } from "@/lib/api";
+import { QuestionLevel } from "@/types";
 import { QuestionList } from "@/components/questions/QuestionList";
-import { Search, Plus, Filter, Star, X, Clock } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Filter,
+  Star,
+  X,
+  Clock,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { QuestionForm } from "@/components/questions/QuestionForm";
 import { Button } from "@/components/ui/button";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 
@@ -38,14 +54,16 @@ const FILTER_PRESETS: Record<
 function QuestionsContent() {
   const t = useTranslations("questions");
   const tNotif = useTranslations("notifications");
-
+  const tCommon = useTranslations("common");
   const searchParams = useSearchParams();
   const router = useRouter();
   const { requireAuth } = useRequireAuth();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [activePreset, setActivePreset] = useState<FilterPreset>("all");
   const [dueCount, setDueCount] = useState<number>(0);
 
@@ -227,6 +245,34 @@ function QuestionsContent() {
     currentFavorites ||
     currentSearch;
 
+  const handleCreateQuestion = async (data: {
+    title: string;
+    content: string;
+    answer: string;
+    topicId: string;
+    level: string;
+  }) => {
+    setIsSubmitting(true);
+    try {
+      await questionsApi.create({
+        title: data.title,
+        content: data.content,
+        answer: data.answer || undefined,
+        topicId: data.topicId,
+        level: data.level as QuestionLevel,
+      });
+
+      setIsDialogOpen(false);
+      await fetchQuestions();
+      toast.success(tNotif("questionCreated"));
+    } catch (error) {
+      console.error("Failed to create question:", error);
+      toast.error(tNotif("error"));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleDeleteQuestion = async (id: string) => {
     try {
       await questionsApi.delete(id);
@@ -250,9 +296,14 @@ function QuestionsContent() {
     });
   };
 
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+
+  // Auth wrappers for protected actions
   const handleCreateQuestionClick = () => {
     requireAuth(() => {
-      router.push("/questions/new");
+      setIsDialogOpen(true);
     });
   };
 
@@ -273,7 +324,7 @@ function QuestionsContent() {
     <div>
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
         <div>
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-liner-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
             {t("title")}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg">
@@ -281,12 +332,30 @@ function QuestionsContent() {
           </p>
         </div>
 
-        <Button className="space-x-2" onClick={handleCreateQuestionClick}>
-          <Plus className="w-5 h-5" />
-          <span>{t("addQuestion")}</span>
-        </Button>
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={(open: boolean) =>
+            requireAuth(() => setIsDialogOpen(open))
+          }
+        >
+          <DialogTrigger asChild>
+            <Button className="space-x-2" onClick={handleCreateQuestionClick}>
+              <Plus className="w-5 h-5" />
+              <span>{t("addQuestion")}</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="w-[95%] max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>{t("addNewQuestion")}</DialogTitle>
+            </DialogHeader>
+            <QuestionForm
+              onCancel={handleDialogClose}
+              onSubmit={handleCreateQuestion}
+              isSubmitting={isSubmitting}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
-
       <div className="sticky top-4 z-40 mb-8 p-2 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 shadow-xl transition-all duration-300">
         <div className="flex flex-col md:flex-row gap-2 mb-4">
           <div className="relative flex-1">
@@ -311,10 +380,10 @@ function QuestionsContent() {
           </div>
           <div className="flex items-center gap-2 w-full md:w-auto md:contents">
             <div className="flex-1 md:flex-none flex items-center gap-1 overflow-x-auto pb-2 md:pb-0 no-scrollbar md:no-scroll-reset w-full md:w-auto -mx-2 px-2 md:mx-0 md:px-0">
-              <div className="hidden md:block h-8 w-px bg-slate-200 dark:bg-white/10 mx-2 shrink-0" />
+              <div className="hidden md:block h-8 w-px bg-slate-200 dark:bg-white/10 mx-2 flex-shrink-0" />
               <button
                 onClick={() => applyPreset("all")}
-                className={`shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
                   activePreset === "all" && !hasActiveFilters
                     ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md transform scale-105"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5"
@@ -324,7 +393,7 @@ function QuestionsContent() {
               </button>
               <button
                 onClick={() => applyPreset("favorites")}
-                className={`shrink-0 p-2 rounded-xl transition-all duration-200 cursor-pointer ${
+                className={`flex-shrink-0 p-2 rounded-xl transition-all duration-200 cursor-pointer ${
                   activePreset === "favorites"
                     ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 shadow-sm"
                     : "text-slate-400 hover:text-yellow-500 hover:bg-yellow-500/10"
@@ -337,7 +406,7 @@ function QuestionsContent() {
               </button>
               <button
                 onClick={() => applyPreset("due")}
-                className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
                   activePreset === "due"
                     ? "bg-orange-500 text-white shadow-md transform scale-105"
                     : dueCount > 0
@@ -364,7 +433,7 @@ function QuestionsContent() {
             <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <PopoverTrigger asChild>
                 <button
-                  className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200/50 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors relative cursor-pointer ${activeFilterCount > 0 ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" : "text-slate-500 dark:text-slate-400"}`}
+                  className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200/50 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors relative cursor-pointer ${activeFilterCount > 0 ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" : "text-slate-500 dark:text-slate-400"}`}
                 >
                   <Filter className="w-5 h-5" />
                   {activeFilterCount > 0 && (

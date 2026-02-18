@@ -23,7 +23,9 @@
       "Bash(PGPASSWORD=postgres psql:*)",
       "Bash(curl:*)",
       "Bash(pnpm add:*)",
-      "Bash(pnpm import:translations:*)"
+      "Bash(pnpm import:translations:*)",
+      "Bash(npm run start:dev:*)",
+      "Bash(pkill:*)"
     ]
   }
 }

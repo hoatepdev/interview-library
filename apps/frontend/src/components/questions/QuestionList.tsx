@@ -3,6 +3,7 @@ import { Pencil, Trash2, Star, LayoutGrid, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 
 interface QuestionListProps {
@@ -21,8 +22,13 @@ export function QuestionList({
   const t = useTranslations("questions");
   const tCommon = useTranslations("common");
   const { requireAuth } = useRequireAuth();
+  const router = useRouter();
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleCardClick = (questionId: string) => {
+    router.push(`/questions/${questionId}`);
+  };
 
   if (questions.length === 0) {
     return (
@@ -46,7 +52,8 @@ export function QuestionList({
         {questions.map((question) => (
           <div
             key={question.id}
-            className="group relative flex flex-col bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl p-6 rounded-2xl border border-slate-200/60 dark:border-white/5 hover:border-blue-500/30 dark:hover:border-blue-400/30 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 hover:-translate-y-1"
+            onClick={() => handleCardClick(question.id)}
+            className="group relative flex flex-col bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl p-6 rounded-2xl border border-slate-200/60 dark:border-white/5 hover:border-blue-500/30 dark:hover:border-blue-400/30 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
           >
             {/* Header & Badges */}
             <div className="flex justify-between items-start mb-4">

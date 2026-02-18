@@ -15,7 +15,8 @@
     "close": "Đóng",
     "actions": "Hành động",
     "viewAll": "Xem tất cả",
-    "noData": "Không tìm thấy dữ liệu"
+    "noData": "Không tìm thấy dữ liệu",
+    "notFound": "Không tìm thấy"
   },
   "nav": {
     "home": "Trang chủ",
@@ -48,6 +49,9 @@
     "viewQuestions": "Xem Câu hỏi"
   },
   "questions": {
+    "edit": "Sửa Câu hỏi",
+    "delete": "Xóa Câu hỏi",
+    "actions": "Hành động",
     "title": "Câu hỏi",
     "subtitle": "Duyệt và quản lý câu hỏi phỏng vấn.",
     "addQuestion": "Thêm Câu hỏi",
@@ -70,6 +74,17 @@
     "deleteConfirm": "Bạn có chắc chắn muốn xóa câu hỏi này?",
     "deleteQuestionConfirm": "Bạn có chắc chắn muốn xóa câu hỏi này? Hành động này không thể hoàn tác.",
     "deleteQuestion": "Xóa Câu hỏi",
+    "questionDetails": "Chi tiết Câu hỏi",
+    "questionNotFound": "Không tìm thấy câu hỏi",
+    "addFavorite": "Thêm vào yêu thích",
+    "removeFavorite": "Xóa khỏi yêu thích",
+    "practiceCount": "Số lần luyện",
+    "lastPracticed": "Lần cuối luyện",
+    "createdAt": "Ngày tạo",
+    "startPractice": "Bắt đầu Luyện",
+    "preview": "Xem trước",
+    "information": "Thông tin",
+    "answer": "Đáp án",
     "levels": {
       "junior": "Junior",
       "middle": "Middle",
@@ -135,6 +150,9 @@
     "updateQuestion": "Cập Nhật Câu hỏi",
     "creating": "Đang thêm...",
     "updating": "Đang cập nhật...",
+    "saving": "Đang lưu...",
+    "save": "Lưu",
+    "createNewQuestion": "Thêm Câu hỏi Mới",
     "createTopic": "Tạo Chủ đề",
     "updateTopic": "Cập Nhật Chủ đề",
     "icons": {
