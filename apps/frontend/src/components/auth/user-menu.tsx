@@ -13,10 +13,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { LogOut, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export function UserMenu() {
   const { user, refetch } = useAuth();
   const router = useRouter();
+  const t = useTranslations("auth");
+  const tCommon = useTranslations("common");
 
   const handleLogout = async () => {
     try {
@@ -41,19 +44,19 @@ export function UserMenu() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name || 'User'}</p>
+            <p className="text-sm font-medium leading-none">{user.name || tCommon('userDefault')}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push('/settings')}>
           <User className="mr-2 h-4 w-4" />
-          Settings
+          {t('settingsMenuItem')}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
-          Log out
+          {t('logoutMenuItem')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

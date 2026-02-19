@@ -16,7 +16,10 @@
     "actions": "Actions",
     "viewAll": "View all",
     "noData": "No data found",
-    "notFound": "Not Found"
+    "notFound": "Not Found",
+    "bulletSeparator": " • ",
+    "userDefault": "User",
+    "total": "total"
   },
   "nav": {
     "home": "Home",
@@ -33,7 +36,8 @@
     "mastered": "Mastered",
     "practiceTime": "Practice Time",
     "recentActivity": "Recent Activity",
-    "hours": "h"
+    "hours": "h",
+    "timeFormatWithHours": "{hours}{unit}"
   },
   "topics": {
     "title": "Topics",
@@ -46,7 +50,8 @@
     "deleteConfirm": "Are you sure you want to delete \"{name}\"? This will also delete all associated questions.",
     "deleteTopicConfirm": "Are you sure you want to delete this topic? This action cannot be undone.",
     "deleteTopic": "Delete Topic",
-    "viewQuestions": "View Questions"
+    "viewQuestions": "View Questions",
+    "noDescriptionAvailable": "No description available."
   },
   "questions": {
     "edit": "Edit Question",
@@ -85,6 +90,16 @@
     "preview": "Preview",
     "information": "Information",
     "answer": "Answer",
+    "uncategorized": "Uncategorized",
+    "practicedCount": "Practiced {count}x",
+    "difficultyLabel": "Difficulty:",
+    "dueBadge": "Due",
+    "tomorrowLabel": "Tomorrow",
+    "daysUntilFormat": "{n}d",
+    "allQuestionsButton": "All Questions",
+    "dueForReviewTooltip": "Due for review",
+    "dueButtonLabel": "Due",
+    "previewSection": "Preview",
     "levels": {
       "junior": "Junior",
       "middle": "Middle",
@@ -114,6 +129,16 @@
     "dueForReviewDesc": "Questions scheduled for review based on your performance.",
     "due": "due",
     "viewAll": "View all",
+    "failedToLoadQuestion": "Failed to load question.",
+    "modeSmartLabel": "Smart",
+    "modeRandomLabel": "Random",
+    "dueForReviewBadge": "Due for review",
+    "showAnswerButton": "Show Answer",
+    "answerRevealedLabel": "Answer Revealed",
+    "noAnswerProvided": "No answer provided for this question.",
+    "timeFormatMinutes": "{minutes}m",
+    "timeFormatHoursMinutes": "{hours}h {mins}m",
+    "timeFormatHours": "{hours}h",
     "statuses": {
       "new": "New",
       "learning": "Learning",
@@ -217,7 +242,10 @@
     "signInDesc": "Sign in to access your interview library and sync your progress.",
     "agreement": "By signing in, you agree to our",
     "terms": "Terms",
-    "privacy": "Privacy Policy"
+    "privacy": "Privacy Policy",
+    "agreementConjunction": " and ",
+    "settingsMenuItem": "Settings",
+    "logoutMenuItem": "Log out"
   },
   "notFound": {
     "title": "404",

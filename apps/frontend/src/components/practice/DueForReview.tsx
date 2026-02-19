@@ -12,6 +12,7 @@ import { DueQuestion } from "@/types";
 export function DueForReview() {
   const t = useTranslations("practice");
   const tAuth = useTranslations("auth");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const { openDialog } = useLoginDialog();
@@ -116,7 +117,7 @@ export function DueForReview() {
                 {t("dueForReview")}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-mono">
-                {dueCount} {t("due")} • {totalCount} total
+                {dueCount} {t("due")}{tCommon("bulletSeparator")}{totalCount} {tCommon("total")}
               </p>
            </div>
         </div>

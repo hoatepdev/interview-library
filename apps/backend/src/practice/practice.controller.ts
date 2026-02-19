@@ -36,9 +36,10 @@ export class PracticeController {
   }
 
   @Get("due-count")
-  getDueQuestionsCount(@Req() req: AuthenticatedRequest) {
+  async getDueQuestionsCount(@Req() req: AuthenticatedRequest) {
     const userId = req.user?.id;
-    return this.practiceService.getDueQuestionsCount(userId);
+    const count = await this.practiceService.getDueQuestionsCount(userId);
+    return { count };
   }
 
   @Get("due")

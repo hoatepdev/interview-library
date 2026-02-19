@@ -16,7 +16,10 @@
     "actions": "Hành động",
     "viewAll": "Xem tất cả",
     "noData": "Không tìm thấy dữ liệu",
-    "notFound": "Không tìm thấy"
+    "notFound": "Không tìm thấy",
+    "bulletSeparator": " • ",
+    "userDefault": "Người dùng",
+    "total": "tổng"
   },
   "nav": {
     "home": "Trang chủ",
@@ -33,7 +36,8 @@
     "mastered": "Đã thành thạo",
     "practiceTime": "Thời gian luyện tập",
     "recentActivity": "Hoạt động gần đây",
-    "hours": "giờ"
+    "hours": "giờ",
+    "timeFormatWithHours": "{hours}{unit}"
   },
   "topics": {
     "title": "Chủ đề",
@@ -46,7 +50,8 @@
     "deleteConfirm": "Bạn có chắc chắn muốn xóa \"{name}\"? Điều này sẽ xóa cả tất cả câu hỏi liên quan.",
     "deleteTopicConfirm": "Bạn có chắc chắn muốn xóa chủ đề này? Hành động này không thể hoàn tác.",
     "deleteTopic": "Xóa Chủ đề",
-    "viewQuestions": "Xem Câu hỏi"
+    "viewQuestions": "Xem Câu hỏi",
+    "noDescriptionAvailable": "Không có mô tả."
   },
   "questions": {
     "edit": "Sửa Câu hỏi",
@@ -85,6 +90,16 @@
     "preview": "Xem trước",
     "information": "Thông tin",
     "answer": "Đáp án",
+    "uncategorized": "Chưa phân loại",
+    "practicedCount": "Đã luyện {count} lần",
+    "difficultyLabel": "Độ khó:",
+    "dueBadge": "Đến hạn",
+    "tomorrowLabel": "Mai",
+    "daysUntilFormat": "{n} ngày",
+    "allQuestionsButton": "Tất cả câu hỏi",
+    "dueForReviewTooltip": "Cần ôn tập",
+    "dueButtonLabel": "Đến hạn",
+    "previewSection": "Xem trước",
     "levels": {
       "junior": "Junior",
       "middle": "Middle",
@@ -114,6 +129,16 @@
     "dueForReviewDesc": "Các câu hỏi được lên lịch ôn tập dựa trên hiệu suất của bạn.",
     "due": "đến hạn",
     "viewAll": "Xem tất cả",
+    "failedToLoadQuestion": "Không thể tải câu hỏi.",
+    "modeSmartLabel": "Thông minh",
+    "modeRandomLabel": "Ngẫu nhiên",
+    "dueForReviewBadge": "Cần ôn tập",
+    "showAnswerButton": "Hiện đáp án",
+    "answerRevealedLabel": "Đã hiện đáp án",
+    "noAnswerProvided": "Không có đáp án cho câu hỏi này.",
+    "timeFormatMinutes": "{minutes} phút",
+    "timeFormatHoursMinutes": "{hours} giờ {mins} phút",
+    "timeFormatHours": "{hours} giờ",
     "statuses": {
       "new": "Mới",
       "learning": "Đang học",
@@ -217,7 +242,10 @@
     "signInDesc": "Đăng nhập để truy cập thư viện phỏng vấn và đồng bộ tiến độ.",
     "agreement": "Bằng cách đăng nhập, bạn đồng ý với",
     "terms": "Điều khoản",
-    "privacy": "Chính sách bảo mật"
+    "privacy": "Chính sách bảo mật",
+    "agreementConjunction": " và ",
+    "settingsMenuItem": "Cài đặt",
+    "logoutMenuItem": "Đăng xuất"
   },
   "notFound": {
     "title": "404",

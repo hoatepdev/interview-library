@@ -23,7 +23,10 @@ export function PracticeSession() {
   const [isRevealed, setIsRevealed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [sessionId] = useState(() => Date.now()); // Track session start time
-  const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
+
+  const [questionStartTime, setQuestionStartTime] = useState<number>(
+    Date.now(),
+  );
   const [practiceMode, setPracticeMode] = useState<PracticeMode>("smart");
   const [dueCount, setDueCount] = useState<number>(0);
   const { requireAuth } = useRequireAuth();
@@ -41,22 +44,26 @@ export function PracticeSession() {
     loadDueCount();
   }, []);
 
-  const loadQuestion = useCallback(async (excludeQuestionId?: string) => {
-    setIsLoading(true);
-    setIsRevealed(false);
-    setQuestionStartTime(Date.now());
-    try {
-      // Use smart practice for authenticated users, random for guests
-      const q = practiceMode === "smart"
-        ? await practiceApi.getNextQuestion({ excludeQuestionId })
-        : await practiceApi.getRandomQuestion({ excludeQuestionId });
-      setQuestion(q);
-    } catch (error) {
-      console.error("Failed to load question", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [practiceMode]);
+  const loadQuestion = useCallback(
+    async (excludeQuestionId?: string) => {
+      setIsLoading(true);
+      setIsRevealed(false);
+      setQuestionStartTime(Date.now());
+      try {
+        // Use smart practice for authenticated users, random for guests
+        const q =
+          practiceMode === "smart"
+            ? await practiceApi.getNextQuestion({ excludeQuestionId })
+            : await practiceApi.getRandomQuestion({ excludeQuestionId });
+        setQuestion(q);
+      } catch (error) {
+        console.error("Failed to load question", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [practiceMode],
+  );
 
   useEffect(() => {
     loadQuestion();
@@ -65,7 +72,9 @@ export function PracticeSession() {
   const handleRate = async (rating: SelfRating) => {
     if (!question) return;
 
-    const timeSpentSeconds = Math.round((Date.now() - questionStartTime) / 1000);
+    const timeSpentSeconds = Math.round(
+      (Date.now() - questionStartTime) / 1000,
+    );
 
     requireAuth(async () => {
       try {
@@ -97,6 +106,12 @@ export function PracticeSession() {
     loadQuestion(question?.id);
   };
 
+  const handleReveal = () => {
+    requireAuth(() => {
+      setIsRevealed(true);
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
@@ -106,7 +121,11 @@ export function PracticeSession() {
   }
 
   if (!question) {
-    return <div className="text-center p-12 text-gray-900 dark:text-white">Failed to load question.</div>;
+    return (
+      <div className="text-center p-12 text-gray-900 dark:text-white">
+        {t("failedToLoadQuestion")}
+      </div>
+    );
   }
 
   return (
@@ -123,13 +142,15 @@ export function PracticeSession() {
             }`}
           >
             <Sparkles className="w-4 h-4" />
-            <span>Smart</span>
+            <span>{t("modeSmartLabel")}</span>
             {dueCount > 0 && (
-              <span className={`ml-1 px-1.5 py-0.5 rounded text-xs ${
-                practiceMode === "smart"
-                  ? "bg-blue-600 text-white"
-                  : "bg-orange-500 text-white"
-              }`}>
+              <span
+                className={`ml-1 px-1.5 py-0.5 rounded text-xs ${
+                  practiceMode === "smart"
+                    ? "bg-blue-600 text-white"
+                    : "bg-orange-500 text-white"
+                }`}
+              >
                 {dueCount}
               </span>
             )}
@@ -143,7 +164,7 @@ export function PracticeSession() {
             }`}
           >
             <Shuffle className="w-4 h-4" />
-            <span>Random</span>
+            <span>{t("modeRandomLabel")}</span>
           </button>
         </div>
 
@@ -151,7 +172,7 @@ export function PracticeSession() {
         {question.isPrioritized && practiceMode === "smart" && (
           <div className="self-start sm:self-auto flex items-center gap-1.5 text-xs font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-full">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Due for review</span>
+            <span>{t("dueForReviewBadge")}</span>
           </div>
         )}
       </div>
@@ -163,14 +184,14 @@ export function PracticeSession() {
           <AnswerReveal
             answer={question.answer}
             isRevealed={isRevealed}
-            onReveal={() => setIsRevealed(true)}
+            onReveal={handleReveal}
           />
         ) : (
           <div className="space-y-8 fade-in">
-             <AnswerReveal
+            <AnswerReveal
               answer={question.answer}
               isRevealed={isRevealed}
-              onReveal={() => setIsRevealed(true)}
+              onReveal={handleReveal}
             />
             <SelfRatingComponent onRate={handleRate} />
           </div>

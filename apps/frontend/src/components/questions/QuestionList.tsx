@@ -97,10 +97,10 @@ export function QuestionList({
                   >
                     <Clock className="w-3 h-3" />
                     {question.dueStatus.isDue
-                      ? "Due"
+                      ? t("dueBadge")
                       : question.dueStatus.daysUntil === 1
-                        ? "Tomorrow"
-                        : `${question.dueStatus.daysUntil}d`}
+                        ? t("tomorrowLabel")
+                        : t("daysUntilFormat", { n: question.dueStatus.daysUntil || 0 })}
                   </span>
                 )}
               </div>

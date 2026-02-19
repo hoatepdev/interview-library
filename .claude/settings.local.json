@@ -25,7 +25,13 @@
       "Bash(pnpm add:*)",
       "Bash(pnpm import:translations:*)",
       "Bash(npm run start:dev:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run typeorm:*)",
+      "Bash(psql:*)",
+      "Bash(grep:*)",
+      "Bash(npm run migration:run:*)",
+      "Bash(pnpm validate:i18n:*)"
     ]
   }
 }

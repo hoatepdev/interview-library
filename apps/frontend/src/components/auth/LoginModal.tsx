@@ -74,7 +74,7 @@ export function LoginModal({ open: controlledOpen, onOpenChange: controlledOnOpe
               <p className="text-[11px] text-slate-400 dark:text-slate-500">
                 {t('agreement')}{' '}
                 <a href="#" className="hover:text-blue-500 transition-colors">{t('terms')}</a>
-                {' '}and{' '}
+                {t('agreementConjunction')}
                 <a href="#" className="hover:text-blue-500 transition-colors">{t('privacy')}</a>
               </p>
             </div>

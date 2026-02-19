@@ -136,7 +136,7 @@ export function TopicCard({ topic, onEdit, onDelete }: TopicCardProps) {
         </h3>
 
         <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 flex-1 line-clamp-3 leading-relaxed">
-          {topic.description || "No description available."}
+          {topic.description || t("noDescriptionAvailable")}
         </p>
 
         <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
