@@ -139,6 +139,11 @@
     "timeFormatMinutes": "{minutes}m",
     "timeFormatHoursMinutes": "{hours}h {mins}m",
     "timeFormatHours": "{hours}h",
+    "notifications": "Notifications",
+    "questionsDueForReview": "questions due for review",
+    "noNotifications": "No new notifications",
+    "viewAllDue": "View all due questions",
+    "allCaughtUp": "You're all caught up! No questions due for review.",
     "statuses": {
       "new": "New",
       "learning": "Learning",

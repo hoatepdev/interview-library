@@ -1,9 +1,10 @@
 "use client";
 
-import { Bell, LogIn } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { ThemeToggle } from "../ui/theme-toggle";
 import { LanguageToggle } from "../ui/language-toggle";
 import { UserMenu } from "@/components/auth/user-menu";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useAuth } from "@/hooks/use-auth";
 import { useLoginDialog } from "@/contexts/login-dialog-context";
 import { useTranslations } from "next-intl";
@@ -101,9 +102,7 @@ export function Header() {
           <LanguageToggle />
           <ThemeToggle />
         </div>
-        {user && <button className="flex items-center rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white transition-colors cursor-pointer">
-          <Bell className="h-5 w-5" />
-        </button>}
+        <NotificationBell />
         <div className="w-10 md:w-auto">
           {loading ? (
             <></>
@@ -119,7 +118,7 @@ export function Header() {
             </button>
           )}
         </div>
-          
+
       </div>
     </header>
   );

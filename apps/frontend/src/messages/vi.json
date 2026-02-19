@@ -139,6 +139,11 @@
     "timeFormatMinutes": "{minutes} phút",
     "timeFormatHoursMinutes": "{hours} giờ {mins} phút",
     "timeFormatHours": "{hours} giờ",
+    "notifications": "Thông báo",
+    "questionsDueForReview": "câu hỏi cần ôn tập",
+    "noNotifications": "Không có thông báo mới",
+    "viewAllDue": "Xem tất cả câu hỏi cần ôn",
+    "allCaughtUp": "Bạn đã hoàn thành hết! Không có câu hỏi nào cần ôn tập.",
     "statuses": {
       "new": "Mới",
       "learning": "Đang học",
