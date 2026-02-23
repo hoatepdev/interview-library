@@ -26,7 +26,11 @@ export const routing = defineRouting({
       vi: '/luyen-tap'
     },
     '/settings': '/settings',
-    '/history': '/history'
+    '/history': '/history',
+    '/analytics': {
+      en: '/analytics',
+      vi: '/phan-tich'
+    }
   }
 });
 

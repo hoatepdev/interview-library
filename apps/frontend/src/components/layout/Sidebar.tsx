@@ -9,6 +9,7 @@ import {
   Settings,
   ShieldCheck,
   UserCog,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -22,6 +23,7 @@ export const navigation = [
   { nameKey: "nav.topics", href: "/topics" as const, icon: BookOpen },
   { nameKey: "nav.questions", href: "/questions" as const, icon: HelpCircle },
   { nameKey: "nav.practice", href: "/practice" as const, icon: Swords },
+  { nameKey: "nav.analytics", href: "/analytics" as const, icon: BarChart3 },
 ];
 
 export function Sidebar() {

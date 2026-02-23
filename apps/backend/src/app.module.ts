@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { APP_GUARD } from "@nestjs/core";
 import * as path from "path";
 import { TopicsModule } from "./topics/topics.module";
 import { QuestionsModule } from "./questions/questions.module";
@@ -17,6 +19,11 @@ import { AdminModule } from "./admin/admin.module";
       isGlobal: true,
       envFilePath: path.join(__dirname, "../../../.env"),
     }),
+    ThrottlerModule.forRoot([
+      { name: 'default', ttl: 60000, limit: 100 },
+      { name: 'strict', ttl: 60000, limit: 20 },
+      { name: 'auth', ttl: 60000, limit: 5 },
+    ]),
     TypeOrmModule.forRoot({
       type: "postgres",
       host: process.env.DB_HOST || "localhost",
@@ -37,6 +44,9 @@ import { AdminModule } from "./admin/admin.module";
     PracticeModule,
     ReviewModule,
     AdminModule,
+  ],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
 export class AppModule {}

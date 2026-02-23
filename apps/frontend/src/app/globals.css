@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@toast-ui/editor/dist/toastui-editor.css";
+@import "@toast-ui/editor/dist/theme/toastui-editor-dark.css";
 
 @plugin "tailwindcss-animate";
 
@@ -128,4 +129,45 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Toast UI Editor & Viewer Dark Mode Fixes */
+.dark .toastui-editor-contents {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .toastui-editor-contents p,
+.dark .toastui-editor-contents h1,
+.dark .toastui-editor-contents h2,
+.dark .toastui-editor-contents h3,
+.dark .toastui-editor-contents h4,
+.dark .toastui-editor-contents h5,
+.dark .toastui-editor-contents h6,
+.dark .toastui-editor-contents li,
+.dark .toastui-editor-contents span:not([class*="token"]),
+.dark .toastui-editor-contents strong,
+.dark .toastui-editor-contents em {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .toastui-editor-contents pre {
+  background-color: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+.dark .toastui-editor-contents code {
+  background-color: hsl(var(--muted)) !important;
+  color: hsl(var(--primary)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .toastui-editor-contents blockquote {
+  border-left-color: hsl(var(--primary)) !important;
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Override default yellow-ish span colors if any inside the viewer */
+.dark .toastui-editor-contents span {
+  color: inherit;
 }

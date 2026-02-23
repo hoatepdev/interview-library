@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { TranslationService, CreateTopicTranslationDto, UpdateTopicTranslationDto, CreateQuestionTranslationDto, UpdateQuestionTranslationDto } from './translation-crud.service';
 import { type Locale } from '@interview-library/shared/i18n';
 
@@ -19,12 +20,14 @@ export class TranslationController {
   }
 
   @Post('topics')
+  @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.CREATED)
   createTopicTranslation(@Body() dto: CreateTopicTranslationDto) {
     return this.translationService.createTopicTranslation(dto);
   }
 
   @Put('topics/:topicId/:locale')
+  @Throttle({ strict: { ttl: 60000, limit: 20 } })
   updateTopicTranslation(
     @Param('topicId') topicId: string,
     @Param('locale') locale: Locale,
@@ -34,6 +37,7 @@ export class TranslationController {
   }
 
   @Delete('topics/:topicId/:locale')
+  @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteTopicTranslation(@Param('topicId') topicId: string, @Param('locale') locale: Locale) {
     await this.translationService.deleteTopicTranslation(topicId, locale);
@@ -52,12 +56,14 @@ export class TranslationController {
   }
 
   @Post('questions')
+  @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.CREATED)
   createQuestionTranslation(@Body() dto: CreateQuestionTranslationDto) {
     return this.translationService.createQuestionTranslation(dto);
   }
 
   @Put('questions/:questionId/:locale')
+  @Throttle({ strict: { ttl: 60000, limit: 20 } })
   updateQuestionTranslation(
     @Param('questionId') questionId: string,
     @Param('locale') locale: Locale,
@@ -67,6 +73,7 @@ export class TranslationController {
   }
 
   @Delete('questions/:questionId/:locale')
+  @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteQuestionTranslation(@Param('questionId') questionId: string, @Param('locale') locale: Locale) {
     await this.translationService.deleteQuestionTranslation(questionId, locale);

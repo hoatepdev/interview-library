@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
+import { useTheme } from "next-themes";
 import type { Editor } from "@toast-ui/react-editor";
 
 // Dynamically import Toast UI Editor to avoid SSR issues
@@ -41,6 +42,8 @@ export function RichTextEditor({
 }: RichTextEditorProps) {
   const editorRef = useRef<Editor>(null);
 
+  const { resolvedTheme } = useTheme();
+
   useEffect(() => {
     // Update editor content when value changes externally
     if (editorRef.current) {
@@ -70,6 +73,7 @@ export function RichTextEditor({
       )}
       <div className="toast-editor-wrapper border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
         <ToastEditor
+          key={resolvedTheme}
           ref={editorRef}
           initialValue={value || ""}
           placeholder={placeholder}
@@ -81,6 +85,7 @@ export function RichTextEditor({
           usageStatistics={false}
           onChange={handleChange}
           disabled={disabled}
+          theme={resolvedTheme === "dark" ? "dark" : "light"}
           toolbarItems={[
             ['heading', 'bold', 'italic', 'strike'],
             ['hr', 'quote'],
@@ -101,13 +106,15 @@ interface RichTextPreviewProps {
 }
 
 export function RichTextPreview({ content, className = "" }: RichTextPreviewProps) {
+  const { resolvedTheme } = useTheme();
+
   if (!content) {
     return null;
   }
 
   return (
     <div className={`toast-viewer-wrapper ${className}`}>
-      <ToastViewer initialValue={content} />
+      <ToastViewer key={resolvedTheme} initialValue={content} theme={resolvedTheme === "dark" ? "dark" : "light"} />
     </div>
   );
 }

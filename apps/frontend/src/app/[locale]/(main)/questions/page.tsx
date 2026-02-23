@@ -12,12 +12,19 @@ import {
   Topic,
 } from "@/lib/api";
 import { QuestionList } from "@/components/questions/QuestionList";
-import { Search, Plus, Filter, Star, X, Clock } from "lucide-react";
+import { ImportQuestionsDialog } from "@/components/questions/ImportQuestionsDialog";
+import { Search, Plus, Filter, Star, X, Clock, Download, Upload, FileJson, FileSpreadsheet } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 
@@ -48,6 +55,7 @@ function QuestionsContent() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<FilterPreset>("all");
   const [dueCount, setDueCount] = useState<number>(0);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   // Build query params from URL
   const buildQueryParams = useCallback(() => {
@@ -262,6 +270,24 @@ function QuestionsContent() {
     });
   };
 
+  const handleExport = (format: "json" | "csv") => {
+    requireAuth(async () => {
+      try {
+        const params: { format: "json" | "csv"; topicId?: string; level?: string } = { format };
+        const topic = searchParams.get("topic");
+        const level = searchParams.get("level");
+        if (topic && topic !== "all") params.topicId = topic;
+        if (level && level !== "all") params.level = level;
+
+        await questionsApi.exportQuestions(params);
+        toast.success(t("exportSuccess"));
+      } catch (error) {
+        console.error("Export failed:", error);
+        toast.error(tNotif("error"));
+      }
+    });
+  };
+
   const activeFilterCount =
     (activePreset !== "all" ? 1 : 0) +
     [currentLevel, currentStatus, currentTopic].filter((f) => f !== "all")
@@ -281,10 +307,36 @@ function QuestionsContent() {
           </p>
         </div>
 
-        <Button className="space-x-2" onClick={handleCreateQuestionClick}>
-          <Plus className="w-5 h-5" />
-          <span>{t("addQuestion")}</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="space-x-2">
+                <Download className="w-4 h-4" />
+                <span>{t("export")}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => handleExport("json")}>
+                <FileJson className="w-4 h-4 mr-2" />
+                {t("exportJson")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport("csv")}>
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                {t("exportCsv")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button variant="outline" className="space-x-2" onClick={() => requireAuth(() => setIsImportOpen(true))}>
+            <Upload className="w-4 h-4" />
+            <span>{t("import")}</span>
+          </Button>
+
+          <Button className="space-x-2" onClick={handleCreateQuestionClick}>
+            <Plus className="w-5 h-5" />
+            <span>{t("addQuestion")}</span>
+          </Button>
+        </div>
       </div>
 
       <div className="sticky top-4 z-40 mb-8 p-2 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 shadow-xl transition-all duration-300">
@@ -490,6 +542,12 @@ function QuestionsContent() {
           />
         )}
       </div>
+
+      <ImportQuestionsDialog
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+        onSuccess={fetchQuestions}
+      />
     </div>
   );
 }

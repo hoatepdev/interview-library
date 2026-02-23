@@ -16,6 +16,8 @@ import type {
   PracticeStats,
   PracticeLogEntry,
   DueQuestion,
+  AnalyticsResponse,
+  ImportResult,
 } from '@/types';
 
 const api = axios.create({
@@ -61,6 +63,32 @@ export const questionsApi = {
     api.patch(`/questions/${id}/status`, { status }).then((res) => res.data),
   toggleFavorite: (id: string) =>
     api.patch<{ isFavorite: boolean }>(`/questions/${id}/favorite`).then((res) => res.data),
+  exportQuestions: (params: { format: 'json' | 'csv'; topicId?: string; level?: string }) => {
+    return api.get('/questions/export', {
+      params,
+      responseType: 'blob',
+    }).then((res) => {
+      const contentDisposition = res.headers['content-disposition'];
+      const filename = contentDisposition
+        ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
+        : `questions-export.${params.format}`;
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    });
+  },
+  importQuestions: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post<ImportResult>('/questions/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then((res) => res.data);
+  },
 };
 
 // Practice
@@ -76,6 +104,8 @@ export const practiceApi = {
   logPractice: (data: CreatePracticeLogDto) =>
     api.post<PracticeLog>('/practice/log', data).then((res) => res.data),
   getStats: () => api.get<PracticeStats>('/practice/stats').then((res) => res.data),
+  getAnalytics: (days = 30) =>
+    api.get<AnalyticsResponse>('/practice/analytics', { params: { days } }).then((res) => res.data),
   getHistory: (limit = 20) =>
     api.get<PracticeLogEntry[]>('/practice/history', { params: { limit } }).then((res) => res.data),
 };

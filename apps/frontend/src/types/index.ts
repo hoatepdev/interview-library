@@ -167,3 +167,51 @@ export interface DueQuestion extends Question {
   nextReviewAt?: string | null;
   dueStatus: DueStatus;
 }
+
+export interface AnalyticsDailyActivity {
+  date: string;
+  sessions: number;
+  timeSpentMinutes: number;
+}
+
+export interface AnalyticsTopicMastery {
+  topicId: string;
+  topicName: string;
+  topicColor: string;
+  new: number;
+  learning: number;
+  mastered: number;
+  total: number;
+}
+
+export interface AnalyticsStreak {
+  current: number;
+  longest: number;
+}
+
+export interface AnalyticsRatingTrend {
+  date: string;
+  poor: number;
+  fair: number;
+  good: number;
+  great: number;
+}
+
+export interface AnalyticsResponse {
+  dailyActivity: AnalyticsDailyActivity[];
+  topicMastery: AnalyticsTopicMastery[];
+  streak: AnalyticsStreak;
+  ratingTrend: AnalyticsRatingTrend[];
+}
+
+export interface ImportError {
+  row: number;
+  field?: string;
+  message: string;
+}
+
+export interface ImportResult {
+  imported: number;
+  skipped: number;
+  errors: ImportError[];
+}

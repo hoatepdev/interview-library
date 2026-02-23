@@ -33,7 +33,11 @@
       "Bash(npm run migration:run:*)",
       "Bash(pnpm validate:i18n:*)",
       "Bash(ls:*)",
-      "Bash(docker compose exec:*)"
+      "Bash(docker compose exec:*)",
+      "Bash(find:*)",
+      "Bash(pnpm --filter frontend build:*)",
+      "Bash(pnpm --filter backend add:*)",
+      "Bash(pnpm:*)"
     ]
   }
 }

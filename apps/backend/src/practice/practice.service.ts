@@ -418,6 +418,165 @@ export class PracticeService {
     };
   }
 
+  async getAnalytics(locale: Locale = 'en', userId?: string, days = 30) {
+    const sinceDate = new Date();
+    sinceDate.setDate(sinceDate.getDate() - days);
+
+    // 1. Daily activity (sessions + time per day)
+    const dailyActivityQuery = this.practiceLogRepository
+      .createQueryBuilder('log')
+      .select("TO_CHAR(log.practicedAt, 'YYYY-MM-DD')", 'date')
+      .addSelect('COUNT(*)', 'sessions')
+      .addSelect('COALESCE(SUM(log.timeSpentSeconds), 0)', 'timeSpentSeconds')
+      .where('log.practicedAt >= :sinceDate', { sinceDate });
+
+    if (userId) {
+      dailyActivityQuery.andWhere('log.userId = :userId', { userId });
+    }
+
+    const dailyActivityRaw = await dailyActivityQuery
+      .groupBy("TO_CHAR(log.practicedAt, 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(log.practicedAt, 'YYYY-MM-DD')", 'ASC')
+      .getRawMany();
+
+    const dailyActivity = dailyActivityRaw.map((row: any) => ({
+      date: row.date,
+      sessions: Number(row.sessions),
+      timeSpentMinutes: Math.round(Number(row.timeSpentSeconds) / 60),
+    }));
+
+    // 2. Topic mastery breakdown
+    const topicMasteryQuery = this.questionRepository
+      .createQueryBuilder('question')
+      .leftJoin('question.topic', 'topic')
+      .select('topic.id', 'topicId')
+      .addSelect('topic.name', 'topicName')
+      .addSelect('topic.color', 'topicColor')
+      .addSelect('question.status', 'status')
+      .addSelect('COUNT(*)', 'count')
+      .where('question.topicId IS NOT NULL')
+      .groupBy('topic.id')
+      .addGroupBy('topic.name')
+      .addGroupBy('topic.color')
+      .addGroupBy('question.status');
+
+    const topicMasteryRaw = await topicMasteryQuery.getRawMany();
+
+    const topicMap = new Map<string, { topicId: string; topicName: string; topicColor: string; new: number; learning: number; mastered: number; total: number }>();
+    for (const row of topicMasteryRaw) {
+      const existing = topicMap.get(row.topicId) || {
+        topicId: row.topicId,
+        topicName: row.topicName,
+        topicColor: row.topicColor || '#6366f1',
+        new: 0,
+        learning: 0,
+        mastered: 0,
+        total: 0,
+      };
+      const count = Number(row.count);
+      existing[row.status as 'new' | 'learning' | 'mastered'] = count;
+      existing.total += count;
+      topicMap.set(row.topicId, existing);
+    }
+    const topicMastery = Array.from(topicMap.values());
+
+    // 3. Study streak calculation
+    const streakQuery = this.practiceLogRepository
+      .createQueryBuilder('log')
+      .select("DISTINCT TO_CHAR(log.practicedAt, 'YYYY-MM-DD')", 'date');
+
+    if (userId) {
+      streakQuery.where('log.userId = :userId', { userId });
+    }
+
+    const streakDatesRaw = await streakQuery
+      .orderBy("TO_CHAR(log.practicedAt, 'YYYY-MM-DD')", 'DESC')
+      .getRawMany();
+
+    const practiceDates = streakDatesRaw.map((r: any) => r.date);
+    const { current, longest } = this.calculateStreaks(practiceDates);
+
+    // 4. Rating trend over time (last N days)
+    const ratingTrendQuery = this.practiceLogRepository
+      .createQueryBuilder('log')
+      .select("TO_CHAR(log.practicedAt, 'YYYY-MM-DD')", 'date')
+      .addSelect('log.selfRating', 'rating')
+      .addSelect('COUNT(*)', 'count')
+      .where('log.practicedAt >= :sinceDate', { sinceDate });
+
+    if (userId) {
+      ratingTrendQuery.andWhere('log.userId = :userId', { userId });
+    }
+
+    const ratingTrendRaw = await ratingTrendQuery
+      .groupBy("TO_CHAR(log.practicedAt, 'YYYY-MM-DD')")
+      .addGroupBy('log.selfRating')
+      .orderBy("TO_CHAR(log.practicedAt, 'YYYY-MM-DD')", 'ASC')
+      .getRawMany();
+
+    const ratingTrendMap = new Map<string, { date: string; poor: number; fair: number; good: number; great: number }>();
+    for (const row of ratingTrendRaw) {
+      const existing = ratingTrendMap.get(row.date) || { date: row.date, poor: 0, fair: 0, good: 0, great: 0 };
+      existing[row.rating as 'poor' | 'fair' | 'good' | 'great'] = Number(row.count);
+      ratingTrendMap.set(row.date, existing);
+    }
+    const ratingTrend = Array.from(ratingTrendMap.values());
+
+    return {
+      dailyActivity,
+      topicMastery,
+      streak: { current, longest },
+      ratingTrend,
+    };
+  }
+
+  private calculateStreaks(sortedDatesDesc: string[]): { current: number; longest: number } {
+    if (sortedDatesDesc.length === 0) {
+      return { current: 0, longest: 0 };
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().slice(0, 10);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().slice(0, 10);
+
+    // Current streak: must include today or yesterday
+    let current = 0;
+    if (sortedDatesDesc[0] === todayStr || sortedDatesDesc[0] === yesterdayStr) {
+      current = 1;
+      for (let i = 1; i < sortedDatesDesc.length; i++) {
+        const prev = new Date(sortedDatesDesc[i - 1]);
+        const curr = new Date(sortedDatesDesc[i]);
+        const diffDays = (prev.getTime() - curr.getTime()) / (1000 * 60 * 60 * 24);
+        if (diffDays === 1) {
+          current++;
+        } else {
+          break;
+        }
+      }
+    }
+
+    // Longest streak
+    let longest = 1;
+    let streakLen = 1;
+    for (let i = 1; i < sortedDatesDesc.length; i++) {
+      const prev = new Date(sortedDatesDesc[i - 1]);
+      const curr = new Date(sortedDatesDesc[i]);
+      const diffDays = (prev.getTime() - curr.getTime()) / (1000 * 60 * 60 * 24);
+      if (diffDays === 1) {
+        streakLen++;
+        longest = Math.max(longest, streakLen);
+      } else {
+        streakLen = 1;
+      }
+    }
+
+    return { current, longest: Math.max(longest, current) };
+  }
+
   async getHistory(limit = 20, locale: Locale = 'en', userId?: string) {
     const where = userId ? { userId } : {};
     const logs = await this.practiceLogRepository.find({

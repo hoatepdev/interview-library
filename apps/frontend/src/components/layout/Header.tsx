@@ -21,6 +21,8 @@ const PAGE_TITLE_MAP: Record<string, string> = {
   "/topics": "topics.title",
   "/questions": "questions.title",
   "/practice": "practice.title",
+  "/settings": "settings.title",
+  "/analytics": "analytics.title",
 };
 
 // Reverse mapping of localized paths to canonical paths
@@ -29,11 +31,13 @@ const LOCALIZED_TO_CANONICAL: Record<string, Record<string, string>> = {
     "/chu-de": "/topics",
     "/cau-hoi": "/questions",
     "/luyen-tap": "/practice",
+    "/phan-tich": "/analytics",
   },
   en: {
     "/topics": "/topics",
     "/questions": "/questions",
     "/practice": "/practice",
+    "/analytics": "/analytics",
   },
 };
 
