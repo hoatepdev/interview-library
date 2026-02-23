@@ -25,11 +25,14 @@ export class UserQuestion {
   @Column({ name: 'is_public', default: false })
   isPublic: boolean;
 
+  @Column({ name: 'is_favorite', default: false })
+  isFavorite: boolean;
+
   // Spaced repetition tracking (user-specific)
   @Column({ name: 'next_review_at', nullable: true })
   nextReviewAt: Date;
 
-  @Column({ name: 'ease_factor', default: 2.5 })
+  @Column({ name: 'ease_factor', type: 'decimal', precision: 4, scale: 2, default: 2.5 })
   easeFactor: number;
 
   @Column({ name: 'interval_days', default: 0 })

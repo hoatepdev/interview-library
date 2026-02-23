@@ -31,7 +31,9 @@
       "Bash(psql:*)",
       "Bash(grep:*)",
       "Bash(npm run migration:run:*)",
-      "Bash(pnpm validate:i18n:*)"
+      "Bash(pnpm validate:i18n:*)",
+      "Bash(ls:*)",
+      "Bash(docker compose exec:*)"
     ]
   }
 }

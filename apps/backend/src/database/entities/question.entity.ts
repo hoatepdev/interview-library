@@ -71,7 +71,7 @@ export class Question {
   nextReviewAt: Date;
 
   // Spaced repetition tracking
-  @Column({ name: 'ease_factor', default: 2.5 })
+  @Column({ name: 'ease_factor', type: 'decimal', precision: 4, scale: 2, default: 2.5 })
   easeFactor: number;
 
   @Column({ name: 'interval_days', default: 0 })

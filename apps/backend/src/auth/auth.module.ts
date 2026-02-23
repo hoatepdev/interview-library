@@ -8,13 +8,12 @@ import { GitHubStrategy } from './strategies/github.strategy';
 import { SessionAuthGuard } from './guards/session-auth.guard';
 import { AuthSerializer } from './serializers/auth.serializer';
 import { User } from '../database/entities/user.entity';
-import { QuestionFavorite } from '../database/entities/question-favorite.entity';
 import { UserQuestion } from '../database/entities/user-question.entity';
 
 @Module({
   imports: [
     PassportModule.register({ session: true }),
-    TypeOrmModule.forFeature([User, QuestionFavorite, UserQuestion]),
+    TypeOrmModule.forFeature([User, UserQuestion]),
   ],
   providers: [
     AuthService,

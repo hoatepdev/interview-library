@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, DataSource } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Question, QuestionLevel, QuestionStatus } from '../database/entities/question.entity';
-import { QuestionFavorite } from '../database/entities/question-favorite.entity';
+import { UserQuestion } from '../database/entities/user-question.entity';
 import { Topic } from '../database/entities/topic.entity';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -16,12 +16,11 @@ export class QuestionsService {
   constructor(
     @InjectRepository(Question)
     private readonly questionRepository: Repository<Question>,
-    @InjectRepository(QuestionFavorite)
-    private readonly questionFavoriteRepository: Repository<QuestionFavorite>,
+    @InjectRepository(UserQuestion)
+    private readonly userQuestionRepository: Repository<UserQuestion>,
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
     private readonly translationService: TranslationService,
-    private readonly dataSource: DataSource,
   ) {}
 
   async create(createQuestionDto: CreateQuestionDto): Promise<Question> {
@@ -65,37 +64,31 @@ export class QuestionsService {
       });
     }
 
+    // Fetch all favorited question IDs for this user in one query
+    const userFavoriteIds = userId
+      ? new Set(
+          (await this.userQuestionRepository
+            .createQueryBuilder('uq')
+            .where('uq.userId = :userId AND uq.isFavorite = true', { userId })
+            .select('uq.questionId')
+            .getMany()).map(r => r.questionId),
+        )
+      : new Set<string>();
+
     // Filter by favorites if requested
     if (favorite === true && userId) {
-      const favoriteQuestionIds = await this.questionFavoriteRepository
-        .createQueryBuilder('qf')
-        .where('qf.userId = :userId', { userId })
-        .select('qf.questionId')
-        .getMany();
-
-      const favoriteIds = new Set(favoriteQuestionIds.map(f => f.questionId));
-      questions = questions.filter(q => favoriteIds.has(q.id));
+      questions = questions.filter(q => userFavoriteIds.has(q.id));
     } else if (favorite === true && !userId) {
       // If filtering by favorites but no user, return empty
       return [];
     }
 
     // Format with translations and isFavorite status
-    return await Promise.all(questions.map(async q => {
+    return questions.map(q => {
       const formatted = this.translationService.formatQuestion(q, locale, true).data;
-
-      // Check if this question is favorited by the user
-      if (userId) {
-        const favorite = await this.questionFavoriteRepository.findOne({
-          where: { userId, questionId: q.id },
-        });
-        formatted.isFavorite = !!favorite;
-      } else {
-        formatted.isFavorite = false;
-      }
-
+      formatted.isFavorite = userFavoriteIds.has(q.id);
       return formatted;
-    }));
+    });
   }
 
   async getByTopicSlug(slug: string, query: QueryQuestionsDto, locale: Locale = 'en', userId?: string): Promise<any[]> {
@@ -123,12 +116,9 @@ export class QuestionsService {
     }
     const formatted = this.translationService.formatQuestion(question, locale, true).data;
 
-    // Check if this question is favorited by the user
     if (userId) {
-      const favorite = await this.questionFavoriteRepository.findOne({
-        where: { userId, questionId: id },
-      });
-      formatted.isFavorite = !!favorite;
+      const uq = await this.userQuestionRepository.findOne({ where: { userId, questionId: id } });
+      formatted.isFavorite = !!uq?.isFavorite;
     } else {
       formatted.isFavorite = false;
     }
@@ -172,22 +162,22 @@ export class QuestionsService {
       throw new NotFoundException(`Question with ID ${id} not found`);
     }
 
-    // Check if already favorited
-    const existingFavorite = await this.questionFavoriteRepository.findOne({
-      where: { userId, questionId: id },
-    });
+    const existing = await this.userQuestionRepository.findOne({ where: { userId, questionId: id } });
 
-    if (existingFavorite) {
-      // Remove from favorites
-      await this.questionFavoriteRepository.remove(existingFavorite);
-      return { isFavorite: false };
+    if (existing) {
+      existing.isFavorite = !existing.isFavorite;
+      await this.userQuestionRepository.save(existing);
+      return { isFavorite: existing.isFavorite };
     } else {
-      // Add to favorites
-      const favorite = this.questionFavoriteRepository.create({
+      const uq = this.userQuestionRepository.create({
         userId,
         questionId: id,
+        isFavorite: true,
+        easeFactor: 2.5,
+        intervalDays: 0,
+        repetitions: 0,
       });
-      await this.questionFavoriteRepository.save(favorite);
+      await this.userQuestionRepository.save(uq);
       return { isFavorite: true };
     }
   }

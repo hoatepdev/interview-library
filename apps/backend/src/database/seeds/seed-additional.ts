@@ -13,7 +13,6 @@ import { ConfigService } from '@nestjs/config';
 // Import all entities to avoid metadata errors
 import { Question } from '../entities/question.entity';
 import { QuestionTranslation } from '../entities/question-translation.entity';
-import { QuestionFavorite } from '../entities/question-favorite.entity';
 import { Topic } from '../entities/topic.entity';
 import { TopicTranslation } from '../entities/topic-translation.entity';
 import { User } from '../entities/user.entity';
@@ -64,7 +63,6 @@ async function runSeed() {
     entities: [
       Question,
       QuestionTranslation,
-      QuestionFavorite,
       Topic,
       TopicTranslation,
       User,

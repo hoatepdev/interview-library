@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { UserQuestion } from './user-question.entity';
-import { QuestionFavorite } from './question-favorite.entity';
 import { PracticeLog } from './practice-log.entity';
 
 @Entity('users')
@@ -34,7 +33,4 @@ export class User {
 
   @OneToMany(() => PracticeLog, log => log.user)
   practiceLogs: PracticeLog[];
-
-  @OneToMany(() => QuestionFavorite, fav => fav.user)
-  favorites: QuestionFavorite[];
 }

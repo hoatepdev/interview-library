@@ -33,6 +33,7 @@ Personal interview question management application for storing, categorizing, an
 | Practice UI (Frontend) | ✅     | Components created & API connected               |
 | Multi-language (i18n)  | ✅     | English & Vietnamese support                     |
 | Dark Mode              | ✅     | Full dark mode support with theme toggle         |
+| Migration Reset        | ✅     | Single InitialSchema migration (1771845985469)   |
 
 ### Backend API Endpoints
 
@@ -127,66 +128,69 @@ types/
 ```sql
 topics
 ├── id (UUID, PK)
-├── name (VARCHAR)
-├── slug (VARCHAR, unique)
-├── color (VARCHAR)
-├── icon (VARCHAR)
-└── description (TEXT)
+├── name (VARCHAR(100))
+├── slug (VARCHAR(100), unique)
+├── color (VARCHAR(7), nullable)
+├── icon (VARCHAR(50), nullable)
+└── description (TEXT, nullable)
 
 topic_translations
-├── id (UUID, PK)
-├── topic_id (UUID, FK)
-├── locale (VARCHAR)
-├── name (VARCHAR)
-└── description (TEXT)
+├── id (BIGSERIAL, PK)
+├── topic_id (UUID, FK → topics)
+├── locale (VARCHAR(5))
+├── name (VARCHAR(100))
+└── description (TEXT, nullable)
 
 questions
 ├── id (UUID, PK)
-├── title (VARCHAR)
+├── title (VARCHAR(255))
 ├── content (TEXT)
 ├── answer (TEXT, nullable)
-├── topic_id (UUID, FK)
+├── topic_id (UUID, FK → topics)
+├── user_id (UUID, FK → users, nullable)
 ├── level (ENUM: junior/middle/senior)
 ├── status (ENUM: new/learning/mastered)
-├── difficulty_score (INT)
-├── practice_count (INT)
-└── last_practiced_at (TIMESTAMP)
+├── difficulty_score (INT, default 0)
+├── practice_count (INT, default 0)
+├── last_practiced_at (TIMESTAMP, nullable)
+├── next_review_at (TIMESTAMP, nullable)
+├── ease_factor (NUMERIC(4,2), default 2.5)
+├── interval_days (INT, default 0)
+├── repetitions (INT, default 0)
+└── order (INT, default 0)
 
 question_translations
-├── id (UUID, PK)
-├── question_id (UUID, FK)
-├── locale (VARCHAR)
-├── title (VARCHAR)
+├── id (BIGSERIAL, PK)
+├── question_id (UUID, FK → questions)
+├── locale (VARCHAR(5))
+├── title (VARCHAR(255))
 ├── content (TEXT)
-└── answer (TEXT)
+└── answer (TEXT, nullable)
 
 users
 ├── id (UUID, PK)
 ├── email (VARCHAR, unique)
-├── name (VARCHAR)
-├── avatar (VARCHAR)
-├── provider (VARCHAR)
-├── provider_id (VARCHAR)
-└── created_at (TIMESTAMP)
+├── name (VARCHAR, nullable)
+├── avatar (VARCHAR, nullable)
+├── provider (VARCHAR, default 'google')
+└── provider_id (VARCHAR, unique)
 
 user_questions
 ├── id (UUID, PK)
 ├── user_id (UUID, FK → users)
 ├── question_id (UUID, FK → questions)
-├── is_favorite (BOOLEAN)
-├── status (ENUM: new/learning/mastered)
+├── is_public (BOOLEAN, default false)
+├── is_favorite (BOOLEAN, default false)
+├── next_review_at (TIMESTAMP, nullable)
+├── ease_factor (NUMERIC(4,2), default 2.5)
+├── interval_days (INT, default 0)
+├── repetitions (INT, default 0)
 └── UNIQUE(user_id, question_id)
-
-question_favorites
-├── id (UUID, PK)
-├── user_id (UUID, FK → users)
-├── question_id (UUID, FK → questions)
-└── created_at (TIMESTAMP)
 
 practice_logs
 ├── id (UUID, PK)
-├── user_id (UUID, FK → users)
 ├── question_id (UUID, FK → questions)
+├── user_id (UUID, FK → users, nullable)
 ├── self_rating (ENUM: poor/fair/good/great)
 ├── time_spent_seconds (INT, nullable)
 ├── notes (TEXT, nullable)
@@ -284,6 +288,7 @@ apps/frontend/src/
 practice_logs
 ├── id (UUID, PK)
 ├── question_id (UUID, FK → questions)
+├── user_id (UUID, FK → users, nullable)
 ├── self_rating (ENUM: poor/fair/good/great)
 ├── time_spent_seconds (INT, nullable)
 ├── notes (TEXT, nullable)
@@ -517,7 +522,6 @@ apps/backend/src/
     └── entities/
         ├── user.entity.ts          ✅
         ├── user-question.entity.ts ✅
-        ├── question-favorite.entity.ts ✅
         ├── topic-translation.entity.ts ✅
         └── question-translation.entity.ts ✅
 ```
@@ -1040,4 +1044,4 @@ NEXT_PUBLIC_API_URL=http://localhost:9001/api
 
 ---
 
-_Last updated: February 19, 2026 - Keyboard Shortcuts Complete_
+_Last updated: February 23, 2026 - Migration history reset, SCHEMA.md and PROJECT_PLAN.md updated to reflect current entities_
