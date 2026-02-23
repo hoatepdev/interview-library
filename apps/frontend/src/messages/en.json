@@ -19,14 +19,17 @@
     "notFound": "Not Found",
     "bulletSeparator": " • ",
     "userDefault": "User",
-    "total": "total"
+    "total": "total",
+    "error": "Something went wrong. Please try again."
   },
   "nav": {
     "home": "Home",
     "topics": "Topics",
     "questions": "Questions",
     "practice": "Practice",
-    "settings": "Settings"
+    "settings": "Settings",
+    "moderation": "Moderation",
+    "admin": "Admin"
   },
   "home": {
     "welcome": "Welcome back, Developer!",
@@ -257,5 +260,41 @@
     "heading": "Signal Lost",
     "description": "The page you are looking for has drifted into deep space.",
     "returnHome": "Return to Base"
+  },
+  "contentStatus": {
+    "draft": "Draft",
+    "pending_review": "Pending Review",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
+  "roles": {
+    "user": "User",
+    "moderator": "Moderator",
+    "admin": "Admin"
+  },
+  "moderation": {
+    "title": "Moderation",
+    "pendingQuestions": "Pending Questions",
+    "pendingRevisions": "Pending Revisions",
+    "noItems": "No items pending review.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approveSuccess": "Approved successfully",
+    "rejectSuccess": "Rejected successfully",
+    "rejectTitle": "Reject with note",
+    "rejectNotePlaceholder": "Reason for rejection (required)...",
+    "submittedAt": "Submitted {date}",
+    "submittedBy": "By {name}",
+    "revisionOf": "Revision",
+    "original": "Original",
+    "proposed": "Proposed"
+  },
+  "admin": {
+    "usersTitle": "User Management",
+    "user": "User",
+    "provider": "Provider",
+    "joined": "Joined",
+    "role": "Role",
+    "roleUpdated": "Role updated successfully"
   }
 }

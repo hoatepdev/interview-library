@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Topic } from './topic.entity';
 import { QuestionTranslation } from './question-translation.entity';
 import { User } from './user.entity';
+import { ContentStatus } from '../../common/enums/content-status.enum';
 
 export enum QuestionLevel {
   JUNIOR = 'junior',
@@ -79,6 +80,17 @@ export class Question {
 
   @Column({ name: 'repetitions', default: 0 })
   repetitions: number;
+
+  @Column({
+    type: 'enum',
+    enum: ContentStatus,
+    default: ContentStatus.APPROVED,
+    name: 'content_status',
+  })
+  contentStatus: ContentStatus;
+
+  @Column({ name: 'review_note', type: 'text', nullable: true })
+  reviewNote: string;
 
   @Column({ type: 'int', default: 0 })
   order: number;

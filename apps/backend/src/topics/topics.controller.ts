@@ -1,14 +1,20 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus, Query, Req } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus, Query, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { TopicsService } from './topics.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
+import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { UserRole } from '../common/enums/role.enum';
 
 @Controller('topics')
 export class TopicsController {
   constructor(private readonly topicsService: TopicsService) {}
 
   @Post()
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  @Roles(UserRole.MODERATOR, UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createTopicDto: CreateTopicDto) {
     return this.topicsService.create(createTopicDto);
@@ -33,11 +39,15 @@ export class TopicsController {
   }
 
   @Put(':id')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  @Roles(UserRole.MODERATOR, UserRole.ADMIN)
   update(@Param('id') id: string, @Body() updateTopicDto: UpdateTopicDto) {
     return this.topicsService.update(id, updateTopicDto);
   }
 
   @Delete(':id')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  @Roles(UserRole.MODERATOR, UserRole.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
     await this.topicsService.remove(id);

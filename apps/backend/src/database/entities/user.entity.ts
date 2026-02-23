@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { UserQuestion } from './user-question.entity';
 import { PracticeLog } from './practice-log.entity';
+import { UserRole } from '../../common/enums/role.enum';
 
 @Entity('users')
 export class User {
@@ -15,6 +16,13 @@ export class User {
 
   @Column({ nullable: true })
   avatar: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
 
   @Column({ default: 'google' })
   provider: string;

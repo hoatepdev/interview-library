@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../database/entities/user.entity';
+import { UserRole } from '../common/enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -24,12 +25,16 @@ export class AuthService {
 
     if (!user) {
       this.logger.log(`Creating new user: ${email}`);
+      // First user in the system gets ADMIN role
+      const userCount = await this.userRepository.count();
+      const role = userCount === 0 ? UserRole.ADMIN : UserRole.USER;
       user = this.userRepository.create({
         email,
         name: displayName || email.split('@')[0],
         avatar: photos?.[0]?.value,
         provider,
         providerId: id,
+        role,
       });
       await this.userRepository.save(user);
     } else {

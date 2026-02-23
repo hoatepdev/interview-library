@@ -9,6 +9,7 @@ export interface User {
   name: string;
   avatar: string;
   provider: string;
+  role: 'user' | 'moderator' | 'admin';
 }
 
 interface AuthContextType {

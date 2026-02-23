@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Question, QuestionLevel, QuestionStatus } from '../database/entities/question.entity';
+import { QuestionRevision } from '../database/entities/question-revision.entity';
 import { UserQuestion } from '../database/entities/user-question.entity';
 import { Topic } from '../database/entities/topic.entity';
+import { User } from '../database/entities/user.entity';
+import { ContentStatus } from '../common/enums/content-status.enum';
+import { UserRole } from '../common/enums/role.enum';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { UpdateQuestionStatusDto } from './dto/update-question-status.dto';
@@ -16,6 +20,8 @@ export class QuestionsService {
   constructor(
     @InjectRepository(Question)
     private readonly questionRepository: Repository<Question>,
+    @InjectRepository(QuestionRevision)
+    private readonly revisionRepository: Repository<QuestionRevision>,
     @InjectRepository(UserQuestion)
     private readonly userQuestionRepository: Repository<UserQuestion>,
     @InjectRepository(Topic)
@@ -23,48 +29,99 @@ export class QuestionsService {
     private readonly translationService: TranslationService,
   ) {}
 
-  async create(createQuestionDto: CreateQuestionDto): Promise<Question> {
-    const question = this.questionRepository.create(createQuestionDto);
+  async create(createQuestionDto: CreateQuestionDto, user: User): Promise<Question> {
+    const isPrivileged = user.role === UserRole.MODERATOR || user.role === UserRole.ADMIN;
+    const question = this.questionRepository.create({
+      ...createQuestionDto,
+      userId: user.id,
+      contentStatus: isPrivileged ? ContentStatus.APPROVED : ContentStatus.PENDING_REVIEW,
+    });
     return this.questionRepository.save(question);
   }
 
-  async findAll(query: QueryQuestionsDto, locale: Locale = 'en', userId?: string): Promise<any[]> {
-    const { topicId, level, status, search, favorite } = query;
+  async findAll(query: QueryQuestionsDto, locale: Locale = 'en', user?: User): Promise<any[]> {
+    const { topicId, level, status, search, favorite, contentStatus } = query;
 
-    const where: any = {};
-
-    if (topicId) {
-      where.topicId = topicId;
-    }
-
-    if (level) {
-      where.level = level;
-    }
-
-    if (status) {
-      where.status = status;
-    }
+    const isPrivileged = user && (user.role === UserRole.MODERATOR || user.role === UserRole.ADMIN);
 
     let questions: Question[];
 
-    if (search) {
-      questions = await this.questionRepository.find({
-        where: [
-          { ...where, title: Like(`%${search}%`) },
-          { ...where, content: Like(`%${search}%`) },
-        ],
-        relations: ['topic', 'translations'],
-        order: { order: 'ASC', createdAt: 'DESC' },
-      });
+    if (isPrivileged && contentStatus) {
+      // MOD/ADMIN with explicit contentStatus filter
+      const where: any = { contentStatus };
+      if (topicId) where.topicId = topicId;
+      if (level) where.level = level;
+      if (status) where.status = status;
+
+      questions = search
+        ? await this.questionRepository.find({
+            where: [
+              { ...where, title: Like(`%${search}%`) },
+              { ...where, content: Like(`%${search}%`) },
+            ],
+            relations: ['topic', 'translations'],
+            order: { order: 'ASC', createdAt: 'DESC' },
+          })
+        : await this.questionRepository.find({
+            where,
+            relations: ['topic', 'translations'],
+            order: { order: 'ASC', createdAt: 'DESC' },
+          });
     } else {
-      questions = await this.questionRepository.find({
-        where,
-        relations: ['topic', 'translations'],
-        order: { order: 'ASC', createdAt: 'DESC' },
-      });
+      // Public or regular user: show APPROVED + own pending
+      const baseWhere: any = {};
+      if (topicId) baseWhere.topicId = topicId;
+      if (level) baseWhere.level = level;
+      if (status) baseWhere.status = status;
+
+      const approvedWhere = { ...baseWhere, contentStatus: ContentStatus.APPROVED };
+
+      if (search) {
+        const approvedResults = await this.questionRepository.find({
+          where: [
+            { ...approvedWhere, title: Like(`%${search}%`) },
+            { ...approvedWhere, content: Like(`%${search}%`) },
+          ],
+          relations: ['topic', 'translations'],
+          order: { order: 'ASC', createdAt: 'DESC' },
+        });
+
+        if (user) {
+          const ownPendingWhere = { ...baseWhere, userId: user.id, contentStatus: ContentStatus.PENDING_REVIEW };
+          const ownPending = await this.questionRepository.find({
+            where: [
+              { ...ownPendingWhere, title: Like(`%${search}%`) },
+              { ...ownPendingWhere, content: Like(`%${search}%`) },
+            ],
+            relations: ['topic', 'translations'],
+            order: { order: 'ASC', createdAt: 'DESC' },
+          });
+          questions = [...approvedResults, ...ownPending];
+        } else {
+          questions = approvedResults;
+        }
+      } else {
+        const approvedResults = await this.questionRepository.find({
+          where: approvedWhere,
+          relations: ['topic', 'translations'],
+          order: { order: 'ASC', createdAt: 'DESC' },
+        });
+
+        if (user) {
+          const ownPending = await this.questionRepository.find({
+            where: { ...baseWhere, userId: user.id, contentStatus: ContentStatus.PENDING_REVIEW },
+            relations: ['topic', 'translations'],
+            order: { order: 'ASC', createdAt: 'DESC' },
+          });
+          questions = [...approvedResults, ...ownPending];
+        } else {
+          questions = approvedResults;
+        }
+      }
     }
 
     // Fetch all favorited question IDs for this user in one query
+    const userId = user?.id;
     const userFavoriteIds = userId
       ? new Set(
           (await this.userQuestionRepository
@@ -79,7 +136,6 @@ export class QuestionsService {
     if (favorite === true && userId) {
       questions = questions.filter(q => userFavoriteIds.has(q.id));
     } else if (favorite === true && !userId) {
-      // If filtering by favorites but no user, return empty
       return [];
     }
 
@@ -87,12 +143,12 @@ export class QuestionsService {
     return questions.map(q => {
       const formatted = this.translationService.formatQuestion(q, locale, true).data;
       formatted.isFavorite = userFavoriteIds.has(q.id);
+      formatted.contentStatus = q.contentStatus;
       return formatted;
     });
   }
 
-  async getByTopicSlug(slug: string, query: QueryQuestionsDto, locale: Locale = 'en', userId?: string): Promise<any[]> {
-    // First find topic by slug to get its ID
+  async getByTopicSlug(slug: string, query: QueryQuestionsDto, locale: Locale = 'en', user?: User): Promise<any[]> {
     const topic = await this.topicRepository.findOne({
       where: { slug },
       select: ['id'],
@@ -102,11 +158,10 @@ export class QuestionsService {
       throw new NotFoundException(`Topic with slug "${slug}" not found`);
     }
 
-    // Then query questions by topicId using the existing logic
-    return this.findAll({ ...query, topicId: topic.id }, locale, userId);
+    return this.findAll({ ...query, topicId: topic.id }, locale, user);
   }
 
-  async findOne(id: string, locale: Locale = 'en', userId?: string): Promise<any> {
+  async findOne(id: string, locale: Locale = 'en', user?: User): Promise<any> {
     const question = await this.questionRepository.findOne({
       where: { id },
       relations: ['topic', 'translations'],
@@ -114,10 +169,20 @@ export class QuestionsService {
     if (!question) {
       throw new NotFoundException(`Question with ID ${id} not found`);
     }
-    const formatted = this.translationService.formatQuestion(question, locale, true).data;
 
-    if (userId) {
-      const uq = await this.userQuestionRepository.findOne({ where: { userId, questionId: id } });
+    const isPrivileged = user && (user.role === UserRole.MODERATOR || user.role === UserRole.ADMIN);
+    const isOwner = user && question.userId === user.id;
+
+    // Only show non-approved content to privileged users or the owner
+    if (question.contentStatus !== ContentStatus.APPROVED && !isPrivileged && !isOwner) {
+      throw new NotFoundException(`Question with ID ${id} not found`);
+    }
+
+    const formatted = this.translationService.formatQuestion(question, locale, true).data;
+    formatted.contentStatus = question.contentStatus;
+
+    if (user) {
+      const uq = await this.userQuestionRepository.findOne({ where: { userId: user.id, questionId: id } });
       formatted.isFavorite = !!uq?.isFavorite;
     } else {
       formatted.isFavorite = false;
@@ -126,7 +191,7 @@ export class QuestionsService {
     return formatted;
   }
 
-  async update(id: string, updateQuestionDto: UpdateQuestionDto): Promise<Question> {
+  async update(id: string, updateQuestionDto: UpdateQuestionDto, user: User): Promise<Question | QuestionRevision> {
     const question = await this.questionRepository.findOne({
       where: { id },
       relations: ['translations'],
@@ -134,6 +199,37 @@ export class QuestionsService {
     if (!question) {
       throw new NotFoundException(`Question with ID ${id} not found`);
     }
+
+    const isPrivileged = user.role === UserRole.MODERATOR || user.role === UserRole.ADMIN;
+
+    // MOD/ADMIN: direct edit, stays approved
+    if (isPrivileged) {
+      Object.assign(question, updateQuestionDto);
+      question.contentStatus = ContentStatus.APPROVED;
+      return this.questionRepository.save(question);
+    }
+
+    // USER: must be owner
+    if (question.userId !== user.id) {
+      throw new ForbiddenException('You can only edit your own questions');
+    }
+
+    // If question is approved, create a revision instead of modifying
+    if (question.contentStatus === ContentStatus.APPROVED) {
+      const revision = this.revisionRepository.create({
+        questionId: question.id,
+        submittedBy: user.id,
+        title: updateQuestionDto.title ?? question.title,
+        content: updateQuestionDto.content ?? question.content,
+        answer: updateQuestionDto.answer !== undefined ? updateQuestionDto.answer : question.answer,
+        level: updateQuestionDto.level ?? question.level,
+        topicId: updateQuestionDto.topicId ?? question.topicId,
+        contentStatus: ContentStatus.PENDING_REVIEW,
+      });
+      return this.revisionRepository.save(revision);
+    }
+
+    // If question is still PENDING_REVIEW or DRAFT, update in-place
     Object.assign(question, updateQuestionDto);
     return this.questionRepository.save(question);
   }
@@ -154,7 +250,6 @@ export class QuestionsService {
       throw new UnauthorizedException('User must be authenticated to favorite questions');
     }
 
-    // Verify question exists
     const question = await this.questionRepository.findOne({
       where: { id },
     });
@@ -182,7 +277,7 @@ export class QuestionsService {
     }
   }
 
-  async remove(id: string, userId?: string): Promise<void> {
+  async remove(id: string, user: User): Promise<void> {
     const question = await this.questionRepository.findOne({
       where: { id },
     });
@@ -190,8 +285,9 @@ export class QuestionsService {
       throw new NotFoundException(`Question with ID ${id} not found`);
     }
 
-    // Check ownership: only the creator can delete the question
-    if (question.userId && question.userId !== userId) {
+    const isPrivileged = user.role === UserRole.MODERATOR || user.role === UserRole.ADMIN;
+
+    if (!isPrivileged && question.userId !== user.id) {
       throw new UnauthorizedException('You do not have permission to delete this question');
     }
 

@@ -8,6 +8,8 @@ import { PracticeModule } from "./practice/practice.module";
 import { I18nModule } from "./i18n/i18n.module";
 import { TranslationModule } from "./translations/translation.module";
 import { AuthModule } from "./auth/auth.module";
+import { ReviewModule } from "./review/review.module";
+import { AdminModule } from "./admin/admin.module";
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { AuthModule } from "./auth/auth.module";
     TopicsModule,
     QuestionsModule,
     PracticeModule,
+    ReviewModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { TopicTranslation } from './topic-translation.entity';
 import { Question } from './question.entity';
+import { ContentStatus } from '../../common/enums/content-status.enum';
 
 @Entity('topics')
 export class Topic {
@@ -22,6 +23,14 @@ export class Topic {
 
   @Column({ type: 'text', nullable: true })
   description: string;
+
+  @Column({
+    type: 'enum',
+    enum: ContentStatus,
+    default: ContentStatus.APPROVED,
+    name: 'content_status',
+  })
+  contentStatus: ContentStatus;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

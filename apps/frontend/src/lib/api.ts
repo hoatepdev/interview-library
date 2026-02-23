@@ -5,6 +5,7 @@ import { DEFAULT_LOCALE, isValidLocale } from '@interview-library/shared/i18n';
 import type {
   Topic,
   Question,
+  QuestionRevision,
   CreateTopicDto,
   UpdateTopicDto,
   CreateQuestionDto,
@@ -83,6 +84,33 @@ export const practiceApi = {
 export const authApi = {
   getProfile: () => api.get('/auth/me').then((res) => res.data),
   logout: () => api.post('/auth/logout').then((res) => res.data),
+};
+
+// Review (MOD/ADMIN)
+export const reviewApi = {
+  getPending: () =>
+    api.get<{ questions: Question[]; revisions: QuestionRevision[] }>('/review/pending').then((res) => res.data),
+  getPendingCount: () =>
+    api.get<{ count: number }>('/review/pending/count').then((res) => res.data),
+  getRevision: (id: string) =>
+    api.get<QuestionRevision>(`/review/revisions/${id}`).then((res) => res.data),
+  getHistory: (limit = 50) =>
+    api.get('/review/history', { params: { limit } }).then((res) => res.data),
+  approveQuestion: (id: string, note?: string) =>
+    api.post<Question>(`/review/questions/${id}/approve`, { note }).then((res) => res.data),
+  rejectQuestion: (id: string, note: string) =>
+    api.post<Question>(`/review/questions/${id}/reject`, { note }).then((res) => res.data),
+  approveRevision: (id: string, note?: string) =>
+    api.post<Question>(`/review/revisions/${id}/approve`, { note }).then((res) => res.data),
+  rejectRevision: (id: string, note: string) =>
+    api.post<QuestionRevision>(`/review/revisions/${id}/reject`, { note }).then((res) => res.data),
+};
+
+// Admin (ADMIN only)
+export const adminApi = {
+  getUsers: () => api.get('/admin/users').then((res) => res.data),
+  updateUserRole: (userId: string, role: string) =>
+    api.patch(`/admin/users/${userId}/role`, { role }).then((res) => res.data),
 };
 
 // Convenience functions for backward compatibility

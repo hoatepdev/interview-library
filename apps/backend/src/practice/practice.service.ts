@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Raw, LessThanOrEqual } from 'typeorm';
 import { Question, QuestionStatus } from '../database/entities/question.entity';
+import { ContentStatus } from '../common/enums/content-status.enum';
 import { PracticeLog, SelfRating } from '../database/entities/practice-log.entity';
 import { UserQuestion } from '../database/entities/user-question.entity';
 import { CreatePracticeLogDto } from './dto/create-practice-log.dto';
@@ -39,6 +40,9 @@ export class PracticeService {
     if (status) {
       where.status = status;
     }
+
+    // Only serve approved questions in practice mode
+    where.contentStatus = ContentStatus.APPROVED;
 
     // Exclude a specific question (useful for getting next question)
     if (excludeQuestionId) {
@@ -79,6 +83,7 @@ export class PracticeService {
         .createQueryBuilder('question')
         .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
         .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
+        .andWhere('question.content_status = :contentStatus', { contentStatus: ContentStatus.APPROVED })
         .leftJoinAndSelect('question.topic', 'topic')
         .leftJoinAndSelect('question.translations', 'translations');
 
@@ -245,6 +250,7 @@ export class PracticeService {
         .createQueryBuilder('question')
         .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
         .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
+        .andWhere('question.content_status = :contentStatus', { contentStatus: ContentStatus.APPROVED })
         .leftJoinAndSelect('question.topic', 'topic')
         .leftJoinAndSelect('question.translations', 'translations')
         .limit(limit)
@@ -296,9 +302,10 @@ export class PracticeService {
 
       questions = result;
     } else {
-      // Non-authenticated: return all questions (no user-specific data)
+      // Non-authenticated: return all approved questions (no user-specific data)
       questions = await this.questionRepository
         .createQueryBuilder('question')
+        .where('question.content_status = :contentStatus', { contentStatus: ContentStatus.APPROVED })
         .limit(limit)
         .leftJoinAndSelect('question.topic', 'topic')
         .leftJoinAndSelect('question.translations', 'translations')

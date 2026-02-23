@@ -10,6 +10,19 @@ export enum QuestionStatus {
   MASTERED = 'mastered',
 }
 
+export enum ContentStatus {
+  DRAFT = 'draft',
+  PENDING_REVIEW = 'pending_review',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
+export enum UserRole {
+  USER = 'user',
+  MODERATOR = 'moderator',
+  ADMIN = 'admin',
+}
+
 export enum SelfRating {
   POOR = 'poor',
   FAIR = 'fair',
@@ -38,6 +51,7 @@ export interface Question {
   topic?: Topic;
   level: QuestionLevel;
   status: QuestionStatus;
+  contentStatus: ContentStatus;
   isFavorite: boolean;
   difficultyScore: number;
   practiceCount: number;
@@ -49,6 +63,24 @@ export interface Question {
   nextReviewAt?: string | null;
   dueStatus?: DueStatus;
   isPrioritized?: boolean;
+}
+
+export interface QuestionRevision {
+  id: string;
+  questionId: string;
+  question?: Question;
+  submittedBy: string;
+  submitter?: { id: string; name: string; email: string; avatar: string };
+  title: string;
+  content: string;
+  answer?: string;
+  level?: QuestionLevel;
+  topicId?: string;
+  contentStatus: ContentStatus;
+  reviewNote?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  createdAt: string;
 }
 
 export interface CreateTopicDto {

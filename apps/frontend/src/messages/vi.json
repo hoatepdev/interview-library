@@ -19,14 +19,17 @@
     "notFound": "Không tìm thấy",
     "bulletSeparator": " • ",
     "userDefault": "Người dùng",
-    "total": "tổng"
+    "total": "tổng",
+    "error": "Có lỗi xảy ra. Vui lòng thử lại."
   },
   "nav": {
     "home": "Trang chủ",
     "topics": "Chủ đề",
     "questions": "Câu hỏi",
     "practice": "Luyện tập",
-    "settings": "Cài đặt"
+    "settings": "Cài đặt",
+    "moderation": "Kiểm duyệt",
+    "admin": "Quản trị"
   },
   "home": {
     "welcome": "Chào mừng trở lại, Developer!",
@@ -257,5 +260,41 @@
     "heading": "Mất Tín Hiệu",
     "description": "Trang bạn đang tìm kiếm đã trôi dạt vào không gian sâu thẳm.",
     "returnHome": "Trở về Căn cứ"
+  },
+  "contentStatus": {
+    "draft": "Nháp",
+    "pending_review": "Chờ duyệt",
+    "approved": "Đã duyệt",
+    "rejected": "Từ chối"
+  },
+  "roles": {
+    "user": "Người dùng",
+    "moderator": "Kiểm duyệt viên",
+    "admin": "Quản trị viên"
+  },
+  "moderation": {
+    "title": "Kiểm duyệt",
+    "pendingQuestions": "Câu hỏi chờ duyệt",
+    "pendingRevisions": "Chỉnh sửa chờ duyệt",
+    "noItems": "Không có nội dung nào cần duyệt.",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "approveSuccess": "Đã duyệt thành công",
+    "rejectSuccess": "Đã từ chối thành công",
+    "rejectTitle": "Từ chối với lý do",
+    "rejectNotePlaceholder": "Lý do từ chối (bắt buộc)...",
+    "submittedAt": "Gửi ngày {date}",
+    "submittedBy": "Bởi {name}",
+    "revisionOf": "Chỉnh sửa",
+    "original": "Bản gốc",
+    "proposed": "Đề xuất"
+  },
+  "admin": {
+    "usersTitle": "Quản lý người dùng",
+    "user": "Người dùng",
+    "provider": "Nhà cung cấp",
+    "joined": "Ngày tham gia",
+    "role": "Vai trò",
+    "roleUpdated": "Cập nhật vai trò thành công"
   }
 }

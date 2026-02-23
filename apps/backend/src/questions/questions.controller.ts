@@ -17,35 +17,34 @@ export class QuestionsController {
   constructor(private readonly questionsService: QuestionsService) {}
 
   @Post()
+  @UseGuards(SessionAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   create(@Req() req: AuthenticatedRequest, @Body() createQuestionDto: CreateQuestionDto) {
-    return this.questionsService.create(createQuestionDto);
+    return this.questionsService.create(createQuestionDto, req.user);
   }
 
   @Get()
   findAll(@Req() req: AuthenticatedRequest, @Query() query: QueryQuestionsDto) {
     const lang = req.i18n?.lang || 'en';
-    const userId = req.user?.id;
-    return this.questionsService.findAll(query, lang, userId);
+    return this.questionsService.findAll(query, lang, req.user);
   }
 
   @Get('by-topic-slug/:slug')
   getByTopicSlug(@Param('slug') slug: string, @Query() query: QueryQuestionsDto, @Req() req: AuthenticatedRequest) {
     const lang = req.i18n?.lang || 'en';
-    const userId = req.user?.id;
-    return this.questionsService.getByTopicSlug(slug, query, lang, userId);
+    return this.questionsService.getByTopicSlug(slug, query, lang, req.user);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const lang = req.i18n?.lang || 'en';
-    const userId = req.user?.id;
-    return this.questionsService.findOne(id, lang, userId);
+    return this.questionsService.findOne(id, lang, req.user);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateQuestionDto: UpdateQuestionDto) {
-    return this.questionsService.update(id, updateQuestionDto);
+  @UseGuards(SessionAuthGuard)
+  update(@Param('id') id: string, @Body() updateQuestionDto: UpdateQuestionDto, @Req() req: AuthenticatedRequest) {
+    return this.questionsService.update(id, updateQuestionDto, req.user);
   }
 
   @Patch(':id/status')
@@ -54,18 +53,15 @@ export class QuestionsController {
   }
 
   @Patch(':id/favorite')
+  @UseGuards(SessionAuthGuard)
   toggleFavorite(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
-    const userId = req.user?.id;
-    if (!userId) {
-      throw new Error('User must be authenticated to favorite questions');
-    }
-    return this.questionsService.toggleFavorite(id, userId);
+    return this.questionsService.toggleFavorite(id, req.user.id);
   }
 
   @Delete(':id')
   @UseGuards(SessionAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
-    await this.questionsService.remove(id, req.user?.id);
+    await this.questionsService.remove(id, req.user);
   }
 }
