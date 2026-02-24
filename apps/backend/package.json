@@ -18,7 +18,11 @@
     "migration:run": "pnpm typeorm migration:run -d src/database/data-source.ts",
     "migration:revert": "pnpm typeorm migration:revert -d src/database/data-source.ts",
     "seed": "ts-node src/database/seeds/seed.ts",
-    "seed:additional": "ts-node src/database/seeds/seed-additional.ts"
+    "seed:additional": "ts-node src/database/seeds/seed-additional.ts",
+    "seed:middle-jsts": "ts-node src/database/seeds/seed-middle-jsts.ts",
+    "seed:middle-react": "ts-node src/database/seeds/seed-middle-react.ts",
+    "seed:middle-nextjs": "ts-node src/database/seeds/seed-middle-nextjs.ts",
+    "seed:middle-nodejs": "ts-node src/database/seeds/seed-middle-nodejs.ts"
   },
   "dependencies": {
     "@interview-library/shared": "workspace:*",
