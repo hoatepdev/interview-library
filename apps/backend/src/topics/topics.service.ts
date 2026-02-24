@@ -6,6 +6,7 @@ import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
 import { type Locale } from '@interview-library/shared/i18n';
 import { TranslationService } from '../i18n/translation.service';
+import { softDelete, restore } from '../common/utils/soft-delete.util';
 
 @Injectable()
 export class TopicsService {
@@ -34,18 +35,25 @@ export class TopicsService {
       .replace(/^-+|-+$/g, '');        // Remove leading/trailing hyphens
   }
 
-  async findAll(locale: Locale = 'en'): Promise<any[]> {
-    const topics = await this.topicRepository
+  async findAll(locale: Locale = 'en', includeDeleted = false): Promise<any[]> {
+    const qb = this.topicRepository
       .createQueryBuilder('topic')
       .leftJoinAndSelect('topic.translations', 'translation')
-      .loadRelationCountAndMap('topic.questionsCount', 'topic.questions')
-      .orderBy('topic.name', 'ASC')
-      .getMany();
+      .loadRelationCountAndMap('topic.questionsCount', 'topic.questions', 'q', (qb) =>
+        qb.andWhere('q.deleted_at IS NULL'),
+      )
+      .orderBy('topic.name', 'ASC');
 
-    // Format with translations and include questions count
+    if (includeDeleted) {
+      qb.withDeleted();
+    }
+
+    const topics = await qb.getMany();
+
     return topics.map(topic => ({
       ...this.translationService.formatTopic(topic, locale).data,
       questionsCount: (topic as any).questionsCount || 0,
+      ...(includeDeleted && topic.deletedAt ? { deletedAt: topic.deletedAt } : {}),
     }));
   }
 
@@ -54,7 +62,9 @@ export class TopicsService {
       .createQueryBuilder('topic')
       .where('topic.id = :id', { id })
       .leftJoinAndSelect('topic.translations', 'translation')
-      .loadRelationCountAndMap('topic.questionsCount', 'topic.questions')
+      .loadRelationCountAndMap('topic.questionsCount', 'topic.questions', 'q', (qb) =>
+        qb.andWhere('q.deleted_at IS NULL'),
+      )
       .getOne();
 
     if (!topic) {
@@ -71,7 +81,9 @@ export class TopicsService {
       .createQueryBuilder('topic')
       .where('topic.slug = :slug', { slug })
       .leftJoinAndSelect('topic.translations', 'translation')
-      .loadRelationCountAndMap('topic.questionsCount', 'topic.questions')
+      .loadRelationCountAndMap('topic.questionsCount', 'topic.questions', 'q', (qb) =>
+        qb.andWhere('q.deleted_at IS NULL'),
+      )
       .getOne();
 
     if (!topic) {
@@ -99,14 +111,12 @@ export class TopicsService {
     return this.topicRepository.save(topic);
   }
 
-  async remove(id: string): Promise<void> {
-    const topic = await this.topicRepository.findOne({
-      where: { id },
-    });
-    if (!topic) {
-      throw new NotFoundException(`Topic with ID ${id} not found`);
-    }
-    await this.topicRepository.remove(topic);
+  async remove(id: string, deletedByUserId: string): Promise<void> {
+    await softDelete(this.topicRepository, id, deletedByUserId);
+  }
+
+  async restore(id: string): Promise<Topic> {
+    return restore(this.topicRepository, id);
   }
 
   // Helper to get translated name

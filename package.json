@@ -16,7 +16,8 @@
     "build": "pnpm --filter frontend build && pnpm --filter backend build",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
     "validate:i18n": "node scripts/validate-translations.js",
-    "import:translations": "node scripts/import-translations.js"
+    "import:translations": "node scripts/import-translations.js",
+    "kill-port": "kill -9 $(lsof -t -i:9000,9001)"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

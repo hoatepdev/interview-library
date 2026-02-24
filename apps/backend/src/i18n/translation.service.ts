@@ -179,11 +179,8 @@ export class TranslationService {
       answer: this.getQuestionAnswer(question, validatedLocale),
       topicId: question.topicId,
       level: question.level,
-      status: question.status,
       difficultyScore: question.difficultyScore,
-      practiceCount: question.practiceCount,
-      lastPracticedAt: question.lastPracticedAt,
-      order: question.order,
+      displayOrder: question.displayOrder,
       createdAt: question.createdAt,
       updatedAt: question.updatedAt,
     };

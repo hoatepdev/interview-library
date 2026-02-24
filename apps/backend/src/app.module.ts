@@ -1,8 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
-import { APP_GUARD } from "@nestjs/core";
+import { ThrottlerModule } from "@nestjs/throttler";
 import * as path from "path";
 import { TopicsModule } from "./topics/topics.module";
 import { QuestionsModule } from "./questions/questions.module";
@@ -44,9 +43,6 @@ import { AdminModule } from "./admin/admin.module";
     PracticeModule,
     ReviewModule,
     AdminModule,
-  ],
-  providers: [
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
 export class AppModule {}

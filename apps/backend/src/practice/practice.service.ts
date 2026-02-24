@@ -1,15 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Raw, LessThanOrEqual } from 'typeorm';
-import { Question, QuestionStatus } from '../database/entities/question.entity';
+import { Repository, Raw } from 'typeorm';
+import { Question } from '../database/entities/question.entity';
 import { ContentStatus } from '../common/enums/content-status.enum';
-import { PracticeLog, SelfRating } from '../database/entities/practice-log.entity';
+import { PracticeLog } from '../database/entities/practice-log.entity';
 import { UserQuestion } from '../database/entities/user-question.entity';
 import { CreatePracticeLogDto } from './dto/create-practice-log.dto';
 import { QueryPracticeDto } from './dto/query-practice.dto';
 import { type Locale } from '@interview-library/shared/i18n';
 import { TranslationService } from '../i18n/translation.service';
 import { SpacedRepetitionService } from './spaced-repetition.service';
+import { QuestionStatus, getQuestionStatus } from '../common/utils/question-status.util';
 
 @Injectable()
 export class PracticeService {
@@ -24,7 +25,7 @@ export class PracticeService {
     private readonly spacedRepetitionService: SpacedRepetitionService,
   ) {}
 
-  async getRandomQuestion(query: QueryPracticeDto, locale: Locale = 'en'): Promise<any> {
+  async getRandomQuestion(query: QueryPracticeDto, locale: Locale = 'en', userId?: string): Promise<any> {
     const { topicId, level, status, excludeQuestionId } = query;
 
     const where: any = {};
@@ -37,10 +38,6 @@ export class PracticeService {
       where.level = level;
     }
 
-    if (status) {
-      where.status = status;
-    }
-
     // Only serve approved questions in practice mode
     where.contentStatus = ContentStatus.APPROVED;
 
@@ -49,10 +46,23 @@ export class PracticeService {
       where.id = Raw((alias) => `${alias} != :excludeId`, { excludeId: excludeQuestionId });
     }
 
-    const questions = await this.questionRepository.find({
+    let questions = await this.questionRepository.find({
       where,
       relations: ['topic', 'translations'],
     });
+
+    // Post-filter by derived status if requested
+    if (status && userId) {
+      const questionIds = questions.map(q => q.id);
+      const userQuestions = questionIds.length > 0
+        ? await this.userQuestionRepository
+            .createQueryBuilder('uq')
+            .where('uq.userId = :userId AND uq.questionId IN (:...questionIds)', { userId, questionIds })
+            .getMany()
+        : [];
+      const uqMap = new Map(userQuestions.map(uq => [uq.questionId, uq]));
+      questions = questions.filter(q => getQuestionStatus(uqMap.get(q.id)?.repetitions ?? 0) === status);
+    }
 
     if (questions.length === 0) {
       throw new NotFoundException('No questions found matching the criteria');
@@ -60,7 +70,17 @@ export class PracticeService {
 
     // Return a random question with translations
     const randomIndex = Math.floor(Math.random() * questions.length);
-    return this.translationService.formatQuestion(questions[randomIndex], locale, true).data;
+    const formatted = this.translationService.formatQuestion(questions[randomIndex], locale, true).data;
+    formatted.status = QuestionStatus.NEW;
+
+    if (userId) {
+      const uq = await this.userQuestionRepository.findOne({
+        where: { userId, questionId: questions[randomIndex].id },
+      });
+      formatted.status = getQuestionStatus(uq?.repetitions ?? 0);
+    }
+
+    return formatted;
   }
 
   /**
@@ -81,11 +101,15 @@ export class PracticeService {
       // Build the base query for due questions
       const dueQuery = this.questionRepository
         .createQueryBuilder('question')
-        .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
+        .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId AND uq.deleted_at IS NULL', { userId })
         .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
         .andWhere('question.content_status = :contentStatus', { contentStatus: ContentStatus.APPROVED })
         .leftJoinAndSelect('question.topic', 'topic')
-        .leftJoinAndSelect('question.translations', 'translations');
+        .leftJoinAndSelect('question.translations', 'translations')
+        .addSelect('uq.repetitions', 'uq_repetitions')
+        .addSelect('uq.ease_factor', 'uq_ease_factor')
+        .addSelect('uq.interval_days', 'uq_interval_days')
+        .addSelect('uq.next_review_at', 'uq_next_review_at');
 
       // Apply filters
       if (topicId) {
@@ -95,39 +119,44 @@ export class PracticeService {
         dueQuery.andWhere('question.level = :level', { level });
       }
       if (status) {
-        dueQuery.andWhere('question.status = :status', { status });
+        // Filter by derived status using SM-2 repetitions
+        if (status === QuestionStatus.NEW) {
+          dueQuery.andWhere('(uq.repetitions IS NULL OR uq.repetitions = 0)');
+        } else if (status === QuestionStatus.LEARNING) {
+          dueQuery.andWhere('uq.repetitions >= 1 AND uq.repetitions <= 3');
+        } else if (status === QuestionStatus.MASTERED) {
+          dueQuery.andWhere('uq.repetitions >= 4');
+        }
       }
       if (excludeQuestionId) {
         dueQuery.andWhere('question.id != :excludeQuestionId', { excludeQuestionId });
       }
 
-      // Get one due question
-      const dueQuestions = await dueQuery.limit(1).getMany();
+      // Get raw results to include uq fields
+      const rawResults = await dueQuery.limit(1).getRawAndEntities();
 
-      if (dueQuestions.length > 0) {
-        const question = dueQuestions[0];
+      if (rawResults.entities.length > 0) {
+        const question = rawResults.entities[0];
+        const raw = rawResults.raw[0];
 
-        // Get user-specific SM-2 data
-        const userQuestion = await this.userQuestionRepository.findOne({
-          where: { userId, questionId: question.id },
-        });
-
+        const repetitions = raw?.uq_repetitions ?? 0;
         const formatted = this.translationService.formatQuestion(question, locale, true).data;
 
         return {
           ...formatted,
+          status: getQuestionStatus(repetitions),
           isPrioritized: true,
-          nextReviewAt: userQuestion?.nextReviewAt,
-          easeFactor: userQuestion?.easeFactor ?? 2.5,
-          intervalDays: userQuestion?.intervalDays ?? 0,
-          repetitions: userQuestion?.repetitions ?? 0,
+          nextReviewAt: raw?.uq_next_review_at,
+          easeFactor: raw?.uq_ease_factor ?? 2.5,
+          intervalDays: raw?.uq_interval_days ?? 0,
+          repetitions,
         };
       }
     }
 
     // No due questions or not authenticated - fall back to random
     return {
-      ...(await this.getRandomQuestion(query, locale)),
+      ...(await this.getRandomQuestion(query, locale, userId)),
       isPrioritized: false,
     };
   }
@@ -143,7 +172,7 @@ export class PracticeService {
     const now = new Date();
     return await this.questionRepository
       .createQueryBuilder('question')
-      .innerJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
+      .innerJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId AND uq.deleted_at IS NULL', { userId })
       .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
       .getCount();
   }
@@ -169,16 +198,10 @@ export class PracticeService {
     // Save practice log
     await this.practiceLogRepository.save(practiceLog);
 
-    // Update question practice count and last practiced date
-    question.practiceCount += 1;
-    question.lastPracticedAt = new Date();
-
-    // Handle user-specific spaced repetition data
-    let userQuestion: UserQuestion | null = null;
-
+    // SM-2 state lives exclusively in user_questions
     if (userId) {
       // Find or create user-question relationship
-      userQuestion = await this.userQuestionRepository.findOne({
+      let userQuestion = await this.userQuestionRepository.findOne({
         where: { userId, questionId },
       });
 
@@ -193,7 +216,7 @@ export class PracticeService {
         });
       }
 
-      // Calculate next review date using spaced repetition (user-specific)
+      // Calculate next review using SM-2 algorithm
       const { nextInterval, nextEaseFactor, nextRepetitions } =
         this.spacedRepetitionService.calculateNextReview(
           userQuestion.easeFactor,
@@ -202,39 +225,16 @@ export class PracticeService {
           selfRating,
         );
 
-      // Update user question with spaced repetition data
       userQuestion.easeFactor = nextEaseFactor;
       userQuestion.intervalDays = nextInterval;
       userQuestion.repetitions = nextRepetitions;
 
-      // Set next review date
       const nextReviewDate = new Date();
       nextReviewDate.setDate(nextReviewDate.getDate() + nextInterval);
       userQuestion.nextReviewAt = nextReviewDate;
 
       await this.userQuestionRepository.save(userQuestion);
-
-      // Update question status based on user's progress
-      if (selfRating === SelfRating.GREAT) {
-        if (userQuestion.repetitions >= 3) {
-          question.status = QuestionStatus.MASTERED;
-        } else {
-          question.status = QuestionStatus.LEARNING;
-        }
-      } else if (selfRating === SelfRating.POOR) {
-        question.status = QuestionStatus.LEARNING;
-      }
-    } else {
-      // For non-authenticated users, still update global question status
-      // (this is a fallback and won't persist across users)
-      if (selfRating === SelfRating.GREAT) {
-        question.status = QuestionStatus.LEARNING;
-      } else if (selfRating === SelfRating.POOR) {
-        question.status = QuestionStatus.LEARNING;
-      }
     }
-
-    await this.questionRepository.save(question);
 
     return practiceLog;
   }
@@ -248,7 +248,7 @@ export class PracticeService {
       // User-specific query: join with user_questions
       const rawQuestions = await this.questionRepository
         .createQueryBuilder('question')
-        .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
+        .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId AND uq.deleted_at IS NULL', { userId })
         .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now })
         .andWhere('question.content_status = :contentStatus', { contentStatus: ContentStatus.APPROVED })
         .leftJoinAndSelect('question.topic', 'topic')
@@ -265,6 +265,7 @@ export class PracticeService {
         if (seenIds.has(id)) continue;
         seenIds.add(id);
 
+        const repetitions = row.uq_repetitions ?? 0;
         result.push({
           id: row.question_id,
           title: row.question_title,
@@ -272,16 +273,14 @@ export class PracticeService {
           answer: row.question_answer,
           topicId: row.question_topicId,
           level: row.question_level,
-          status: row.question_status,
+          status: getQuestionStatus(repetitions),
           difficultyScore: row.question_difficultyScore,
-          practiceCount: row.question_practiceCount,
-          lastPracticedAt: row.question_lastPracticedAt,
           // Use user-specific SM-2 data from user_questions
           nextReviewAt: row.uq_next_review_at,
           easeFactor: row.uq_ease_factor ?? 2.5,
           intervalDays: row.uq_interval_days ?? 0,
-          repetitions: row.uq_repetitions ?? 0,
-          order: row.question_order,
+          repetitions,
+          displayOrder: row.question_displayOrder,
           createdAt: row.question_createdAt,
           updatedAt: row.question_updatedAt,
           topic: row.topic_id ? {
@@ -313,6 +312,7 @@ export class PracticeService {
 
       questions = questions.map(q => ({
         ...q,
+        status: QuestionStatus.NEW,
         nextReviewAt: null,
         easeFactor: 2.5,
         intervalDays: 0,
@@ -322,6 +322,7 @@ export class PracticeService {
 
     return questions.map((q: any) => ({
       ...this.translationService.formatQuestion(q, locale, true).data,
+      status: q.status,
       easeFactor: q.easeFactor,
       intervalDays: q.intervalDays,
       repetitions: q.repetitions,
@@ -339,12 +340,29 @@ export class PracticeService {
       ? await this.practiceLogRepository.count({ where: { userId } })
       : await this.practiceLogRepository.count();
 
-    const questionsByStatus = await this.questionRepository
-      .createQueryBuilder('question')
-      .select('question.status', 'status')
-      .addSelect('COUNT(*)', 'count')
-      .groupBy('question.status')
-      .getRawMany();
+    // Derive questionsByStatus from user_questions SM-2 data
+    let questionsByStatus: Record<string, number>;
+    if (userId) {
+      const uqRows = await this.userQuestionRepository
+        .createQueryBuilder('uq')
+        .select('uq.repetitions', 'repetitions')
+        .where('uq.userId = :userId', { userId })
+        .getRawMany();
+
+      const statusCounts = { new: 0, learning: 0, mastered: 0 };
+      for (const row of uqRows) {
+        const s = getQuestionStatus(row.repetitions ?? 0);
+        statusCounts[s]++;
+      }
+      // Count questions without a user_questions row as "new"
+      const trackedCount = uqRows.length;
+      const untrackedNew = totalQuestions - trackedCount;
+      statusCounts.new += untrackedNew;
+      questionsByStatus = statusCounts;
+    } else {
+      // No user context: all questions are "new"
+      questionsByStatus = { new: totalQuestions, learning: 0, mastered: 0 };
+    }
 
     const questionsByLevel = await this.questionRepository
       .createQueryBuilder('question')
@@ -382,19 +400,16 @@ export class PracticeService {
 
     const totalPracticeTimeSeconds = timeResult?.total || 0;
 
-    // Count questions due for review (user-specific or all)
+    // Count questions due for review (user-specific only)
     let questionsDueForReview: number;
     if (userId) {
       questionsDueForReview = await this.questionRepository
         .createQueryBuilder('question')
-        .innerJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId', { userId })
+        .innerJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId AND uq.deleted_at IS NULL', { userId })
         .where('(uq.next_review_at IS NULL OR uq.next_review_at <= :now)', { now: new Date() })
         .getCount();
     } else {
-      questionsDueForReview = await this.questionRepository
-        .createQueryBuilder('question')
-        .where('(question.next_review_at IS NULL OR question.next_review_at <= :now)', { now: new Date() })
-        .getCount();
+      questionsDueForReview = 0;
     }
 
     // Get recent practice logs (user-specific or global)
@@ -410,7 +425,7 @@ export class PracticeService {
       totalPracticeSessions: totalLogs,
       totalPracticeTimeSeconds,
       totalPracticeTimeMinutes: Math.round(totalPracticeTimeSeconds / 60),
-      questionsByStatus: this.formatArrayAsObject(questionsByStatus),
+      questionsByStatus,
       questionsByLevel: this.formatArrayAsObject(questionsByLevel),
       practiceByRating: this.formatArrayAsObject(practiceByRating),
       questionsNeedingReview: questionsDueForReview,
@@ -445,40 +460,64 @@ export class PracticeService {
       timeSpentMinutes: Math.round(Number(row.timeSpentSeconds) / 60),
     }));
 
-    // 2. Topic mastery breakdown
-    const topicMasteryQuery = this.questionRepository
-      .createQueryBuilder('question')
-      .leftJoin('question.topic', 'topic')
-      .select('topic.id', 'topicId')
-      .addSelect('topic.name', 'topicName')
-      .addSelect('topic.color', 'topicColor')
-      .addSelect('question.status', 'status')
-      .addSelect('COUNT(*)', 'count')
-      .where('question.topicId IS NOT NULL')
-      .groupBy('topic.id')
-      .addGroupBy('topic.name')
-      .addGroupBy('topic.color')
-      .addGroupBy('question.status');
+    // 2. Topic mastery breakdown — derived from user_questions SM-2 data
+    let topicMastery: { topicId: string; topicName: string; topicColor: string; new: number; learning: number; mastered: number; total: number }[];
 
-    const topicMasteryRaw = await topicMasteryQuery.getRawMany();
+    if (userId) {
+      // Get all questions with their topics + user's repetitions
+      const rows = await this.questionRepository
+        .createQueryBuilder('question')
+        .leftJoin('question.topic', 'topic')
+        .leftJoin('user_questions', 'uq', 'uq.question_id = question.id AND uq.user_id = :userId AND uq.deleted_at IS NULL', { userId })
+        .select('topic.id', 'topicId')
+        .addSelect('topic.name', 'topicName')
+        .addSelect('topic.color', 'topicColor')
+        .addSelect('COALESCE(uq.repetitions, 0)', 'repetitions')
+        .where('question.topicId IS NOT NULL')
+        .getRawMany();
 
-    const topicMap = new Map<string, { topicId: string; topicName: string; topicColor: string; new: number; learning: number; mastered: number; total: number }>();
-    for (const row of topicMasteryRaw) {
-      const existing = topicMap.get(row.topicId) || {
+      const topicMap = new Map<string, { topicId: string; topicName: string; topicColor: string; new: number; learning: number; mastered: number; total: number }>();
+      for (const row of rows) {
+        const existing = topicMap.get(row.topicId) || {
+          topicId: row.topicId,
+          topicName: row.topicName,
+          topicColor: row.topicColor || '#6366f1',
+          new: 0,
+          learning: 0,
+          mastered: 0,
+          total: 0,
+        };
+        const s = getQuestionStatus(Number(row.repetitions));
+        existing[s]++;
+        existing.total++;
+        topicMap.set(row.topicId, existing);
+      }
+      topicMastery = Array.from(topicMap.values());
+    } else {
+      // No user context: all questions are "new"
+      const rows = await this.questionRepository
+        .createQueryBuilder('question')
+        .leftJoin('question.topic', 'topic')
+        .select('topic.id', 'topicId')
+        .addSelect('topic.name', 'topicName')
+        .addSelect('topic.color', 'topicColor')
+        .addSelect('COUNT(*)', 'count')
+        .where('question.topicId IS NOT NULL')
+        .groupBy('topic.id')
+        .addGroupBy('topic.name')
+        .addGroupBy('topic.color')
+        .getRawMany();
+
+      topicMastery = rows.map((row: any) => ({
         topicId: row.topicId,
         topicName: row.topicName,
         topicColor: row.topicColor || '#6366f1',
-        new: 0,
+        new: Number(row.count),
         learning: 0,
         mastered: 0,
-        total: 0,
-      };
-      const count = Number(row.count);
-      existing[row.status as 'new' | 'learning' | 'mastered'] = count;
-      existing.total += count;
-      topicMap.set(row.topicId, existing);
+        total: Number(row.count),
+      }));
     }
-    const topicMastery = Array.from(topicMap.values());
 
     // 3. Study streak calculation
     const streakQuery = this.practiceLogRepository

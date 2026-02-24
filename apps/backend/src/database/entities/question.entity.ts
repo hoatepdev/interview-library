@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, DeleteDateColumn } from 'typeorm';
 import { Topic } from './topic.entity';
 import { QuestionTranslation } from './question-translation.entity';
 import { User } from './user.entity';
@@ -8,12 +8,6 @@ export enum QuestionLevel {
   JUNIOR = 'junior',
   MIDDLE = 'middle',
   SENIOR = 'senior',
-}
-
-export enum QuestionStatus {
-  NEW = 'new',
-  LEARNING = 'learning',
-  MASTERED = 'mastered',
 }
 
 @Entity('questions')
@@ -34,7 +28,7 @@ export class Question {
   @Column({ name: 'topic_id' })
   topicId: string;
 
-  @ManyToOne(() => Topic, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Topic, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'topic_id' })
   topic: Topic;
 
@@ -45,41 +39,15 @@ export class Question {
   })
   level: QuestionLevel;
 
-  @Column({
-    type: 'enum',
-    enum: QuestionStatus,
-    default: QuestionStatus.NEW,
-  })
-  status: QuestionStatus;
-
   @Column({ name: 'user_id', nullable: true })
   userId: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
   @Column({ name: 'difficulty_score', default: 0 })
   difficultyScore: number;
-
-  @Column({ name: 'practice_count', default: 0 })
-  practiceCount: number;
-
-  @Column({ name: 'last_practiced_at', nullable: true })
-  lastPracticedAt: Date;
-
-  @Column({ name: 'next_review_at', nullable: true })
-  nextReviewAt: Date;
-
-  // Spaced repetition tracking
-  @Column({ name: 'ease_factor', type: 'decimal', precision: 4, scale: 2, default: 2.5 })
-  easeFactor: number;
-
-  @Column({ name: 'interval_days', default: 0 })
-  intervalDays: number;
-
-  @Column({ name: 'repetitions', default: 0 })
-  repetitions: number;
 
   @Column({
     type: 'enum',
@@ -92,14 +60,24 @@ export class Question {
   @Column({ name: 'review_note', type: 'text', nullable: true })
   reviewNote: string;
 
-  @Column({ type: 'int', default: 0 })
-  order: number;
+  @Column({ name: 'display_order', type: 'int', default: 0 })
+  displayOrder: number;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
+
+  @Column({ name: 'deleted_by', nullable: true })
+  deletedBy: string;
+
+  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedByUser: User;
 
   @OneToMany(() => QuestionTranslation, translation => translation.question, { cascade: true })
   translations: QuestionTranslation[];

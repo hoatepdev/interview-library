@@ -8,6 +8,11 @@ import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { UserRole } from '../common/enums/role.enum';
+import { User } from '../database/entities/user.entity';
+
+interface AuthenticatedRequest extends Request {
+  user?: User;
+}
 
 @Controller('topics')
 export class TopicsController {
@@ -24,9 +29,10 @@ export class TopicsController {
   }
 
   @Get()
-  findAll(@Req() req: Request) {
+  findAll(@Req() req: AuthenticatedRequest, @Query('includeDeleted') includeDeleted?: string) {
     const lang = req.i18n?.lang || 'en';
-    return this.topicsService.findAll(lang);
+    const isAdmin = req.user?.role === UserRole.ADMIN;
+    return this.topicsService.findAll(lang, isAdmin && includeDeleted === 'true');
   }
 
   @Get('slug/:slug')
@@ -56,7 +62,17 @@ export class TopicsController {
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.MODERATOR, UserRole.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string) {
-    await this.topicsService.remove(id);
+  async remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    await this.topicsService.remove(id, req.user.id);
+  }
+
+  @Post(':id/restore')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ strict: { ttl: 60000, limit: 20 } })
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  async restore(@Param('id') id: string) {
+    return this.topicsService.restore(id);
   }
 }

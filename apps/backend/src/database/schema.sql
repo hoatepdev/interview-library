@@ -99,8 +99,7 @@ CREATE TABLE IF NOT EXISTS questions (
   level            question_level   NOT NULL DEFAULT 'middle',
   is_public        BOOLEAN          NOT NULL DEFAULT TRUE,
   difficulty_score INTEGER          NOT NULL DEFAULT 0,
-  practice_count   INTEGER          NOT NULL DEFAULT 0,
-  "order"          INTEGER          NOT NULL DEFAULT 0,
+  display_order    INTEGER          NOT NULL DEFAULT 0,
   created_at       TIMESTAMPTZ      NOT NULL DEFAULT NOW(),
   updated_at       TIMESTAMPTZ      NOT NULL DEFAULT NOW(),
 

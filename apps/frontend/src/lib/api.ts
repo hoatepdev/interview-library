@@ -59,8 +59,6 @@ export const questionsApi = {
   create: (data: CreateQuestionDto) => api.post<Question>('/questions', data).then((res) => res.data),
   update: (id: string, data: UpdateQuestionDto) => api.put<Question>(`/questions/${id}`, data).then((res) => res.data),
   delete: (id: string) => api.delete(`/questions/${id}`).then((res) => res.data),
-  updateStatus: (id: string, status: string) =>
-    api.patch(`/questions/${id}/status`, { status }).then((res) => res.data),
   toggleFavorite: (id: string) =>
     api.patch<{ isFavorite: boolean }>(`/questions/${id}/favorite`).then((res) => res.data),
   exportQuestions: (params: { format: 'json' | 'csv'; topicId?: string; level?: string }) => {

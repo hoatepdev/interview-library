@@ -54,9 +54,7 @@ export interface Question {
   contentStatus: ContentStatus;
   isFavorite: boolean;
   difficultyScore: number;
-  practiceCount: number;
-  lastPracticedAt?: string;
-  order: number;
+  displayOrder: number;
   createdAt: string;
   updatedAt: string;
   // Spaced repetition fields (optional, from user_questions)
@@ -99,10 +97,9 @@ export interface CreateQuestionDto {
   answer?: string;
   topicId: string;
   level?: QuestionLevel;
-  status?: QuestionStatus;
   isFavorite?: boolean;
   difficultyScore?: number;
-  order?: number;
+  displayOrder?: number;
 }
 
 export interface UpdateQuestionDto extends Partial<CreateQuestionDto> {}

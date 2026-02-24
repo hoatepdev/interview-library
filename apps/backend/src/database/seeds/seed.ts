@@ -71,10 +71,8 @@ async function runSeed() {
       const question = questionRepo.create({
         ...questionData,
         topicId: topic.id,
-        status: 'new' as any,
         difficultyScore: 0,
-        practiceCount: 0,
-        order: 0,
+        displayOrder: 0,
       });
 
       await questionRepo.save(question);

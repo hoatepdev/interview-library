@@ -27,7 +27,8 @@ export class PracticeController {
   @Get("random")
   getRandomQuestion(@Req() req: AuthenticatedRequest, @Query() query: QueryPracticeDto) {
     const lang = req.i18n?.lang || 'en';
-    return this.practiceService.getRandomQuestion(query, lang);
+    const userId = req.user?.id;
+    return this.practiceService.getRandomQuestion(query, lang, userId);
   }
 
   @Get("next")

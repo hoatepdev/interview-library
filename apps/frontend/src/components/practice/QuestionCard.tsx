@@ -8,7 +8,6 @@ interface QuestionCardProps {
 
 export function QuestionCard({ question }: QuestionCardProps) {
   const t = useTranslations("questions");
-  const tCommon = useTranslations("common");
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-none border border-gray-100 dark:border-gray-700 p-6 sm:p-8 mb-6">
@@ -28,9 +27,8 @@ export function QuestionCard({ question }: QuestionCardProps) {
         <p>{question.content}</p>
       </div>
       <div className="mt-4 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-        <span>{t("practicedCount", { count: question.practiceCount })}</span>
         {question.difficultyScore && (
-          <span>{tCommon("bulletSeparator")}{t("difficultyLabel")} {question.difficultyScore}</span>
+          <span>{t("difficultyLabel")} {question.difficultyScore}</span>
         )}
       </div>
     </div>

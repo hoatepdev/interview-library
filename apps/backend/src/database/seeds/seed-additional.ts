@@ -113,10 +113,8 @@ async function runSeed() {
         answer: questionData.answer,
         topicId: topicId,
         level: questionData.level,
-        status: 'new' as any,
         difficultyScore: 0,
-        practiceCount: 0,
-        order: 0,
+        displayOrder: 0,
       });
 
       await questionRepo.save(question);

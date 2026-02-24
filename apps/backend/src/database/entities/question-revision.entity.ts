@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Question } from './question.entity';
 import { User } from './user.entity';
@@ -19,14 +20,14 @@ export class QuestionRevision {
   @Column({ name: 'question_id' })
   questionId: string;
 
-  @ManyToOne(() => Question, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Question, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'question_id' })
   question: Question;
 
-  @Column({ name: 'submitted_by' })
+  @Column({ name: 'submitted_by', nullable: true })
   submittedBy: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'submitted_by' })
   submitter: User;
 
@@ -72,4 +73,14 @@ export class QuestionRevision {
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
+
+  @Column({ name: 'deleted_by', nullable: true })
+  deletedBy: string;
+
+  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedByUser: User;
 }

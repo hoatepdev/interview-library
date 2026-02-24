@@ -148,11 +148,6 @@ export function QuestionList({
                 >
                   {question.status}
                 </span>
-                {question.practiceCount > 0 && (
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                    {question.practiceCount}x
-                  </span>
-                )}
               </div>
 
               <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 transform translate-x-2 sm:translate-x-4 sm:group-hover:translate-x-0">

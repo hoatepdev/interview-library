@@ -27,7 +27,8 @@ export class AuthController {
    * Store locale in session before OAuth redirect
    */
   @Get("google")
-  @UseGuards(AuthGuard("google"))
+  @UseGuards(ThrottlerGuard, AuthGuard("google"))
+  @Throttle({ auth: { ttl: 60000, limit: 5 } })
   googleLogin(@Req() req: any, @Query('locale') locale?: string) {
     // Store locale in session for use in callback
     if (locale) {
@@ -57,7 +58,8 @@ export class AuthController {
    * Store locale in session before OAuth redirect
    */
   @Get("github")
-  @UseGuards(AuthGuard("github"))
+  @UseGuards(ThrottlerGuard, AuthGuard("github"))
+  @Throttle({ auth: { ttl: 60000, limit: 5 } })
   githubLogin(@Req() req: any, @Query('locale') locale?: string) {
     // Store locale in session for use in callback
     if (locale) {

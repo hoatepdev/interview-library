@@ -18,10 +18,12 @@ import { Request } from "express";
 import { QuestionsService } from "./questions.service";
 import { CreateQuestionDto } from "./dto/create-question.dto";
 import { UpdateQuestionDto } from "./dto/update-question.dto";
-import { UpdateQuestionStatusDto } from "./dto/update-question-status.dto";
 import { QueryQuestionsDto } from "./dto/query-questions.dto";
 import { User } from "../database/entities/user.entity";
 import { SessionAuthGuard } from "../auth/guards/session-auth.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
+import { Roles } from "../common/decorators/roles.decorator";
+import { UserRole } from "../common/enums/role.enum";
 
 interface AuthenticatedRequest extends Request {
   user?: User;
@@ -77,16 +79,6 @@ export class QuestionsController {
     return this.questionsService.update(id, updateQuestionDto, req.user);
   }
 
-  @Patch(":id/status")
-  @UseGuards(ThrottlerGuard)
-  @Throttle({ strict: { ttl: 60000, limit: 20 } })
-  updateStatus(
-    @Param("id") id: string,
-    @Body() updateStatusDto: UpdateQuestionStatusDto,
-  ) {
-    return this.questionsService.updateStatus(id, updateStatusDto);
-  }
-
   @Patch(":id/favorite")
   @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
@@ -96,9 +88,20 @@ export class QuestionsController {
   }
 
   @Delete(":id")
-  @UseGuards(SessionAuthGuard)
+  @UseGuards(ThrottlerGuard, SessionAuthGuard)
+  @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param("id") id: string, @Req() req: AuthenticatedRequest) {
     await this.questionsService.remove(id, req.user);
+  }
+
+  @Post(":id/restore")
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ strict: { ttl: 60000, limit: 20 } })
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  async restore(@Param("id") id: string) {
+    return this.questionsService.restore(id);
   }
 }

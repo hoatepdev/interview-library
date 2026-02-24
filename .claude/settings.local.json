@@ -37,7 +37,8 @@
       "Bash(find:*)",
       "Bash(pnpm --filter frontend build:*)",
       "Bash(pnpm --filter backend add:*)",
-      "Bash(pnpm:*)"
+      "Bash(pnpm:*)",
+      "Bash(git stash:*)"
     ]
   }
 }

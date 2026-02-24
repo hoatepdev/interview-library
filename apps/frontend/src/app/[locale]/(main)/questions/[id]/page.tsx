@@ -494,36 +494,6 @@ function QuestionDetailContent() {
             </h3>
 
             <div className="space-y-4">
-              {/* Practice Count */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                  <BookOpen className="w-5 h-5 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500">{t("practiceCount")}</p>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                    {question.practiceCount}x
-                  </p>
-                </div>
-              </div>
-
-              {/* Last Practiced */}
-              {question.lastPracticedAt && (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-green-500" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">
-                      {t("lastPracticed")}
-                    </p>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                      {new Date(question.lastPracticedAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              )}
-
               {/* Created At */}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">

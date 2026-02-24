@@ -1,5 +1,6 @@
 import { IsOptional, IsEnum, IsString, IsUUID, IsBoolean } from 'class-validator';
-import { QuestionLevel, QuestionStatus } from '../../database/entities/question.entity';
+import { QuestionLevel } from '../../database/entities/question.entity';
+import { QuestionStatus } from '../../common/utils/question-status.util';
 import { ContentStatus } from '../../common/enums/content-status.enum';
 import { Type } from 'class-transformer';
 import { LOCALES } from '@interview-library/shared/i18n';

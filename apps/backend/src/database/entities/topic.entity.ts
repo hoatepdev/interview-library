@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
 import { TopicTranslation } from './topic-translation.entity';
 import { Question } from './question.entity';
+import { User } from './user.entity';
 import { ContentStatus } from '../../common/enums/content-status.enum';
 
 @Entity('topics')
@@ -12,7 +13,7 @@ export class Topic {
   @Column({ length: 100 })
   name: string;
 
-  @Column({ length: 100, unique: true })
+  @Column({ length: 100 })
   slug: string;
 
   @Column({ length: 7, nullable: true })
@@ -37,6 +38,16 @@ export class Topic {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
+
+  @Column({ name: 'deleted_by', nullable: true })
+  deletedBy: string;
+
+  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedByUser: User;
 
   @OneToMany(() => TopicTranslation, translation => translation.topic, { cascade: true })
   translations: TopicTranslation[];

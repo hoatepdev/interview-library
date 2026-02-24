@@ -39,10 +39,10 @@ export class ContentReview {
   @Column({ type: 'text', nullable: true })
   note: string;
 
-  @Column({ name: 'reviewer_id' })
+  @Column({ name: 'reviewer_id', nullable: true })
   reviewerId: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'reviewer_id' })
   reviewer: User;
 

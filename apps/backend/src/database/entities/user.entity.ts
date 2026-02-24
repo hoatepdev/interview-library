@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
 import { UserQuestion } from './user-question.entity';
 import { PracticeLog } from './practice-log.entity';
 import { UserRole } from '../../common/enums/role.enum';
@@ -8,7 +8,7 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Column({ nullable: true })
@@ -27,7 +27,7 @@ export class User {
   @Column({ default: 'google' })
   provider: string;
 
-  @Column({ unique: true, name: 'provider_id' })
+  @Column({ name: 'provider_id' })
   providerId: string;
 
   @CreateDateColumn({ name: 'created_at' })
@@ -35,6 +35,16 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
+
+  @Column({ name: 'deleted_by', nullable: true })
+  deletedBy: string;
+
+  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'deleted_by' })
+  deletedByUser: User;
 
   @OneToMany(() => UserQuestion, q => q.user)
   personalQuestions: UserQuestion[];

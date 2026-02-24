@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsNotEmpty, IsEnum, IsBoolean, IsInt, MaxLength, IsUUID } from 'class-validator';
-import { QuestionLevel, QuestionStatus } from '../../database/entities/question.entity';
+import { QuestionLevel } from '../../database/entities/question.entity';
 
 export class CreateQuestionDto {
   @IsString()
@@ -24,10 +24,6 @@ export class CreateQuestionDto {
   level?: QuestionLevel;
 
   @IsOptional()
-  @IsEnum(QuestionStatus)
-  status?: QuestionStatus;
-
-  @IsOptional()
   @IsBoolean()
   isFavorite?: boolean;
 
@@ -37,5 +33,5 @@ export class CreateQuestionDto {
 
   @IsOptional()
   @IsInt()
-  order?: number;
+  displayOrder?: number;
 }

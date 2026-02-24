@@ -56,7 +56,7 @@ export class QuestionExportImportService {
     const questions = await this.questionRepository.find({
       where,
       relations: ['topic'],
-      order: { order: 'ASC', createdAt: 'DESC' },
+      order: { displayOrder: 'ASC', createdAt: 'DESC' },
     });
 
     return questions.map((q) => ({

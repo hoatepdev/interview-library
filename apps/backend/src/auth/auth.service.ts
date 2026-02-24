@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { User } from '../database/entities/user.entity';
 import { UserRole } from '../common/enums/role.enum';
 
@@ -19,6 +19,15 @@ export class AuthService {
 
     if (!email) {
       throw new Error('Email is required from OAuth provider');
+    }
+
+    // Check for soft-deleted user first — block re-login
+    const deletedUser = await this.userRepository.findOne({
+      where: { email, deletedAt: Not(IsNull()) },
+      withDeleted: true,
+    });
+    if (deletedUser) {
+      throw new ForbiddenException('This account has been deactivated. Contact an administrator.');
     }
 
     let user = await this.userRepository.findOne({ where: { email } });
