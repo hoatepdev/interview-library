@@ -62,8 +62,12 @@ export class TopicsController {
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.MODERATOR, UserRole.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
-    await this.topicsService.remove(id, req.user.id);
+  async remove(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+    @Query('force') force?: string,
+  ) {
+    await this.topicsService.remove(id, req.user.id, force === 'true');
   }
 
   @Post(':id/restore')
@@ -72,7 +76,7 @@ export class TopicsController {
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id') id: string) {
-    return this.topicsService.restore(id);
+  async restore(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    return this.topicsService.restore(id, req.user.id);
   }
 }

@@ -43,7 +43,7 @@ export class AdminController {
   @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.OK)
-  restoreUser(@Param('id') id: string) {
-    return this.adminService.restoreUser(id);
+  restoreUser(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    return this.adminService.restoreUser(id, req.user.id);
   }
 }

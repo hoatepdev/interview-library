@@ -12,6 +12,7 @@ PostgreSQL 16. Extension required: `pgcrypto`.
 | `1772100000000-RemoveStatusFromQuestions` | Drop `status` column from questions (now derived from user_questions.repetitions) |
 | `1772200000000-RenameOrderToDisplayOrder` | Rename reserved-keyword column `order` to `display_order` in questions |
 | `1772200000000-AddSoftDelete` | Add soft delete (`deleted_at`, `deleted_by`) to users, topics, questions, question_revisions, user_questions; replace CASCADE with RESTRICT/SET NULL on critical FKs; partial unique indexes |
+| `1772300000000-AddDomainEventsAndPerformanceIndexes` | Add `domain_events` audit table; composite indexes for soft-delete query performance |
 
 Run migrations: `pnpm db:migrate`
 
@@ -26,6 +27,28 @@ All primary tables (`users`, `topics`, `questions`, `question_revisions`, `user_
 - **Immutable log tables** (`practice_logs`, `content_reviews`) do not use soft delete.
 
 Utility functions: `softDelete()`, `restore()`, `findWithDeleted()` in `src/common/utils/soft-delete.util.ts`.
+
+### Hardened Soft Delete Rules
+
+**Restore guards** (Part 1): Restoring an entity validates that its parent is not soft-deleted:
+- Cannot restore `question` if `topic.deleted_at IS NOT NULL`
+- Cannot restore `user_question` if `question` or `user` is deleted
+- Cannot restore `question_revision` if `question` is deleted
+- Throws `RestoreBlockedException` (HTTP 409)
+
+**Domain-safe delete** (Part 2): Deleting entities with active children requires explicit `force=true`:
+- Deleting topic with active questions → blocked unless `force=true` → cascades soft-delete
+- Deleting question with active user_questions → blocked unless `force=true` → cascades soft-delete
+- All cascades run within a single database transaction
+
+**Restore conflict detection** (Part 3): Before restoring, partial unique index conflicts are checked proactively:
+- Topics: `slug` uniqueness among active rows
+- Users: `email` and `provider_id` uniqueness
+- Throws `DomainConflictException` (HTTP 409) instead of raw DB error
+
+**Global query filter** (Part 4): `SafeRepository` wrapper strips `withDeleted: true` from non-admin queries. ESLint rule `no-unsafe-with-deleted` warns on direct `withDeleted` usage outside admin/utility files.
+
+**Audit logging** (Part 5): All soft-delete and restore operations log to `domain_events` table.
 
 ---
 
@@ -185,6 +208,21 @@ Utility functions: `softDelete()`, `restore()`, `findWithDeleted()` in `src/comm
 
 ---
 
+### domain_events
+| Column | Type | Constraints | Notes |
+|--------|------|-------------|-------|
+| id | UUID | PK, DEFAULT gen_random_uuid() | |
+| entity_type | VARCHAR(50) | NOT NULL | e.g. `topic`, `question`, `user` |
+| entity_id | UUID | NOT NULL | ID of affected entity |
+| action | domain_event_action_enum | NOT NULL | `deleted`, `restored`, `force_deleted`, `restore_blocked` |
+| actor_id | UUID | NULLABLE, FK → users(id) SET NULL | Who performed the action |
+| metadata | JSONB | NULLABLE | Additional context (cascaded counts, slugs, etc.) |
+| created_at | TIMESTAMPTZ | DEFAULT now() | |
+
+**Indexes:** `(entity_type, entity_id)`, `(actor_id)`, `(created_at)`
+
+---
+
 ## Enums
 
 | Enum | Values |
@@ -196,6 +234,7 @@ Utility functions: `softDelete()`, `restore()`, `findWithDeleted()` in `src/comm
 | `self_rating` | `poor`, `fair`, `good`, `great` |
 | `review_action_enum` | `approved`, `rejected` |
 | `review_target_type_enum` | `question`, `question_revision` |
+| `domain_event_action_enum` | `deleted`, `restored`, `force_deleted`, `restore_blocked` |
 
 ---
 
@@ -272,13 +311,20 @@ Moderator rejects revision
 
 ```
 Delete (user/question/topic/revision)
+  → Check for active children (questions under topic, user_questions under question)
+  → If children exist and force=false → throw DomainDeleteBlockedException (409)
+  → If children exist and force=true → soft-delete children in transaction
   → deleted_at = NOW(), deleted_by = acting user's ID
   → Row excluded from normal queries via TypeORM @DeleteDateColumn
   → Partial unique indexes ensure uniqueness only among active rows
+  → domain_events row logged (action = deleted | force_deleted)
 
 Restore (admin only)
+  → Validate parent is not soft-deleted (RestoreBlockedException if so)
+  → Check unique index conflicts proactively (DomainConflictException if conflict)
   → deleted_at = NULL, deleted_by = NULL
   → Row becomes active again
+  → domain_events row logged (action = restored)
 
 Deactivated user login attempt
   → Blocked with ForbiddenException ("account deactivated")

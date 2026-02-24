@@ -91,8 +91,12 @@ export class QuestionsController {
   @UseGuards(ThrottlerGuard, SessionAuthGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param("id") id: string, @Req() req: AuthenticatedRequest) {
-    await this.questionsService.remove(id, req.user);
+  async remove(
+    @Param("id") id: string,
+    @Req() req: AuthenticatedRequest,
+    @Query("force") force?: string,
+  ) {
+    await this.questionsService.remove(id, req.user, force === "true");
   }
 
   @Post(":id/restore")
@@ -101,7 +105,7 @@ export class QuestionsController {
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  async restore(@Param("id") id: string) {
-    return this.questionsService.restore(id);
+  async restore(@Param("id") id: string, @Req() req: AuthenticatedRequest) {
+    return this.questionsService.restore(id, req.user.id);
   }
 }

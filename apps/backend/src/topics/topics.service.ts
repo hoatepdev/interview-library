@@ -1,19 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource, IsNull } from 'typeorm';
 import { Topic } from '../database/entities/topic.entity';
+import { Question } from '../database/entities/question.entity';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
 import { type Locale } from '@interview-library/shared/i18n';
 import { TranslationService } from '../i18n/translation.service';
 import { softDelete, restore } from '../common/utils/soft-delete.util';
+import { DomainEventService } from '../common/services/domain-event.service';
+import { DomainEventAction } from '../database/entities/domain-event.entity';
+import { DomainDeleteBlockedException } from '../common/exceptions/domain-delete-blocked.exception';
 
 @Injectable()
 export class TopicsService {
   constructor(
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
+    @InjectRepository(Question)
+    private readonly questionRepository: Repository<Question>,
     private readonly translationService: TranslationService,
+    private readonly domainEventService: DomainEventService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(createTopicDto: CreateTopicDto): Promise<Topic> {
@@ -111,12 +119,62 @@ export class TopicsService {
     return this.topicRepository.save(topic);
   }
 
-  async remove(id: string, deletedByUserId: string): Promise<void> {
-    await softDelete(this.topicRepository, id, deletedByUserId);
+  async remove(id: string, deletedByUserId: string, force = false): Promise<void> {
+    const topic = await this.topicRepository.findOne({ where: { id } });
+    if (!topic) {
+      throw new NotFoundException(`Topic with ID ${id} not found`);
+    }
+
+    // Count active child questions
+    const activeQuestionCount = await this.questionRepository.count({
+      where: { topicId: id, deletedAt: IsNull() },
+      withDeleted: true,
+    });
+
+    if (activeQuestionCount > 0 && !force) {
+      throw new DomainDeleteBlockedException(
+        'topic',
+        id,
+        `${activeQuestionCount} active question(s) reference this topic`,
+        activeQuestionCount,
+      );
+    }
+
+    // Transaction: cascade soft-delete children then the topic
+    await this.dataSource.transaction(async (manager) => {
+      if (activeQuestionCount > 0 && force) {
+        // Soft-delete all active child questions
+        const activeQuestions = await manager.getRepository(Question).find({
+          where: { topicId: id },
+        });
+        for (const question of activeQuestions) {
+          await softDelete(this.questionRepository, question.id, deletedByUserId, manager);
+        }
+      }
+
+      await softDelete(this.topicRepository, id, deletedByUserId, manager);
+
+      await this.domainEventService.log(
+        'topic',
+        id,
+        force ? DomainEventAction.FORCE_DELETED : DomainEventAction.DELETED,
+        deletedByUserId,
+        {
+          cascadedQuestions: force ? activeQuestionCount : 0,
+          topicSlug: topic.slug,
+        },
+        manager,
+      );
+    });
   }
 
-  async restore(id: string): Promise<Topic> {
-    return restore(this.topicRepository, id);
+  async restore(id: string, actorId?: string): Promise<Topic> {
+    return restore(this.topicRepository, id, {
+      entityType: 'topic',
+      uniqueConstraints: [{ fields: ['slug'], label: 'slug' }],
+      actorId,
+      domainEventService: this.domainEventService,
+    });
   }
 
   // Helper to get translated name

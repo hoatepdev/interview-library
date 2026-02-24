@@ -11,6 +11,7 @@ import { TranslationModule } from "./translations/translation.module";
 import { AuthModule } from "./auth/auth.module";
 import { ReviewModule } from "./review/review.module";
 import { AdminModule } from "./admin/admin.module";
+import { DomainEventModule } from "./common/services/domain-event.module";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { AdminModule } from "./admin/admin.module";
       synchronize: false, // Use migrations in production
       logging: process.env.NODE_ENV === "development",
     }),
+    DomainEventModule,
     AuthModule,
     I18nModule,
     TranslationModule,

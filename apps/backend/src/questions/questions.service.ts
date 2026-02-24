@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, In } from 'typeorm';
+import { Repository, Like, In, DataSource, IsNull } from 'typeorm';
 import { Question, QuestionLevel } from '../database/entities/question.entity';
 import { QuestionRevision } from '../database/entities/question-revision.entity';
 import { UserQuestion } from '../database/entities/user-question.entity';
@@ -15,6 +15,9 @@ import { QueryQuestionsDto } from './dto/query-questions.dto';
 import { type Locale } from '@interview-library/shared/i18n';
 import { TranslationService } from '../i18n/translation.service';
 import { softDelete, restore } from '../common/utils/soft-delete.util';
+import { DomainEventService } from '../common/services/domain-event.service';
+import { DomainEventAction } from '../database/entities/domain-event.entity';
+import { DomainDeleteBlockedException } from '../common/exceptions/domain-delete-blocked.exception';
 
 @Injectable()
 export class QuestionsService {
@@ -28,6 +31,8 @@ export class QuestionsService {
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
     private readonly translationService: TranslationService,
+    private readonly domainEventService: DomainEventService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(createQuestionDto: CreateQuestionDto, user: User): Promise<Question> {
@@ -280,7 +285,7 @@ export class QuestionsService {
     }
   }
 
-  async remove(id: string, user: User): Promise<void> {
+  async remove(id: string, user: User, force = false): Promise<void> {
     const question = await this.questionRepository.findOne({
       where: { id },
     });
@@ -294,10 +299,60 @@ export class QuestionsService {
       throw new UnauthorizedException('You do not have permission to delete this question');
     }
 
-    await softDelete(this.questionRepository, id, user.id);
+    // Count active user_questions referencing this question
+    const activeUserQuestionCount = await this.userQuestionRepository.count({
+      where: { questionId: id, deletedAt: IsNull() },
+      withDeleted: true,
+    });
+
+    if (activeUserQuestionCount > 0 && !force) {
+      throw new DomainDeleteBlockedException(
+        'question',
+        id,
+        `${activeUserQuestionCount} active user_question(s) reference this question`,
+        activeUserQuestionCount,
+      );
+    }
+
+    await this.dataSource.transaction(async (manager) => {
+      if (activeUserQuestionCount > 0 && force) {
+        const activeUqs = await manager.getRepository(UserQuestion).find({
+          where: { questionId: id },
+        });
+        for (const uq of activeUqs) {
+          await softDelete(this.userQuestionRepository, uq.id, user.id, manager);
+        }
+      }
+
+      await softDelete(this.questionRepository, id, user.id, manager);
+
+      await this.domainEventService.log(
+        'question',
+        id,
+        force ? DomainEventAction.FORCE_DELETED : DomainEventAction.DELETED,
+        user.id,
+        {
+          cascadedUserQuestions: force ? activeUserQuestionCount : 0,
+          questionTitle: question.title,
+          topicId: question.topicId,
+        },
+        manager,
+      );
+    });
   }
 
-  async restore(id: string): Promise<Question> {
-    return restore(this.questionRepository, id);
+  async restore(id: string, actorId?: string): Promise<Question> {
+    return restore(this.questionRepository, id, {
+      entityType: 'question',
+      parentRefs: [
+        {
+          repository: this.topicRepository as Repository<any>,
+          foreignKey: 'topicId',
+          parentType: 'topic',
+        },
+      ],
+      actorId,
+      domainEventService: this.domainEventService,
+    });
   }
 }
