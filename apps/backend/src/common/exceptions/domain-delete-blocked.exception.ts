@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException } from "@nestjs/common";
 
 export class DomainDeleteBlockedException extends ConflictException {
   constructor(
@@ -9,7 +9,7 @@ export class DomainDeleteBlockedException extends ConflictException {
   ) {
     super({
       statusCode: 409,
-      error: 'Delete Blocked',
+      error: "Delete Blocked",
       message: `Cannot delete ${entityType} (${entityId}): ${reason}. Use force=true to cascade soft-delete ${childCount} child record(s).`,
       entityType,
       entityId,

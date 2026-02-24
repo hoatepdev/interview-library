@@ -1,5 +1,12 @@
-import { IsEnum, IsOptional, IsInt, IsUUID, IsString, Min } from 'class-validator';
-import { SelfRating } from '../../database/entities/practice-log.entity';
+import {
+  IsEnum,
+  IsOptional,
+  IsInt,
+  IsUUID,
+  IsString,
+  Min,
+} from "class-validator";
+import { SelfRating } from "../../database/entities/practice-log.entity";
 
 export class CreatePracticeLogDto {
   @IsUUID()

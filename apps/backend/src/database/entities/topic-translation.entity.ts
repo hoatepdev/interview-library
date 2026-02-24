@@ -1,15 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
-import { Topic } from './topic.entity';
-import { type Locale } from '@interview-library/shared/i18n';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from "typeorm";
+import { Topic } from "./topic.entity";
+import { type Locale } from "@interview-library/shared/i18n";
 
-@Entity('topic_translations')
-@Index(['topicId', 'locale'], { unique: true })
-@Index(['locale'])
+@Entity("topic_translations")
+@Index(["topicId", "locale"], { unique: true })
+@Index(["locale"])
 export class TopicTranslation {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn("increment", { type: "bigint" })
   id: number;
 
-  @Column({ name: 'topic_id' })
+  @Column({ name: "topic_id" })
   topicId: string;
 
   @Column({ length: 5 })
@@ -18,16 +27,16 @@ export class TopicTranslation {
   @Column({ length: 100 })
   name: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   description: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
-  @ManyToOne(() => Topic, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'topic_id' })
+  @ManyToOne(() => Topic, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "topic_id" })
   topic: Topic;
 }

@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class AddDomainEventsAndPerformanceIndexes1772300000000 implements MigrationInterface {
-  name = 'AddDomainEventsAndPerformanceIndexes1772300000000';
+  name = "AddDomainEventsAndPerformanceIndexes1772300000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // ─── 1. Create domain_events audit table ───
@@ -73,14 +73,26 @@ export class AddDomainEventsAndPerformanceIndexes1772300000000 implements Migrat
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // ─── Drop composite performance indexes ───
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_question_revisions_deleted_question"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_user_questions_deleted_question"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_user_questions_deleted_user"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_questions_deleted_user"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_questions_deleted_topic"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_question_revisions_deleted_question"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_user_questions_deleted_question"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_user_questions_deleted_user"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_questions_deleted_user"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_questions_deleted_topic"`,
+    );
 
     // ─── Drop domain_events indexes and table ───
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_domain_events_created_at"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_domain_events_created_at"`,
+    );
     await queryRunner.query(`DROP INDEX IF EXISTS "IDX_domain_events_actor"`);
     await queryRunner.query(`DROP INDEX IF EXISTS "IDX_domain_events_entity"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "domain_events"`);

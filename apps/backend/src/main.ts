@@ -20,8 +20,8 @@ async function bootstrap() {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         domain: undefined, // Let browser use default (allows localhost access)
       },
-      name: 'connect.sid', // Explicit cookie name
-    })
+      name: "connect.sid", // Explicit cookie name
+    }),
   );
 
   // Passport initialization
@@ -40,7 +40,7 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-    })
+    }),
   );
 
   // Global prefix

@@ -1,84 +1,96 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, DeleteDateColumn } from 'typeorm';
-import { Topic } from './topic.entity';
-import { QuestionTranslation } from './question-translation.entity';
-import { User } from './user.entity';
-import { ContentStatus } from '../../common/enums/content-status.enum';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  DeleteDateColumn,
+} from "typeorm";
+import { Topic } from "./topic.entity";
+import { QuestionTranslation } from "./question-translation.entity";
+import { User } from "./user.entity";
+import { ContentStatus } from "../../common/enums/content-status.enum";
 
 export enum QuestionLevel {
-  JUNIOR = 'junior',
-  MIDDLE = 'middle',
-  SENIOR = 'senior',
+  JUNIOR = "junior",
+  MIDDLE = "middle",
+  SENIOR = "senior",
 }
 
-@Entity('questions')
+@Entity("questions")
 export class Question {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   // English (default language) - kept as source of truth
   @Column({ length: 255 })
   title: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: "text" })
   content: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   answer: string;
 
-  @Column({ name: 'topic_id' })
+  @Column({ name: "topic_id" })
   topicId: string;
 
-  @ManyToOne(() => Topic, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'topic_id' })
+  @ManyToOne(() => Topic, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "topic_id" })
   topic: Topic;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: QuestionLevel,
     default: QuestionLevel.MIDDLE,
   })
   level: QuestionLevel;
 
-  @Column({ name: 'user_id', nullable: true })
+  @Column({ name: "user_id", nullable: true })
   userId: string;
 
-  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, { onDelete: "SET NULL", nullable: true })
+  @JoinColumn({ name: "user_id" })
   user: User;
 
-  @Column({ name: 'difficulty_score', default: 0 })
+  @Column({ name: "difficulty_score", default: 0 })
   difficultyScore: number;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: ContentStatus,
     default: ContentStatus.APPROVED,
-    name: 'content_status',
+    name: "content_status",
   })
   contentStatus: ContentStatus;
 
-  @Column({ name: 'review_note', type: 'text', nullable: true })
+  @Column({ name: "review_note", type: "text", nullable: true })
   reviewNote: string;
 
-  @Column({ name: 'display_order', type: 'int', default: 0 })
+  @Column({ name: "display_order", type: "int", default: 0 })
   displayOrder: number;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
+  @DeleteDateColumn({ name: "deleted_at" })
   deletedAt: Date;
 
-  @Column({ name: 'deleted_by', nullable: true })
+  @Column({ name: "deleted_by", nullable: true })
   deletedBy: string;
 
-  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'deleted_by' })
+  @ManyToOne(() => User, { onDelete: "SET NULL", nullable: true })
+  @JoinColumn({ name: "deleted_by" })
   deletedByUser: User;
 
-  @OneToMany(() => QuestionTranslation, translation => translation.question, { cascade: true })
+  @OneToMany(() => QuestionTranslation, (translation) => translation.question, {
+    cascade: true,
+  })
   translations: QuestionTranslation[];
 }

@@ -1,6 +1,16 @@
-import { Injectable, NestMiddleware, BadRequestException } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { LOCALES, DEFAULT_LOCALE, parseAcceptLanguage, isValidLocale, type Locale } from '@interview-library/shared/i18n';
+import {
+  Injectable,
+  NestMiddleware,
+  BadRequestException,
+} from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
+import {
+  LOCALES,
+  DEFAULT_LOCALE,
+  parseAcceptLanguage,
+  isValidLocale,
+  type Locale,
+} from "@interview-library/shared/i18n";
 
 declare global {
   namespace Express {
@@ -19,7 +29,7 @@ export class I18nMiddleware implements NestMiddleware {
     const lang = this.detectLanguage(req);
     req.i18n = {
       lang,
-      acceptLanguage: req.headers['accept-language'] || 'en',
+      acceptLanguage: req.headers["accept-language"] || "en",
     };
     next();
   }
@@ -30,7 +40,7 @@ export class I18nMiddleware implements NestMiddleware {
     if (queryLang) return queryLang;
 
     // 2. Check Accept-Language header
-    const headerLang = parseAcceptLanguage(req.headers['accept-language']);
+    const headerLang = parseAcceptLanguage(req.headers["accept-language"]);
     if (headerLang) return headerLang;
 
     // 3. Fallback to default
@@ -51,7 +61,7 @@ export class I18nMiddleware implements NestMiddleware {
 export const i18nMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const middleware = new I18nMiddleware();
   middleware.use(req, res, next);

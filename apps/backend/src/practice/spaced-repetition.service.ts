@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { SelfRating } from '../database/entities/practice-log.entity';
+import { Injectable } from "@nestjs/common";
+import { SelfRating } from "../database/entities/practice-log.entity";
 
 /**
  * SM-2 Spaced Repetition Algorithm
@@ -39,7 +39,8 @@ export class SpacedRepetitionService {
 
     // Calculate new ease factor
     // EF' = EF + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02))
-    const nextEaseFactor = currentEaseFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+    const nextEaseFactor =
+      currentEaseFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
     const clampedEaseFactor = Math.max(1.3, Math.min(2.5, nextEaseFactor));
 
     // Calculate next interval
@@ -110,7 +111,7 @@ export class SpacedRepetitionService {
     if (!nextReviewAt) {
       return {
         isDue: true,
-        text: 'Due now',
+        text: "Due now",
       };
     }
 
@@ -122,7 +123,7 @@ export class SpacedRepetitionService {
     if (diffDays <= 0) {
       return {
         isDue: true,
-        text: 'Due now',
+        text: "Due now",
         daysUntil: 0,
       };
     }
@@ -130,7 +131,7 @@ export class SpacedRepetitionService {
     if (diffDays === 1) {
       return {
         isDue: false,
-        text: 'Due tomorrow',
+        text: "Due tomorrow",
         daysUntil: 1,
       };
     }

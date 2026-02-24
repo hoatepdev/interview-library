@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class RemoveStatusFromQuestions1772100000000 implements MigrationInterface {
-  name = 'RemoveStatusFromQuestions1772100000000';
+  name = "RemoveStatusFromQuestions1772100000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Drop the status column from questions table.
@@ -10,7 +10,9 @@ export class RemoveStatusFromQuestions1772100000000 implements MigrationInterfac
     //   repetitions 1-3      -> 'learning'
     //   repetitions >= 4     -> 'mastered'
     await queryRunner.query(`ALTER TABLE "questions" DROP COLUMN "status"`);
-    await queryRunner.query(`DROP TYPE IF EXISTS "public"."questions_status_enum"`);
+    await queryRunner.query(
+      `DROP TYPE IF EXISTS "public"."questions_status_enum"`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

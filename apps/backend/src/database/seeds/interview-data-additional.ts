@@ -12,7 +12,7 @@
  * Usage: npm run seed:additional
  */
 
-import { QuestionLevel } from '../entities/question.entity';
+import { QuestionLevel } from "../entities/question.entity";
 
 export interface TopicSeed {
   name: string;
@@ -39,8 +39,9 @@ export interface QuestionSeed {
 
 const javascriptAdditionalQuestions: QuestionSeed[] = [
   {
-    title: 'Explain closures and their practical use cases',
-    content: 'What are closures in JavaScript? Provide 3 practical use cases where closures are essential.',
+    title: "Explain closures and their practical use cases",
+    content:
+      "What are closures in JavaScript? Provide 3 practical use cases where closures are essential.",
     answer: `**Closure**: A function bundled with its lexical environment. It allows a function to access variables from its outer scope even after the outer function has returned.
 
 \`\`\`js
@@ -95,11 +96,12 @@ for (var i = 0; i < 3; i++) {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'Explain prototypal inheritance and prototype chain',
-    content: 'How does prototypal inheritance work in JavaScript? Explain the prototype chain lookup process.',
+    title: "Explain prototypal inheritance and prototype chain",
+    content:
+      "How does prototypal inheritance work in JavaScript? Explain the prototype chain lookup process.",
     answer: `**Prototype Chain**: JavaScript's inheritance mechanism where objects can inherit properties from other objects.
 
 **Prototype Chain Lookup**:
@@ -146,11 +148,12 @@ Dog.prototype.speak = function() {
 };
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'What is Temporal Dead Zone (TDZ)?',
-    content: 'Explain Temporal Dead Zone in JavaScript. When does it occur for let, const, and var?',
+    title: "What is Temporal Dead Zone (TDZ)?",
+    content:
+      "Explain Temporal Dead Zone in JavaScript. When does it occur for let, const, and var?",
     answer: `**TDZ**: The period between entering scope and variable declaration where accessing the variable throws a ReferenceError.
 
 \`\`\`js
@@ -199,11 +202,12 @@ console.log(x); // ReferenceError
 let x;
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'Explain async/await internals and error handling',
-    content: 'How does async/await work under the hood? Compare error handling patterns with Promises.',
+    title: "Explain async/await internals and error handling",
+    content:
+      "How does async/await work under the hood? Compare error handling patterns with Promises.",
     answer: `**Under the Hood**: \`async\` functions return Promises. \`await\` pauses execution until Promise settles.
 
 **Transformation** (roughly):
@@ -274,11 +278,12 @@ async function good() {
 }
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'Implement debounce and throttle from scratch',
-    content: 'Write implementations of debounce and throttle. Explain the difference and use cases for each.',
+    title: "Implement debounce and throttle from scratch",
+    content:
+      "Write implementations of debounce and throttle. Explain the difference and use cases for each.",
     answer: `**Debounce**: Delay execution until after a pause. Useful for search inputs, resize handlers.
 
 \`\`\`js
@@ -352,11 +357,12 @@ function throttleAdvanced(fn, limit) {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
   {
-    title: 'Explain memory leaks in JavaScript and how to prevent them',
-    content: 'What are common causes of memory leaks in JavaScript? How would you detect and fix them?',
+    title: "Explain memory leaks in JavaScript and how to prevent them",
+    content:
+      "What are common causes of memory leaks in JavaScript? How would you detect and fix them?",
     answer: `**Common Memory Leaks**:
 
 1. **Accidental Global Variables**:
@@ -415,7 +421,7 @@ button.addEventListener('click', handler);
 - Nullify references when done
 - Avoid closures holding large objects`,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'javascript'
+    topicSlug: "javascript",
   },
 ];
 
@@ -425,8 +431,9 @@ button.addEventListener('click', handler);
 
 const typescriptAdditionalQuestions: QuestionSeed[] = [
   {
-    title: 'Explain TypeScript utility types: Pick, Omit, Partial, Required',
-    content: 'Describe these utility types and provide real-world use cases for each.',
+    title: "Explain TypeScript utility types: Pick, Omit, Partial, Required",
+    content:
+      "Describe these utility types and provide real-world use cases for each.",
     answer: `**Pick<T, K>\` - Select specific properties:
 
 \`\`\`ts
@@ -479,11 +486,12 @@ type UserWithRequiredEmail = Required<Pick<User, 'email'>> & User;
 type UpdateUserDto = Partial<Pick<User, 'name' | 'email'>> & Required<Pick<User, 'id'>>;
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
   {
-    title: 'Explain generics with constraints and conditional types',
-    content: 'How do generic constraints work? Explain conditional types with examples.',
+    title: "Explain generics with constraints and conditional types",
+    content:
+      "How do generic constraints work? Explain conditional types with examples.",
     answer: `**Generic Constraints**: Limit what types can be passed to a generic.
 
 \`\`\`ts
@@ -540,11 +548,12 @@ type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
 type Foo = UnwrapPromise Promise<string>>; // string
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
   {
-    title: 'Implement a deep readonly utility type',
-    content: 'Create a DeepReadonly type that makes all nested properties readonly recursively.',
+    title: "Implement a deep readonly utility type",
+    content:
+      "Create a DeepReadonly type that makes all nested properties readonly recursively.",
     answer: `**DeepReadonly Implementation**:
 
 \`\`\`ts
@@ -607,11 +616,11 @@ type DeepReadonly<T> = {
 };
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
   {
-    title: 'What are discriminated unions in TypeScript?',
-    content: 'Explain discriminated unions and how they enable type narrowing.',
+    title: "What are discriminated unions in TypeScript?",
+    content: "Explain discriminated unions and how they enable type narrowing.",
     answer: `**Discriminated Union**: Using a common property (discriminator) to narrow union types.
 
 \`\`\`ts
@@ -680,7 +689,7 @@ function handle(state: AsyncState) {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'typescript'
+    topicSlug: "typescript",
   },
 ];
 
@@ -690,8 +699,9 @@ function handle(state: AsyncState) {
 
 const nodejsAdditionalQuestions: QuestionSeed[] = [
   {
-    title: 'Explain Node.js Event Loop phases',
-    content: 'Describe all phases of the Node.js Event Loop and their order of execution.',
+    title: "Explain Node.js Event Loop phases",
+    content:
+      "Describe all phases of the Node.js Event Loop and their order of execution.",
     answer: `**Node.js Event Loop Phases** (in order):
 
 \`\`\`
@@ -739,11 +749,12 @@ Promise.resolve().then(() => console.log(4));
 - \`process.nextTick\`: Higher priority, runs after current operation
 - \`Promise.resolve\`: Microtask queue, runs after macrotask`,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'nodejs'
+    topicSlug: "nodejs",
   },
   {
-    title: 'Explain streams in Node.js (Readable, Writable, Transform)',
-    content: 'Describe the four types of streams and when to use each. Provide examples.',
+    title: "Explain streams in Node.js (Readable, Writable, Transform)",
+    content:
+      "Describe the four types of streams and when to use each. Provide examples.",
     answer: `**Stream Types**:
 
 1. **Readable**: Data source (file read, HTTP request)
@@ -835,11 +846,12 @@ _write(chunk, encoding, callback) {
 }
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'nodejs'
+    topicSlug: "nodejs",
   },
   {
-    title: 'Implement a connection pool for PostgreSQL in Node.js',
-    content: 'Design and implement a database connection pool. Explain why pooling is necessary.',
+    title: "Implement a connection pool for PostgreSQL in Node.js",
+    content:
+      "Design and implement a database connection pool. Explain why pooling is necessary.",
     answer: `**Why Connection Pooling?**
 
 - Creating connections is expensive (TCP handshake, auth)
@@ -929,7 +941,7 @@ class ConnectionPool {
 }
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'nodejs'
+    topicSlug: "nodejs",
   },
 ];
 
@@ -939,8 +951,9 @@ class ConnectionPool {
 
 const nestjsAdditionalQuestions: QuestionSeed[] = [
   {
-    title: 'Explain NestJS dependency injection and injection scopes',
-    content: 'How does DI work in NestJS? What are the different injection scopes?',
+    title: "Explain NestJS dependency injection and injection scopes",
+    content:
+      "How does DI work in NestJS? What are the different injection scopes?",
     answer: `**Dependency Injection in NestJS**:
 
 NestJS uses a container to manage class dependencies.
@@ -1014,11 +1027,12 @@ class B {
 }
 \`\`\``,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nestjs'
+    topicSlug: "nestjs",
   },
   {
-    title: 'Explain Guards, Interceptors, and Pipes in NestJS',
-    content: 'Compare Guards, Interceptors, and Pipes. When would you use each?',
+    title: "Explain Guards, Interceptors, and Pipes in NestJS",
+    content:
+      "Compare Guards, Interceptors, and Pipes. When would you use each?",
     answer: `**Guards**: Determine if request should proceed (authorization)
 
 \`\`\`ts
@@ -1092,7 +1106,7 @@ export class ValidationPipe implements PipeTransform {
 - **Interceptor**: Logging, caching, response transformation
 - **Pipe**: Validation, parsing (string → number), sanitization`,
     level: QuestionLevel.MIDDLE,
-    topicSlug: 'nestjs'
+    topicSlug: "nestjs",
   },
 ];
 
@@ -1102,8 +1116,9 @@ export class ValidationPipe implements PipeTransform {
 
 const postgresqlAdditionalQuestions: QuestionSeed[] = [
   {
-    title: 'Explain PostgreSQL indexes and when to use B-tree, GIN, GiST',
-    content: 'Describe different index types in PostgreSQL and their use cases.',
+    title: "Explain PostgreSQL indexes and when to use B-tree, GIN, GiST",
+    content:
+      "Describe different index types in PostgreSQL and their use cases.",
     answer: `**Index Types**:
 
 **B-tree (default)**: Equality and range queries
@@ -1161,11 +1176,11 @@ CREATE INDEX idx_orders_covering ON orders(user_id) INCLUDE (total, status);
 SELECT total, status FROM orders WHERE user_id = ?;
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
   {
-    title: 'Explain MVCC and VACUUM in PostgreSQL',
-    content: 'How does MVCC work in PostgreSQL? Why is VACUUM necessary?',
+    title: "Explain MVCC and VACUUM in PostgreSQL",
+    content: "How does MVCC work in PostgreSQL? Why is VACUUM necessary?",
     answer: `**MVCC (Multi-Version Concurrency Control)**:
 
 PostgreSQL maintains multiple versions of each row to allow concurrent access without locking.
@@ -1228,11 +1243,11 @@ autovacuum_max_workers = 3
 autovacuum_naptime = 1min
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
   {
-    title: 'Optimize slow queries in PostgreSQL',
-    content: 'A query is slow. How would you analyze and optimize it?',
+    title: "Optimize slow queries in PostgreSQL",
+    content: "A query is slow. How would you analyze and optimize it?",
     answer: `**Step-by-Step Optimization**:
 
 1. **EXPLAIN ANALYZE**:
@@ -1304,7 +1319,7 @@ ORDER BY idx_scan ASC;
 -- Unused indexes = drop them
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'postgresql'
+    topicSlug: "postgresql",
   },
 ];
 
@@ -1314,8 +1329,9 @@ ORDER BY idx_scan ASC;
 
 const systemDesignAdditionalQuestions: QuestionSeed[] = [
   {
-    title: 'Design a URL Shortener service (bit.ly style)',
-    content: 'Design a distributed URL shortener service that handles 100M URLs with 10M redirects/day.',
+    title: "Design a URL Shortener service (bit.ly style)",
+    content:
+      "Design a distributed URL shortener service that handles 100M URLs with 10M redirects/day.",
     answer: `**Requirements**:
 - Shorten long URLs to ~7 character codes
 - Handle redirects (301/302)
@@ -1435,11 +1451,12 @@ shard2: codes [0-9]
                               └─────────────────┘
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'system-design'
+    topicSlug: "system-design",
   },
   {
-    title: 'Design a chat application (WhatsApp style)',
-    content: 'Design a real-time chat application supporting 1B users with 100M concurrent connections.',
+    title: "Design a chat application (WhatsApp style)",
+    content:
+      "Design a real-time chat application supporting 1B users with 100M concurrent connections.",
     answer: `**Requirements**:
 - 1B users, 100M concurrent
 - Real-time messaging
@@ -1581,7 +1598,7 @@ CREATE TABLE device_messages (
 );
 \`\`\``,
     level: QuestionLevel.SENIOR,
-    topicSlug: 'system-design'
+    topicSlug: "system-design",
   },
 ];
 
@@ -1599,9 +1616,9 @@ export const additionalQuestions: QuestionSeed[] = [
 ];
 
 // Summary
-console.log('='.repeat(50));
-console.log('ADDITIONAL INTERVIEW QUESTIONS');
-console.log('='.repeat(50));
+console.log("=".repeat(50));
+console.log("ADDITIONAL INTERVIEW QUESTIONS");
+console.log("=".repeat(50));
 console.log(`JavaScript: ${javascriptAdditionalQuestions.length}`);
 console.log(`TypeScript: ${typescriptAdditionalQuestions.length}`);
 console.log(`Node.js: ${nodejsAdditionalQuestions.length}`);
@@ -1609,4 +1626,4 @@ console.log(`NestJS: ${nestjsAdditionalQuestions.length}`);
 console.log(`PostgreSQL: ${postgresqlAdditionalQuestions.length}`);
 console.log(`System Design: ${systemDesignAdditionalQuestions.length}`);
 console.log(`Total: ${additionalQuestions.length}`);
-console.log('='.repeat(50));
+console.log("=".repeat(50));

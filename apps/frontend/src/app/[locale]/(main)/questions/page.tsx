@@ -12,19 +12,13 @@ import {
   Topic,
 } from "@/lib/api";
 import { QuestionList } from "@/components/questions/QuestionList";
-import { ImportQuestionsDialog } from "@/components/questions/ImportQuestionsDialog";
-import { Search, Plus, Filter, Star, X, Clock, Download, Upload, FileJson, FileSpreadsheet } from "lucide-react";
+
+import { Search, Plus, Filter, Star, X, Clock } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 
@@ -55,7 +49,6 @@ function QuestionsContent() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<FilterPreset>("all");
   const [dueCount, setDueCount] = useState<number>(0);
-  const [isImportOpen, setIsImportOpen] = useState(false);
 
   // Build query params from URL
   const buildQueryParams = useCallback(() => {
@@ -270,24 +263,6 @@ function QuestionsContent() {
     });
   };
 
-  const handleExport = (format: "json" | "csv") => {
-    requireAuth(async () => {
-      try {
-        const params: { format: "json" | "csv"; topicId?: string; level?: string } = { format };
-        const topic = searchParams.get("topic");
-        const level = searchParams.get("level");
-        if (topic && topic !== "all") params.topicId = topic;
-        if (level && level !== "all") params.level = level;
-
-        await questionsApi.exportQuestions(params);
-        toast.success(t("exportSuccess"));
-      } catch (error) {
-        console.error("Export failed:", error);
-        toast.error(tNotif("error"));
-      }
-    });
-  };
-
   const activeFilterCount =
     (activePreset !== "all" ? 1 : 0) +
     [currentLevel, currentStatus, currentTopic].filter((f) => f !== "all")
@@ -308,30 +283,6 @@ function QuestionsContent() {
         </div>
 
         <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="space-x-2 bg-white/5 dark:bg-slate-900/30 backdrop-blur-md border border-slate-200/50 dark:border-white/10 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all duration-300">
-                <Download className="w-4 h-4 drop-shadow-[0_0_8px_rgba(148,163,184,0.5)]" />
-                <span>{t("export")}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="backdrop-blur-xl bg-white/95 dark:bg-slate-900/95 border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl">
-              <DropdownMenuItem onClick={() => handleExport("json")} className="cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800">
-                <FileJson className="w-4 h-4 mr-2" />
-                {t("exportJson")}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport("csv")} className="cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800">
-                <FileSpreadsheet className="w-4 h-4 mr-2" />
-                {t("exportCsv")}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button variant="outline" className="space-x-2 bg-white/5 dark:bg-slate-900/30 backdrop-blur-md border border-slate-200/50 dark:border-white/10 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all duration-300" onClick={() => requireAuth(() => setIsImportOpen(true))}>
-            <Upload className="w-4 h-4 drop-shadow-[0_0_8px_rgba(148,163,184,0.5)]" />
-            <span>{t("import")}</span>
-          </Button>
-
           <Button className="space-x-2 bg-blue-600 hover:bg-blue-700 text-white shadow-md dark:shadow-[0_0_15px_rgba(37,99,235,0.4)] border-none transition-all duration-300" onClick={handleCreateQuestionClick}>
             <Plus className="w-5 h-5 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
             <span>{t("addQuestion")}</span>
@@ -542,12 +493,6 @@ function QuestionsContent() {
           />
         )}
       </div>
-
-      <ImportQuestionsDialog
-        open={isImportOpen}
-        onOpenChange={setIsImportOpen}
-        onSuccess={fetchQuestions}
-      />
     </div>
   );
 }

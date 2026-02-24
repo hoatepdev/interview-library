@@ -1,20 +1,33 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus, Query, Req, UseGuards } from '@nestjs/common';
-import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
-import { Request } from 'express';
-import { TopicsService } from './topics.service';
-import { CreateTopicDto } from './dto/create-topic.dto';
-import { UpdateTopicDto } from './dto/update-topic.dto';
-import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
-import { RolesGuard } from '../common/guards/roles.guard';
-import { Roles } from '../common/decorators/roles.decorator';
-import { UserRole } from '../common/enums/role.enum';
-import { User } from '../database/entities/user.entity';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  HttpCode,
+  HttpStatus,
+  Query,
+  Req,
+  UseGuards,
+} from "@nestjs/common";
+import { ThrottlerGuard, Throttle } from "@nestjs/throttler";
+import { Request } from "express";
+import { TopicsService } from "./topics.service";
+import { CreateTopicDto } from "./dto/create-topic.dto";
+import { UpdateTopicDto } from "./dto/update-topic.dto";
+import { SessionAuthGuard } from "../auth/guards/session-auth.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
+import { Roles } from "../common/decorators/roles.decorator";
+import { UserRole } from "../common/enums/role.enum";
+import { User } from "../database/entities/user.entity";
 
 interface AuthenticatedRequest extends Request {
   user?: User;
 }
 
-@Controller('topics')
+@Controller("topics")
 export class TopicsController {
   constructor(private readonly topicsService: TopicsService) {}
 
@@ -29,54 +42,60 @@ export class TopicsController {
   }
 
   @Get()
-  findAll(@Req() req: AuthenticatedRequest, @Query('includeDeleted') includeDeleted?: string) {
-    const lang = req.i18n?.lang || 'en';
+  findAll(
+    @Req() req: AuthenticatedRequest,
+    @Query("includeDeleted") includeDeleted?: string,
+  ) {
+    const lang = req.i18n?.lang || "en";
     const isAdmin = req.user?.role === UserRole.ADMIN;
-    return this.topicsService.findAll(lang, isAdmin && includeDeleted === 'true');
+    return this.topicsService.findAll(
+      lang,
+      isAdmin && includeDeleted === "true",
+    );
   }
 
-  @Get('slug/:slug')
-  findBySlug(@Param('slug') slug: string, @Req() req: Request) {
-    const lang = req.i18n?.lang || 'en';
+  @Get("slug/:slug")
+  findBySlug(@Param("slug") slug: string, @Req() req: Request) {
+    const lang = req.i18n?.lang || "en";
     return this.topicsService.findBySlug(slug, lang);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string, @Req() req: Request) {
-    const lang = req.i18n?.lang || 'en';
+  @Get(":id")
+  findOne(@Param("id") id: string, @Req() req: Request) {
+    const lang = req.i18n?.lang || "en";
     return this.topicsService.findOne(id, lang);
   }
 
-  @Put(':id')
+  @Put(":id")
   @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.MODERATOR, UserRole.ADMIN)
-  update(@Param('id') id: string, @Body() updateTopicDto: UpdateTopicDto) {
+  update(@Param("id") id: string, @Body() updateTopicDto: UpdateTopicDto) {
     return this.topicsService.update(id, updateTopicDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.MODERATOR, UserRole.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Req() req: AuthenticatedRequest,
-    @Query('force') force?: string,
+    @Query("force") force?: string,
   ) {
-    await this.topicsService.remove(id, req.user.id, force === 'true');
+    await this.topicsService.remove(id, req.user.id, force === "true");
   }
 
-  @Post(':id/restore')
+  @Post(":id/restore")
   @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+  async restore(@Param("id") id: string, @Req() req: AuthenticatedRequest) {
     return this.topicsService.restore(id, req.user.id);
   }
 }

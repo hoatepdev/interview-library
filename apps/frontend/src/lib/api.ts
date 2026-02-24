@@ -17,7 +17,6 @@ import type {
   PracticeLogEntry,
   DueQuestion,
   AnalyticsResponse,
-  ImportResult,
 } from '@/types';
 
 const api = axios.create({
@@ -61,32 +60,6 @@ export const questionsApi = {
   delete: (id: string) => api.delete(`/questions/${id}`).then((res) => res.data),
   toggleFavorite: (id: string) =>
     api.patch<{ isFavorite: boolean }>(`/questions/${id}/favorite`).then((res) => res.data),
-  exportQuestions: (params: { format: 'json' | 'csv'; topicId?: string; level?: string }) => {
-    return api.get('/questions/export', {
-      params,
-      responseType: 'blob',
-    }).then((res) => {
-      const contentDisposition = res.headers['content-disposition'];
-      const filename = contentDisposition
-        ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
-        : `questions-export.${params.format}`;
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    });
-  },
-  importQuestions: (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    return api.post<ImportResult>('/questions/import', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }).then((res) => res.data);
-  },
 };
 
 // Practice

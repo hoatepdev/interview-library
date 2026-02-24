@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class RemoveGlobalSm2FromQuestions1772000000000 implements MigrationInterface {
-  name = 'RemoveGlobalSm2FromQuestions1772000000000';
+  name = "RemoveGlobalSm2FromQuestions1772000000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Step 1: Migrate global SM-2 state into user_questions for questions
@@ -37,21 +37,45 @@ export class RemoveGlobalSm2FromQuestions1772000000000 implements MigrationInter
     `);
 
     // Step 2: Drop SM-2 columns from questions table
-    await queryRunner.query(`ALTER TABLE "questions" DROP COLUMN "ease_factor"`);
-    await queryRunner.query(`ALTER TABLE "questions" DROP COLUMN "interval_days"`);
-    await queryRunner.query(`ALTER TABLE "questions" DROP COLUMN "repetitions"`);
-    await queryRunner.query(`ALTER TABLE "questions" DROP COLUMN "next_review_at"`);
-    await queryRunner.query(`ALTER TABLE "questions" DROP COLUMN "last_practiced_at"`);
-    await queryRunner.query(`ALTER TABLE "questions" DROP COLUMN "practice_count"`);
+    await queryRunner.query(
+      `ALTER TABLE "questions" DROP COLUMN "ease_factor"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" DROP COLUMN "interval_days"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" DROP COLUMN "repetitions"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" DROP COLUMN "next_review_at"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" DROP COLUMN "last_practiced_at"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" DROP COLUMN "practice_count"`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Re-add dropped columns with their original defaults
-    await queryRunner.query(`ALTER TABLE "questions" ADD "practice_count" integer NOT NULL DEFAULT 0`);
-    await queryRunner.query(`ALTER TABLE "questions" ADD "last_practiced_at" TIMESTAMP`);
-    await queryRunner.query(`ALTER TABLE "questions" ADD "next_review_at" TIMESTAMP`);
-    await queryRunner.query(`ALTER TABLE "questions" ADD "ease_factor" numeric(4,2) NOT NULL DEFAULT 2.5`);
-    await queryRunner.query(`ALTER TABLE "questions" ADD "interval_days" integer NOT NULL DEFAULT 0`);
-    await queryRunner.query(`ALTER TABLE "questions" ADD "repetitions" integer NOT NULL DEFAULT 0`);
+    await queryRunner.query(
+      `ALTER TABLE "questions" ADD "practice_count" integer NOT NULL DEFAULT 0`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" ADD "last_practiced_at" TIMESTAMP`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" ADD "next_review_at" TIMESTAMP`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" ADD "ease_factor" numeric(4,2) NOT NULL DEFAULT 2.5`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" ADD "interval_days" integer NOT NULL DEFAULT 0`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "questions" ADD "repetitions" integer NOT NULL DEFAULT 0`,
+    );
   }
 }

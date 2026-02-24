@@ -1,7 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { DEFAULT_LOCALE, type Locale } from '@interview-library/shared/i18n';
+import { Injectable } from "@nestjs/common";
+import { DEFAULT_LOCALE, type Locale } from "@interview-library/shared/i18n";
 
-export type TranslationField = 'name' | 'description' | 'title' | 'content' | 'answer';
+export type TranslationField =
+  | "name"
+  | "description"
+  | "title"
+  | "content"
+  | "answer";
 
 export interface TranslationValue {
   name?: string;
@@ -24,7 +29,7 @@ export class I18nService {
   getTranslation<T extends Record<string, any>>(
     entity: T,
     field: TranslationField,
-    lang: Locale = DEFAULT_LOCALE
+    lang: Locale = DEFAULT_LOCALE,
   ): string {
     const originalValue = entity[field];
     const translations = this.getTranslations(entity);
@@ -40,13 +45,17 @@ export class I18nService {
   /**
    * Get all translations from entity
    */
-  getTranslations<T extends Record<string, any>>(entity: T): Translations | null {
-    const translations = entity['translations'];
-    if (!translations || typeof translations !== 'object') {
+  getTranslations<T extends Record<string, any>>(
+    entity: T,
+  ): Translations | null {
+    const translations = entity["translations"];
+    if (!translations || typeof translations !== "object") {
       return null;
     }
     // Handle both JSONB (object) and string (parsed JSON)
-    return typeof translations === 'string' ? JSON.parse(translations) : translations;
+    return typeof translations === "string"
+      ? JSON.parse(translations)
+      : translations;
   }
 
   /**
@@ -56,13 +65,13 @@ export class I18nService {
     translations: Translations | string | null,
     field: TranslationField,
     lang: Locale,
-    value: string
+    value: string,
   ): Translations {
     let parsed: Translations;
 
     if (!translations) {
       parsed = {};
-    } else if (typeof translations === 'string') {
+    } else if (typeof translations === "string") {
       parsed = JSON.parse(translations);
     } else {
       parsed = translations;
@@ -84,7 +93,7 @@ export class I18nService {
   formatResponse<T extends Record<string, any>>(
     entity: T,
     lang: Locale,
-    fields: TranslationField[]
+    fields: TranslationField[],
   ): Record<string, any> {
     const response: Record<string, any> = { ...entity };
 
@@ -112,8 +121,8 @@ export class I18nService {
 
   private getLangSuffix(lang: Locale): string {
     const suffixes: Record<Locale, string> = {
-      en: '',
-      vi: 'Vi',
+      en: "",
+      vi: "Vi",
     };
     return suffixes[lang] || lang.charAt(0).toUpperCase() + lang.slice(1);
   }

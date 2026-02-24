@@ -1,9 +1,9 @@
-import { Repository, IsNull, Not, EntityManager } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
-import { DomainEventService } from '../services/domain-event.service';
-import { DomainEventAction } from '../../database/entities/domain-event.entity';
-import { RestoreBlockedException } from '../exceptions/restore-blocked.exception';
-import { DomainConflictException } from '../exceptions/domain-conflict.exception';
+import { Repository, IsNull, Not, EntityManager } from "typeorm";
+import { NotFoundException } from "@nestjs/common";
+import { DomainEventService } from "../services/domain-event.service";
+import { DomainEventAction } from "../../database/entities/domain-event.entity";
+import { RestoreBlockedException } from "../exceptions/restore-blocked.exception";
+import { DomainConflictException } from "../exceptions/domain-conflict.exception";
 
 export interface SoftDeletable {
   id: string;
@@ -118,8 +118,8 @@ export async function restore<T extends SoftDeletable>(
       const conflicting = await repository.findOne({ where });
       if (conflicting && conflicting.id !== id) {
         const conflictValue = constraint.fields
-          .map(f => (entity as any)[f])
-          .join(', ');
+          .map((f) => (entity as any)[f])
+          .join(", ");
         throw new DomainConflictException(
           entityType,
           id,

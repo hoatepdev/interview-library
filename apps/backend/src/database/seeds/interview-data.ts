@@ -2542,6 +2542,6 @@ const byLevel = allQuestions.reduce(
     acc[q.level] = (acc[q.level] || 0) + 1;
     return acc;
   },
-  {} as Record<string, number>
+  {} as Record<string, number>,
 );
 console.log("By Level:", byLevel);

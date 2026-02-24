@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
-import { User } from '../database/entities/user.entity';
-import { UserRole } from '../common/enums/role.enum';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  Logger,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { IsNull, Not, Repository } from "typeorm";
+import { User } from "../database/entities/user.entity";
+import { UserRole } from "../common/enums/role.enum";
 
 @Injectable()
 export class AuthService {
@@ -18,7 +23,7 @@ export class AuthService {
     const email = emails?.[0]?.value;
 
     if (!email) {
-      throw new Error('Email is required from OAuth provider');
+      throw new Error("Email is required from OAuth provider");
     }
 
     // Check for soft-deleted user first — block re-login
@@ -27,7 +32,9 @@ export class AuthService {
       withDeleted: true,
     });
     if (deletedUser) {
-      throw new ForbiddenException('This account has been deactivated. Contact an administrator.');
+      throw new ForbiddenException(
+        "This account has been deactivated. Contact an administrator.",
+      );
     }
 
     let user = await this.userRepository.findOne({ where: { email } });
@@ -39,7 +46,7 @@ export class AuthService {
       const role = userCount === 0 ? UserRole.ADMIN : UserRole.USER;
       user = this.userRepository.create({
         email,
-        name: displayName || email.split('@')[0],
+        name: displayName || email.split("@")[0],
         avatar: photos?.[0]?.value,
         provider,
         providerId: id,
@@ -63,7 +70,7 @@ export class AuthService {
   async getUserProfile(userId: string) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException("User not found");
     }
     return user;
   }

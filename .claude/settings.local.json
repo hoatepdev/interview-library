@@ -38,7 +38,11 @@
       "Bash(pnpm --filter frontend build:*)",
       "Bash(pnpm --filter backend add:*)",
       "Bash(pnpm:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(# Check the ESLint config file that''s actually used in the backend find /Users/hoatepdev/Developer/personal/interview-library/apps/backend -name \"\"*.eslintrc*\"\" -o -name \"\"eslint.config*\"\")",
+      "Bash(# Check if the custom ESLint rule is actually wired into the ESLint config grep -rn \"\"no-unsafe-with-deleted\\\\|eslint-rules\\\\|rulesdir\"\" /Users/hoatepdev/Developer/personal/interview-library/apps/backend --include=\"\"*.json\"\" --include=\"\"*.js\"\" --include=\"\"*.ts\"\")",
+      "Bash(# Check for missing jest config find /Users/hoatepdev/Developer/personal/interview-library/apps/backend -name \"\"jest.config*\"\")",
+      "Bash(# Check for jest config in package.json grep -A30 ''\"\"jest\"\"'' /Users/hoatepdev/Developer/personal/interview-library/apps/backend/package.json)"
     ]
   }
 }

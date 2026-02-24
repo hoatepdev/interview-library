@@ -7,31 +7,31 @@
  * This script populates the database with sample topics and interview questions.
  */
 
-import { DataSource } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
-import { Topic } from '../entities/topic.entity';
-import { Question } from '../entities/question.entity';
-import { topics, allQuestions } from './interview-data';
+import { DataSource } from "typeorm";
+import { ConfigService } from "@nestjs/config";
+import { Topic } from "../entities/topic.entity";
+import { Question } from "../entities/question.entity";
+import { topics, allQuestions } from "./interview-data";
 
 async function runSeed() {
-  console.log('🌱 Starting database seed...');
+  console.log("🌱 Starting database seed...");
 
   // Initialize database connection
   const configService = new ConfigService();
   const dataSource = new DataSource({
-    type: 'postgres',
-    host: configService.get('DB_HOST', 'localhost'),
-    port: configService.get('DB_PORT', 5432),
-    username: configService.get('DB_USERNAME', 'postgres'),
-    password: configService.get('DB_PASSWORD', 'postgres'),
-    database: configService.get('DB_NAME', 'interview_library'),
+    type: "postgres",
+    host: configService.get("DB_HOST", "localhost"),
+    port: configService.get("DB_PORT", 5432),
+    username: configService.get("DB_USERNAME", "postgres"),
+    password: configService.get("DB_PASSWORD", "postgres"),
+    database: configService.get("DB_NAME", "interview_library"),
     entities: [Topic, Question],
     synchronize: false,
   });
 
   try {
     await dataSource.initialize();
-    console.log('✅ Database connected');
+    console.log("✅ Database connected");
 
     const topicRepo = dataSource.getRepository(Topic);
     const questionRepo = dataSource.getRepository(Question);
@@ -39,15 +39,17 @@ async function runSeed() {
     // Check if data already exists
     const existingTopics = await topicRepo.count();
     if (existingTopics > 0) {
-      console.log(`⚠️  Database already has ${existingTopics} topics. Skipping seed.`);
-      console.log('   To re-seed, truncate the tables first:');
-      console.log('   TRUNCATE TABLE questions CASCADE;');
-      console.log('   TRUNCATE TABLE topics CASCADE;');
+      console.log(
+        `⚠️  Database already has ${existingTopics} topics. Skipping seed.`,
+      );
+      console.log("   To re-seed, truncate the tables first:");
+      console.log("   TRUNCATE TABLE questions CASCADE;");
+      console.log("   TRUNCATE TABLE topics CASCADE;");
       return;
     }
 
     // Insert topics
-    console.log('📚 Creating topics...');
+    console.log("📚 Creating topics...");
     const createdTopics: Map<string, Topic> = new Map();
 
     for (const topicData of topics) {
@@ -58,7 +60,7 @@ async function runSeed() {
     }
 
     // Insert questions
-    console.log('❓ Creating questions...');
+    console.log("❓ Creating questions...");
     const questionCounts: Record<string, number> = {};
 
     for (const questionData of allQuestions) {
@@ -82,7 +84,7 @@ async function runSeed() {
     }
 
     // Summary
-    console.log('\n✅ Seed completed successfully!');
+    console.log("\n✅ Seed completed successfully!");
     console.log(`\n📊 Summary:`);
     console.log(`   Topics: ${topics.length}`);
     console.log(`   Questions: ${allQuestions.length}`);
@@ -90,13 +92,12 @@ async function runSeed() {
     Object.entries(questionCounts).forEach(([topic, count]) => {
       console.log(`   - ${topic}: ${count}`);
     });
-
   } catch (error) {
-    console.error('❌ Seed failed:', error);
+    console.error("❌ Seed failed:", error);
     throw error;
   } finally {
     await dataSource.destroy();
-    console.log('\n👋 Database connection closed');
+    console.log("\n👋 Database connection closed");
   }
 }
 

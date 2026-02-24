@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException } from "@nestjs/common";
 
 export class DomainConflictException extends ConflictException {
   constructor(
@@ -9,7 +9,7 @@ export class DomainConflictException extends ConflictException {
   ) {
     super({
       statusCode: 409,
-      error: 'Domain Conflict',
+      error: "Domain Conflict",
       message: `Cannot restore ${entityType} (${entityId}): an active ${entityType} already exists with ${conflictField} = "${conflictValue}"`,
       entityType,
       entityId,

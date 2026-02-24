@@ -1,8 +1,8 @@
-import { IsOptional, IsEnum, IsUUID, IsString, IsInt } from 'class-validator';
-import { QuestionLevel } from '../../database/entities/question.entity';
-import { QuestionStatus } from '../../common/utils/question-status.util';
-import { SelfRating } from '../../database/entities/practice-log.entity';
-import { Type } from 'class-transformer';
+import { IsOptional, IsEnum, IsUUID, IsString, IsInt } from "class-validator";
+import { QuestionLevel } from "../../database/entities/question.entity";
+import { QuestionStatus } from "../../common/utils/question-status.util";
+import { SelfRating } from "../../database/entities/practice-log.entity";
+import { Type } from "class-transformer";
 
 export class QueryPracticeDto {
   @IsOptional()

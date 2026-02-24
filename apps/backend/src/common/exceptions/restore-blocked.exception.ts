@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException } from "@nestjs/common";
 
 export class RestoreBlockedException extends ConflictException {
   constructor(
@@ -9,7 +9,7 @@ export class RestoreBlockedException extends ConflictException {
   ) {
     super({
       statusCode: 409,
-      error: 'Restore Blocked',
+      error: "Restore Blocked",
       message: `Cannot restore ${entityType} (${entityId}): parent ${parentType} (${parentId}) is soft-deleted. Restore the parent first.`,
       entityType,
       entityId,

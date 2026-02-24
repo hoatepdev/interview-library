@@ -4,9 +4,9 @@
  * on the questions table.
  */
 export enum QuestionStatus {
-  NEW = 'new',
-  LEARNING = 'learning',
-  MASTERED = 'mastered',
+  NEW = "new",
+  LEARNING = "learning",
+  MASTERED = "mastered",
 }
 
 /**

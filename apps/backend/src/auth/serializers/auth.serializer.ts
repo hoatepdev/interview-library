@@ -1,6 +1,6 @@
-import { PassportSerializer } from '@nestjs/passport';
-import { Injectable, Logger } from '@nestjs/common';
-import { AuthService } from '../auth.service';
+import { PassportSerializer } from "@nestjs/passport";
+import { Injectable, Logger } from "@nestjs/common";
+import { AuthService } from "../auth.service";
 
 @Injectable()
 export class AuthSerializer extends PassportSerializer {
@@ -14,7 +14,10 @@ export class AuthSerializer extends PassportSerializer {
     done(null, user.id);
   }
 
-  async deserializeUser(userId: string, done: (err: Error, user?: any) => void): Promise<void> {
+  async deserializeUser(
+    userId: string,
+    done: (err: Error, user?: any) => void,
+  ): Promise<void> {
     try {
       const user = await this.authService.findById(userId);
       done(null, user);

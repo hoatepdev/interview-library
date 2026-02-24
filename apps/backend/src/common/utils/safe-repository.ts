@@ -1,4 +1,9 @@
-import { Repository, FindManyOptions, FindOneOptions, ObjectLiteral } from 'typeorm';
+import {
+  Repository,
+  FindManyOptions,
+  FindOneOptions,
+  ObjectLiteral,
+} from "typeorm";
 
 /**
  * SafeRepository wraps a TypeORM Repository to enforce soft-delete safety.
@@ -32,7 +37,9 @@ export class SafeRepository<T extends ObjectLiteral> {
     return this.repository.find({ ...options, withDeleted: true });
   }
 
-  async findOneIncludingDeleted(options?: FindOneOptions<T>): Promise<T | null> {
+  async findOneIncludingDeleted(
+    options?: FindOneOptions<T>,
+  ): Promise<T | null> {
     return this.repository.findOne({ ...options, withDeleted: true });
   }
 
@@ -47,8 +54,8 @@ export class SafeRepository<T extends ObjectLiteral> {
     const { withDeleted, ...rest } = options as any;
     if (withDeleted) {
       console.warn(
-        '[SafeRepository] withDeleted=true was stripped from a non-admin query. ' +
-        'Use findIncludingDeleted() or findOneIncludingDeleted() for admin context.',
+        "[SafeRepository] withDeleted=true was stripped from a non-admin query. " +
+          "Use findIncludingDeleted() or findOneIncludingDeleted() for admin context.",
       );
     }
     return rest as O;

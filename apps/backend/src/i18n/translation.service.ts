@@ -1,9 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { Topic } from '../database/entities/topic.entity';
-import { Question } from '../database/entities/question.entity';
-import { TopicTranslation } from '../database/entities/topic-translation.entity';
-import { QuestionTranslation } from '../database/entities/question-translation.entity';
-import { DEFAULT_LOCALE, LOCALES, isValidLocale, type Locale, type TranslationResponse } from '@interview-library/shared/i18n';
+import { Injectable } from "@nestjs/common";
+import { Topic } from "../database/entities/topic.entity";
+import { Question } from "../database/entities/question.entity";
+import { TopicTranslation } from "../database/entities/topic-translation.entity";
+import { QuestionTranslation } from "../database/entities/question-translation.entity";
+import {
+  DEFAULT_LOCALE,
+  LOCALES,
+  isValidLocale,
+  type Locale,
+  type TranslationResponse,
+} from "@interview-library/shared/i18n";
 
 /**
  * Service for handling translations with fallback logic
@@ -30,9 +36,9 @@ export class TranslationService {
    * Get available locales for a topic
    */
   getTopicAvailableLocales(topic: Topic): Locale[] {
-    const locales: Locale[] = ['en']; // English is always available
+    const locales: Locale[] = ["en"]; // English is always available
     if (topic.translations && topic.translations.length > 0) {
-      topic.translations.forEach(t => {
+      topic.translations.forEach((t) => {
         if (!locales.includes(t.locale)) {
           locales.push(t.locale);
         }
@@ -45,9 +51,9 @@ export class TranslationService {
    * Get available locales for a question
    */
   getQuestionAvailableLocales(question: Question): Locale[] {
-    const locales: Locale[] = ['en']; // English is always available
+    const locales: Locale[] = ["en"]; // English is always available
     if (question.translations && question.translations.length > 0) {
-      question.translations.forEach(t => {
+      question.translations.forEach((t) => {
         if (!locales.includes(t.locale)) {
           locales.push(t.locale);
         }
@@ -59,15 +65,21 @@ export class TranslationService {
   /**
    * Find translation for a topic
    */
-  findTopicTranslation(topic: Topic, locale: Locale): TopicTranslation | undefined {
-    return topic.translations?.find(t => t.locale === locale);
+  findTopicTranslation(
+    topic: Topic,
+    locale: Locale,
+  ): TopicTranslation | undefined {
+    return topic.translations?.find((t) => t.locale === locale);
   }
 
   /**
    * Find translation for a question
    */
-  findQuestionTranslation(question: Question, locale: Locale): QuestionTranslation | undefined {
-    return question.translations?.find(t => t.locale === locale);
+  findQuestionTranslation(
+    question: Question,
+    locale: Locale,
+  ): QuestionTranslation | undefined {
+    return question.translations?.find((t) => t.locale === locale);
   }
 
   /**
@@ -118,21 +130,34 @@ export class TranslationService {
   /**
    * Format topic with translations for API response
    */
-  formatTopic<T extends Topic>(topic: T, locale: Locale = DEFAULT_LOCALE): TranslationResponse {
+  formatTopic<T extends Topic>(
+    topic: T,
+    locale: Locale = DEFAULT_LOCALE,
+  ): TranslationResponse {
     const validatedLocale = this.validateLocale(locale);
     const translation = this.findTopicTranslation(topic, validatedLocale);
     const availableLocales = this.getTopicAvailableLocales(topic);
 
     // Check if any field used fallback
-    const isFallback = validatedLocale === DEFAULT_LOCALE ? false : {
-      name: !translation?.name,
-      description: translation?.description === undefined && !!topic.description,
-    };
+    const isFallback =
+      validatedLocale === DEFAULT_LOCALE
+        ? false
+        : {
+            name: !translation?.name,
+            description:
+              translation?.description === undefined && !!topic.description,
+          };
 
     // For single field fallback, return boolean instead of object
-    const finalIsFallback = validatedLocale === DEFAULT_LOCALE
-      ? false
-      : (!translation || (Object.keys(isFallback as Record<string, boolean>).some(k => !(isFallback as Record<string, boolean>)[k])) ? false : isFallback);
+    const finalIsFallback =
+      validatedLocale === DEFAULT_LOCALE
+        ? false
+        : !translation ||
+            Object.keys(isFallback as Record<string, boolean>).some(
+              (k) => !(isFallback as Record<string, boolean>)[k],
+            )
+          ? false
+          : isFallback;
 
     return {
       id: topic.id,
@@ -155,22 +180,35 @@ export class TranslationService {
   /**
    * Format question with translations for API response
    */
-  formatQuestion<T extends Question>(question: T, locale: Locale = DEFAULT_LOCALE, includeTopic = false): TranslationResponse {
+  formatQuestion<T extends Question>(
+    question: T,
+    locale: Locale = DEFAULT_LOCALE,
+    includeTopic = false,
+  ): TranslationResponse {
     const validatedLocale = this.validateLocale(locale);
     const translation = this.findQuestionTranslation(question, validatedLocale);
     const availableLocales = this.getQuestionAvailableLocales(question);
 
     // Check which fields used fallback
-    const isFallback = validatedLocale === DEFAULT_LOCALE ? false : {
-      title: !translation?.title,
-      content: !translation?.content,
-      answer: translation?.answer === undefined && !!question.answer,
-    };
+    const isFallback =
+      validatedLocale === DEFAULT_LOCALE
+        ? false
+        : {
+            title: !translation?.title,
+            content: !translation?.content,
+            answer: translation?.answer === undefined && !!question.answer,
+          };
 
     // For single field fallback, return boolean instead of object
-    const finalIsFallback = validatedLocale === DEFAULT_LOCALE
-      ? false
-      : (!translation || (Object.keys(isFallback as Record<string, boolean>).some(k => !(isFallback as Record<string, boolean>)[k])) ? false : isFallback);
+    const finalIsFallback =
+      validatedLocale === DEFAULT_LOCALE
+        ? false
+        : !translation ||
+            Object.keys(isFallback as Record<string, boolean>).some(
+              (k) => !(isFallback as Record<string, boolean>)[k],
+            )
+          ? false
+          : isFallback;
 
     const data: any = {
       id: question.id,
@@ -201,15 +239,24 @@ export class TranslationService {
   /**
    * Format multiple topics
    */
-  formatTopics<T extends Topic>(topics: T[], locale: Locale = DEFAULT_LOCALE): TranslationResponse[] {
-    return topics.map(topic => this.formatTopic(topic, locale));
+  formatTopics<T extends Topic>(
+    topics: T[],
+    locale: Locale = DEFAULT_LOCALE,
+  ): TranslationResponse[] {
+    return topics.map((topic) => this.formatTopic(topic, locale));
   }
 
   /**
    * Format multiple questions
    */
-  formatQuestions<T extends Question>(questions: T[], locale: Locale = DEFAULT_LOCALE, includeTopic = false): TranslationResponse[] {
-    return questions.map(question => this.formatQuestion(question, locale, includeTopic));
+  formatQuestions<T extends Question>(
+    questions: T[],
+    locale: Locale = DEFAULT_LOCALE,
+    includeTopic = false,
+  ): TranslationResponse[] {
+    return questions.map((question) =>
+      this.formatQuestion(question, locale, includeTopic),
+    );
   }
 
   /**

@@ -25,15 +25,21 @@ export class PracticeController {
   constructor(private readonly practiceService: PracticeService) {}
 
   @Get("random")
-  getRandomQuestion(@Req() req: AuthenticatedRequest, @Query() query: QueryPracticeDto) {
-    const lang = req.i18n?.lang || 'en';
+  getRandomQuestion(
+    @Req() req: AuthenticatedRequest,
+    @Query() query: QueryPracticeDto,
+  ) {
+    const lang = req.i18n?.lang || "en";
     const userId = req.user?.id;
     return this.practiceService.getRandomQuestion(query, lang, userId);
   }
 
   @Get("next")
-  getNextQuestion(@Req() req: AuthenticatedRequest, @Query() query: QueryPracticeDto) {
-    const lang = req.i18n?.lang || 'en';
+  getNextQuestion(
+    @Req() req: AuthenticatedRequest,
+    @Query() query: QueryPracticeDto,
+  ) {
+    const lang = req.i18n?.lang || "en";
     const userId = req.user?.id;
     return this.practiceService.getNextQuestionForPractice(query, lang, userId);
   }
@@ -46,39 +52,57 @@ export class PracticeController {
   }
 
   @Get("due")
-  getQuestionsDueForReview(@Req() req: AuthenticatedRequest, @Query("limit") limit?: string) {
-    const lang = req.i18n?.lang || 'en';
+  getQuestionsDueForReview(
+    @Req() req: AuthenticatedRequest,
+    @Query("limit") limit?: string,
+  ) {
+    const lang = req.i18n?.lang || "en";
     const userId = req.user?.id;
-    return this.practiceService.getQuestionsDueForReview(lang, limit ? parseInt(limit) : 20, userId);
+    return this.practiceService.getQuestionsDueForReview(
+      lang,
+      limit ? parseInt(limit) : 20,
+      userId,
+    );
   }
 
   @Post("log")
   @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.CREATED)
-  logPractice(@Req() req: AuthenticatedRequest, @Body() createPracticeLogDto: CreatePracticeLogDto) {
+  logPractice(
+    @Req() req: AuthenticatedRequest,
+    @Body() createPracticeLogDto: CreatePracticeLogDto,
+  ) {
     const userId = req.user?.id;
     return this.practiceService.logPractice(createPracticeLogDto, userId);
   }
 
   @Get("analytics")
   getAnalytics(@Req() req: AuthenticatedRequest, @Query("days") days?: string) {
-    const lang = req.i18n?.lang || 'en';
+    const lang = req.i18n?.lang || "en";
     const userId = req.user?.id;
-    return this.practiceService.getAnalytics(lang, userId, days ? parseInt(days) : 30);
+    return this.practiceService.getAnalytics(
+      lang,
+      userId,
+      days ? parseInt(days) : 30,
+    );
   }
 
   @Get("stats")
   getStats(@Req() req: AuthenticatedRequest) {
-    const lang = req.i18n?.lang || 'en';
+    const lang = req.i18n?.lang || "en";
     const userId = req.user?.id;
     return this.practiceService.getStats(lang, userId);
   }
 
   @Get("history")
   getHistory(@Req() req: AuthenticatedRequest, @Query("limit") limit?: string) {
-    const lang = req.i18n?.lang || 'en';
+    const lang = req.i18n?.lang || "en";
     const userId = req.user?.id;
-    return this.practiceService.getHistory(limit ? parseInt(limit) : 20, lang, userId);
+    return this.practiceService.getHistory(
+      limit ? parseInt(limit) : 20,
+      lang,
+      userId,
+    );
   }
 }

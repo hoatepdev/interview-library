@@ -1,11 +1,15 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Topic } from '../database/entities/topic.entity';
-import { Question } from '../database/entities/question.entity';
-import { TopicTranslation } from '../database/entities/topic-translation.entity';
-import { QuestionTranslation } from '../database/entities/question-translation.entity';
-import { type Locale } from '@interview-library/shared/i18n';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Topic } from "../database/entities/topic.entity";
+import { Question } from "../database/entities/question.entity";
+import { TopicTranslation } from "../database/entities/topic-translation.entity";
+import { QuestionTranslation } from "../database/entities/question-translation.entity";
+import { type Locale } from "@interview-library/shared/i18n";
 
 // DTOs for translation CRUD
 export interface CreateTopicTranslationDto {
@@ -52,23 +56,32 @@ export class TranslationService {
   async getTopicTranslations(topicId: string): Promise<TopicTranslation[]> {
     return this.topicTranslationRepository.find({
       where: { topicId },
-      order: { locale: 'ASC' },
+      order: { locale: "ASC" },
     });
   }
 
-  async getTopicTranslation(topicId: string, locale: Locale): Promise<TopicTranslation> {
+  async getTopicTranslation(
+    topicId: string,
+    locale: Locale,
+  ): Promise<TopicTranslation> {
     const translation = await this.topicTranslationRepository.findOne({
       where: { topicId, locale },
     });
     if (!translation) {
-      throw new NotFoundException(`Translation for topic ${topicId} in locale ${locale} not found`);
+      throw new NotFoundException(
+        `Translation for topic ${topicId} in locale ${locale} not found`,
+      );
     }
     return translation;
   }
 
-  async createTopicTranslation(dto: CreateTopicTranslationDto): Promise<TopicTranslation> {
+  async createTopicTranslation(
+    dto: CreateTopicTranslationDto,
+  ): Promise<TopicTranslation> {
     // Verify topic exists
-    const topic = await this.topicRepository.findOne({ where: { id: dto.topicId } });
+    const topic = await this.topicRepository.findOne({
+      where: { id: dto.topicId },
+    });
     if (!topic) {
       throw new NotFoundException(`Topic with ID ${dto.topicId} not found`);
     }
@@ -78,19 +91,27 @@ export class TranslationService {
       where: { topicId: dto.topicId, locale: dto.locale },
     });
     if (existing) {
-      throw new ConflictException(`Translation for topic ${dto.topicId} in locale ${dto.locale} already exists`);
+      throw new ConflictException(
+        `Translation for topic ${dto.topicId} in locale ${dto.locale} already exists`,
+      );
     }
 
     const translation = this.topicTranslationRepository.create(dto);
     return this.topicTranslationRepository.save(translation);
   }
 
-  async updateTopicTranslation(topicId: string, locale: Locale, dto: UpdateTopicTranslationDto): Promise<TopicTranslation> {
+  async updateTopicTranslation(
+    topicId: string,
+    locale: Locale,
+    dto: UpdateTopicTranslationDto,
+  ): Promise<TopicTranslation> {
     const translation = await this.topicTranslationRepository.findOne({
       where: { topicId, locale },
     });
     if (!translation) {
-      throw new NotFoundException(`Translation for topic ${topicId} in locale ${locale} not found`);
+      throw new NotFoundException(
+        `Translation for topic ${topicId} in locale ${locale} not found`,
+      );
     }
     Object.assign(translation, dto);
     return this.topicTranslationRepository.save(translation);
@@ -101,35 +122,50 @@ export class TranslationService {
       where: { topicId, locale },
     });
     if (!translation) {
-      throw new NotFoundException(`Translation for topic ${topicId} in locale ${locale} not found`);
+      throw new NotFoundException(
+        `Translation for topic ${topicId} in locale ${locale} not found`,
+      );
     }
     await this.topicTranslationRepository.remove(translation);
   }
 
   // ==================== Question Translations ====================
 
-  async getQuestionTranslations(questionId: string): Promise<QuestionTranslation[]> {
+  async getQuestionTranslations(
+    questionId: string,
+  ): Promise<QuestionTranslation[]> {
     return this.questionTranslationRepository.find({
       where: { questionId },
-      order: { locale: 'ASC' },
+      order: { locale: "ASC" },
     });
   }
 
-  async getQuestionTranslation(questionId: string, locale: Locale): Promise<QuestionTranslation> {
+  async getQuestionTranslation(
+    questionId: string,
+    locale: Locale,
+  ): Promise<QuestionTranslation> {
     const translation = await this.questionTranslationRepository.findOne({
       where: { questionId, locale },
     });
     if (!translation) {
-      throw new NotFoundException(`Translation for question ${questionId} in locale ${locale} not found`);
+      throw new NotFoundException(
+        `Translation for question ${questionId} in locale ${locale} not found`,
+      );
     }
     return translation;
   }
 
-  async createQuestionTranslation(dto: CreateQuestionTranslationDto): Promise<QuestionTranslation> {
+  async createQuestionTranslation(
+    dto: CreateQuestionTranslationDto,
+  ): Promise<QuestionTranslation> {
     // Verify question exists
-    const question = await this.questionRepository.findOne({ where: { id: dto.questionId } });
+    const question = await this.questionRepository.findOne({
+      where: { id: dto.questionId },
+    });
     if (!question) {
-      throw new NotFoundException(`Question with ID ${dto.questionId} not found`);
+      throw new NotFoundException(
+        `Question with ID ${dto.questionId} not found`,
+      );
     }
 
     // Check if translation already exists
@@ -137,52 +173,76 @@ export class TranslationService {
       where: { questionId: dto.questionId, locale: dto.locale },
     });
     if (existing) {
-      throw new ConflictException(`Translation for question ${dto.questionId} in locale ${dto.locale} already exists`);
+      throw new ConflictException(
+        `Translation for question ${dto.questionId} in locale ${dto.locale} already exists`,
+      );
     }
 
     const translation = this.questionTranslationRepository.create(dto);
     return this.questionTranslationRepository.save(translation);
   }
 
-  async updateQuestionTranslation(questionId: string, locale: Locale, dto: UpdateQuestionTranslationDto): Promise<QuestionTranslation> {
+  async updateQuestionTranslation(
+    questionId: string,
+    locale: Locale,
+    dto: UpdateQuestionTranslationDto,
+  ): Promise<QuestionTranslation> {
     const translation = await this.questionTranslationRepository.findOne({
       where: { questionId, locale },
     });
     if (!translation) {
-      throw new NotFoundException(`Translation for question ${questionId} in locale ${locale} not found`);
+      throw new NotFoundException(
+        `Translation for question ${questionId} in locale ${locale} not found`,
+      );
     }
     Object.assign(translation, dto);
     return this.questionTranslationRepository.save(translation);
   }
 
-  async deleteQuestionTranslation(questionId: string, locale: Locale): Promise<void> {
+  async deleteQuestionTranslation(
+    questionId: string,
+    locale: Locale,
+  ): Promise<void> {
     const translation = await this.questionTranslationRepository.findOne({
       where: { questionId, locale },
     });
     if (!translation) {
-      throw new NotFoundException(`Translation for question ${questionId} in locale ${locale} not found`);
+      throw new NotFoundException(
+        `Translation for question ${questionId} in locale ${locale} not found`,
+      );
     }
     await this.questionTranslationRepository.remove(translation);
   }
 
   // ==================== Bulk Operations ====================
 
-  async getMissingTranslations(entityType: 'topics' | 'questions', locale: Locale): Promise<any[]> {
-    if (entityType === 'topics') {
+  async getMissingTranslations(
+    entityType: "topics" | "questions",
+    locale: Locale,
+  ): Promise<any[]> {
+    if (entityType === "topics") {
       return this.topicRepository
-        .createQueryBuilder('topic')
-        .leftJoin('topic.translations', 'translation', 'translation.locale = :locale')
-        .setParameter('locale', locale)
-        .where('translation.id IS NULL')
-        .select(['topic.id', 'topic.name'])
+        .createQueryBuilder("topic")
+        .leftJoin(
+          "topic.translations",
+          "translation",
+          "translation.locale = :locale",
+        )
+        .setParameter("locale", locale)
+        .where("translation.id IS NULL")
+        .select(["topic.id", "topic.name"])
         .getMany();
     } else {
       return this.questionRepository
-        .createQueryBuilder('question')
-        .leftJoin('question.translations', 'translation', 'translation.locale = :locale')
-        .setParameter('locale', locale)
-        .where('translation.id IS NULL')
-        .select(['question.id', 'question.title'])
+        .createQueryBuilder("question")
+        .leftJoin(
+          "question.translations",
+          "translation",
+          "translation.locale = :locale",
+        )
+        .setParameter("locale", locale)
+        .where("translation.id IS NULL")
+        .select(["question.id", "question.title"])
         .getMany();
     }
   }

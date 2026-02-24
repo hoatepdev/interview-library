@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class AddSoftDelete1772200000000 implements MigrationInterface {
-  name = 'AddSoftDelete1772200000000';
+  name = "AddSoftDelete1772200000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // ─── 1. Add soft delete columns to each table ───
@@ -25,7 +25,9 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // questions
-    await queryRunner.query(`ALTER TABLE "questions" ADD "deleted_at" TIMESTAMP`);
+    await queryRunner.query(
+      `ALTER TABLE "questions" ADD "deleted_at" TIMESTAMP`,
+    );
     await queryRunner.query(`ALTER TABLE "questions" ADD "deleted_by" UUID`);
     await queryRunner.query(`
       ALTER TABLE "questions"
@@ -34,8 +36,12 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // question_revisions
-    await queryRunner.query(`ALTER TABLE "question_revisions" ADD "deleted_at" TIMESTAMP`);
-    await queryRunner.query(`ALTER TABLE "question_revisions" ADD "deleted_by" UUID`);
+    await queryRunner.query(
+      `ALTER TABLE "question_revisions" ADD "deleted_at" TIMESTAMP`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "question_revisions" ADD "deleted_by" UUID`,
+    );
     await queryRunner.query(`
       ALTER TABLE "question_revisions"
       ADD CONSTRAINT "FK_question_revisions_deleted_by"
@@ -43,8 +49,12 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // user_questions
-    await queryRunner.query(`ALTER TABLE "user_questions" ADD "deleted_at" TIMESTAMP`);
-    await queryRunner.query(`ALTER TABLE "user_questions" ADD "deleted_by" UUID`);
+    await queryRunner.query(
+      `ALTER TABLE "user_questions" ADD "deleted_at" TIMESTAMP`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "user_questions" ADD "deleted_by" UUID`,
+    );
     await queryRunner.query(`
       ALTER TABLE "user_questions"
       ADD CONSTRAINT "FK_user_questions_deleted_by"
@@ -54,7 +64,9 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     // ─── 2. Replace unique constraints with partial unique indexes ───
 
     // topics.slug: drop old unique, create partial unique
-    await queryRunner.query(`ALTER TABLE "topics" DROP CONSTRAINT IF EXISTS "UQ_topics_slug"`);
+    await queryRunner.query(
+      `ALTER TABLE "topics" DROP CONSTRAINT IF EXISTS "UQ_topics_slug"`,
+    );
     await queryRunner.query(`DROP INDEX IF EXISTS "UQ_topics_slug"`);
     // Also try the TypeORM-generated constraint name
     await queryRunner.query(`
@@ -368,8 +380,12 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     // ─── Reverse cascade changes ───
 
     // content_reviews.reviewer_id: SET NULL → CASCADE
-    await queryRunner.query(`ALTER TABLE "content_reviews" DROP CONSTRAINT IF EXISTS "FK_content_reviews_reviewer_id"`);
-    await queryRunner.query(`ALTER TABLE "content_reviews" ALTER COLUMN "reviewer_id" SET NOT NULL`);
+    await queryRunner.query(
+      `ALTER TABLE "content_reviews" DROP CONSTRAINT IF EXISTS "FK_content_reviews_reviewer_id"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "content_reviews" ALTER COLUMN "reviewer_id" SET NOT NULL`,
+    );
     await queryRunner.query(`
       ALTER TABLE "content_reviews"
       ADD CONSTRAINT "FK_content_reviews_reviewer_id"
@@ -377,7 +393,9 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // user_questions.question_id: RESTRICT → CASCADE
-    await queryRunner.query(`ALTER TABLE "user_questions" DROP CONSTRAINT IF EXISTS "FK_user_questions_question_id"`);
+    await queryRunner.query(
+      `ALTER TABLE "user_questions" DROP CONSTRAINT IF EXISTS "FK_user_questions_question_id"`,
+    );
     await queryRunner.query(`
       ALTER TABLE "user_questions"
       ADD CONSTRAINT "FK_user_questions_question_id"
@@ -385,7 +403,9 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // user_questions.user_id: RESTRICT → CASCADE
-    await queryRunner.query(`ALTER TABLE "user_questions" DROP CONSTRAINT IF EXISTS "FK_user_questions_user_id"`);
+    await queryRunner.query(
+      `ALTER TABLE "user_questions" DROP CONSTRAINT IF EXISTS "FK_user_questions_user_id"`,
+    );
     await queryRunner.query(`
       ALTER TABLE "user_questions"
       ADD CONSTRAINT "FK_user_questions_user_id"
@@ -393,8 +413,12 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // question_revisions.submitted_by: SET NULL → CASCADE
-    await queryRunner.query(`ALTER TABLE "question_revisions" DROP CONSTRAINT IF EXISTS "FK_question_revisions_submitted_by"`);
-    await queryRunner.query(`ALTER TABLE "question_revisions" ALTER COLUMN "submitted_by" SET NOT NULL`);
+    await queryRunner.query(
+      `ALTER TABLE "question_revisions" DROP CONSTRAINT IF EXISTS "FK_question_revisions_submitted_by"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "question_revisions" ALTER COLUMN "submitted_by" SET NOT NULL`,
+    );
     await queryRunner.query(`
       ALTER TABLE "question_revisions"
       ADD CONSTRAINT "FK_question_revisions_submitted_by"
@@ -402,7 +426,9 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // question_revisions.question_id: RESTRICT → CASCADE
-    await queryRunner.query(`ALTER TABLE "question_revisions" DROP CONSTRAINT IF EXISTS "FK_question_revisions_question_id"`);
+    await queryRunner.query(
+      `ALTER TABLE "question_revisions" DROP CONSTRAINT IF EXISTS "FK_question_revisions_question_id"`,
+    );
     await queryRunner.query(`
       ALTER TABLE "question_revisions"
       ADD CONSTRAINT "FK_question_revisions_question_id"
@@ -410,7 +436,9 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // questions.user_id: SET NULL → CASCADE
-    await queryRunner.query(`ALTER TABLE "questions" DROP CONSTRAINT IF EXISTS "FK_questions_user_id"`);
+    await queryRunner.query(
+      `ALTER TABLE "questions" DROP CONSTRAINT IF EXISTS "FK_questions_user_id"`,
+    );
     await queryRunner.query(`
       ALTER TABLE "questions"
       ADD CONSTRAINT "FK_questions_user_id"
@@ -418,7 +446,9 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // questions.topic_id: RESTRICT → CASCADE
-    await queryRunner.query(`ALTER TABLE "questions" DROP CONSTRAINT IF EXISTS "FK_questions_topic_id"`);
+    await queryRunner.query(
+      `ALTER TABLE "questions" DROP CONSTRAINT IF EXISTS "FK_questions_topic_id"`,
+    );
     await queryRunner.query(`
       ALTER TABLE "questions"
       ADD CONSTRAINT "FK_questions_topic_id"
@@ -427,9 +457,15 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
 
     // ─── Drop partial indexes ───
     await queryRunner.query(`DROP INDEX IF EXISTS "IDX_user_questions_active"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_question_revisions_active"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_questions_active_content_status"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_questions_active_topic"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_question_revisions_active"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_questions_active_content_status"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_questions_active_topic"`,
+    );
     await queryRunner.query(`DROP INDEX IF EXISTS "IDX_questions_active"`);
     await queryRunner.query(`DROP INDEX IF EXISTS "IDX_topics_active"`);
     await queryRunner.query(`DROP INDEX IF EXISTS "IDX_users_active"`);
@@ -437,7 +473,9 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     // ─── Restore original unique constraints ───
 
     // user_questions: drop partial, restore full unique
-    await queryRunner.query(`DROP INDEX IF EXISTS "UQ_user_questions_user_question_active"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "UQ_user_questions_user_question_active"`,
+    );
     await queryRunner.query(`
       ALTER TABLE "user_questions"
       ADD CONSTRAINT "UQ_user_questions_user_question"
@@ -445,7 +483,9 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
     `);
 
     // users.provider_id: drop partial, restore full unique
-    await queryRunner.query(`DROP INDEX IF EXISTS "UQ_users_provider_id_active"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "UQ_users_provider_id_active"`,
+    );
     await queryRunner.query(`
       ALTER TABLE "users"
       ADD CONSTRAINT "UQ_users_provider_id"
@@ -470,23 +510,41 @@ export class AddSoftDelete1772200000000 implements MigrationInterface {
 
     // ─── Drop soft delete columns ───
 
-    await queryRunner.query(`ALTER TABLE "user_questions" DROP CONSTRAINT IF EXISTS "FK_user_questions_deleted_by"`);
-    await queryRunner.query(`ALTER TABLE "user_questions" DROP COLUMN "deleted_by"`);
-    await queryRunner.query(`ALTER TABLE "user_questions" DROP COLUMN "deleted_at"`);
+    await queryRunner.query(
+      `ALTER TABLE "user_questions" DROP CONSTRAINT IF EXISTS "FK_user_questions_deleted_by"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "user_questions" DROP COLUMN "deleted_by"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "user_questions" DROP COLUMN "deleted_at"`,
+    );
 
-    await queryRunner.query(`ALTER TABLE "question_revisions" DROP CONSTRAINT IF EXISTS "FK_question_revisions_deleted_by"`);
-    await queryRunner.query(`ALTER TABLE "question_revisions" DROP COLUMN "deleted_by"`);
-    await queryRunner.query(`ALTER TABLE "question_revisions" DROP COLUMN "deleted_at"`);
+    await queryRunner.query(
+      `ALTER TABLE "question_revisions" DROP CONSTRAINT IF EXISTS "FK_question_revisions_deleted_by"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "question_revisions" DROP COLUMN "deleted_by"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "question_revisions" DROP COLUMN "deleted_at"`,
+    );
 
-    await queryRunner.query(`ALTER TABLE "questions" DROP CONSTRAINT IF EXISTS "FK_questions_deleted_by"`);
+    await queryRunner.query(
+      `ALTER TABLE "questions" DROP CONSTRAINT IF EXISTS "FK_questions_deleted_by"`,
+    );
     await queryRunner.query(`ALTER TABLE "questions" DROP COLUMN "deleted_by"`);
     await queryRunner.query(`ALTER TABLE "questions" DROP COLUMN "deleted_at"`);
 
-    await queryRunner.query(`ALTER TABLE "topics" DROP CONSTRAINT IF EXISTS "FK_topics_deleted_by"`);
+    await queryRunner.query(
+      `ALTER TABLE "topics" DROP CONSTRAINT IF EXISTS "FK_topics_deleted_by"`,
+    );
     await queryRunner.query(`ALTER TABLE "topics" DROP COLUMN "deleted_by"`);
     await queryRunner.query(`ALTER TABLE "topics" DROP COLUMN "deleted_at"`);
 
-    await queryRunner.query(`ALTER TABLE "users" DROP CONSTRAINT IF EXISTS "FK_users_deleted_by"`);
+    await queryRunner.query(
+      `ALTER TABLE "users" DROP CONSTRAINT IF EXISTS "FK_users_deleted_by"`,
+    );
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "deleted_by"`);
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "deleted_at"`);
   }

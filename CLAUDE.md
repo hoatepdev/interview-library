@@ -109,7 +109,7 @@ Locale config is centralized in `packages/shared/src/i18n/locales.ts` (LOCALES, 
 
 ### Environment
 
-Copy `.env.example` to `apps/backend/.env`. Required vars: DB credentials, OAuth client IDs/secrets, SESSION_SECRET. Frontend reads `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:9001/api`).
+Copy `.env.example` to `.env` at the project root. Required vars: DB credentials, OAuth client IDs/secrets, SESSION_SECRET. Frontend reads `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:9001/api`).
 
 ## Development Guidelines
 

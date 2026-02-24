@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../database/entities/user.entity';
-import { UserRole } from '../common/enums/role.enum';
-import { softDelete, restore } from '../common/utils/soft-delete.util';
-import { DomainEventService } from '../common/services/domain-event.service';
-import { DomainEventAction } from '../database/entities/domain-event.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { User } from "../database/entities/user.entity";
+import { UserRole } from "../common/enums/role.enum";
+import { softDelete, restore } from "../common/utils/soft-delete.util";
+import { DomainEventService } from "../common/services/domain-event.service";
+import { DomainEventAction } from "../database/entities/domain-event.entity";
 
 @Injectable()
 export class AdminService {
@@ -18,14 +18,31 @@ export class AdminService {
   async getUsers(includeDeleted = false): Promise<User[]> {
     if (includeDeleted) {
       return this.userRepository.find({
-        select: ['id', 'email', 'name', 'avatar', 'provider', 'role', 'createdAt', 'deletedAt'],
-        order: { createdAt: 'ASC' },
+        select: [
+          "id",
+          "email",
+          "name",
+          "avatar",
+          "provider",
+          "role",
+          "createdAt",
+          "deletedAt",
+        ],
+        order: { createdAt: "ASC" },
         withDeleted: true,
       });
     }
     return this.userRepository.find({
-      select: ['id', 'email', 'name', 'avatar', 'provider', 'role', 'createdAt'],
-      order: { createdAt: 'ASC' },
+      select: [
+        "id",
+        "email",
+        "name",
+        "avatar",
+        "provider",
+        "role",
+        "createdAt",
+      ],
+      order: { createdAt: "ASC" },
     });
   }
 
@@ -40,7 +57,7 @@ export class AdminService {
     await softDelete(this.userRepository, userId, deletedByUserId);
 
     await this.domainEventService.log(
-      'user',
+      "user",
       userId,
       DomainEventAction.DELETED,
       deletedByUserId,
@@ -49,10 +66,10 @@ export class AdminService {
 
   async restoreUser(userId: string, actorId?: string): Promise<User> {
     return restore(this.userRepository, userId, {
-      entityType: 'user',
+      entityType: "user",
       uniqueConstraints: [
-        { fields: ['email'], label: 'email' },
-        { fields: ['providerId'], label: 'provider_id' },
+        { fields: ["email"], label: "email" },
+        { fields: ["providerId"], label: "provider_id" },
       ],
       actorId,
       domainEventService: this.domainEventService,

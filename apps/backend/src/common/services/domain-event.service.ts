@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, EntityManager } from 'typeorm';
-import { DomainEvent, DomainEventAction } from '../../database/entities/domain-event.entity';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, EntityManager } from "typeorm";
+import {
+  DomainEvent,
+  DomainEventAction,
+} from "../../database/entities/domain-event.entity";
 
 @Injectable()
 export class DomainEventService {
@@ -33,10 +36,13 @@ export class DomainEventService {
     return repo.save(event);
   }
 
-  async findByEntity(entityType: string, entityId: string): Promise<DomainEvent[]> {
+  async findByEntity(
+    entityType: string,
+    entityId: string,
+  ): Promise<DomainEvent[]> {
     return this.domainEventRepository.find({
       where: { entityType, entityId },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
   }
 }

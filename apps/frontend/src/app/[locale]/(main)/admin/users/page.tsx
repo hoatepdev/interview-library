@@ -63,9 +63,7 @@ export default function AdminUsersPage() {
         prev.map((u) => (u.id === userId ? { ...u, role: updated.role } : u)),
       );
       toast.success(t("admin.roleUpdated"));
-    } catch (error) {
-      console.log("⭐ error", error);
-
+    } catch {
       toast.error(t("common.error"));
     } finally {
       setUpdating(null);

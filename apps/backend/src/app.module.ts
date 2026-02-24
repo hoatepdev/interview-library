@@ -20,9 +20,9 @@ import { DomainEventModule } from "./common/services/domain-event.module";
       envFilePath: path.join(__dirname, "../../../.env"),
     }),
     ThrottlerModule.forRoot([
-      { name: 'default', ttl: 60000, limit: 100 },
-      { name: 'strict', ttl: 60000, limit: 20 },
-      { name: 'auth', ttl: 60000, limit: 5 },
+      { name: "default", ttl: 60000, limit: 100 },
+      { name: "strict", ttl: 60000, limit: 20 },
+      { name: "auth", ttl: 60000, limit: 5 },
     ]),
     TypeOrmModule.forRoot({
       type: "postgres",

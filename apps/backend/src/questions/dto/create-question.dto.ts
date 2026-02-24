@@ -1,5 +1,14 @@
-import { IsString, IsOptional, IsNotEmpty, IsEnum, IsBoolean, IsInt, MaxLength, IsUUID } from 'class-validator';
-import { QuestionLevel } from '../../database/entities/question.entity';
+import {
+  IsString,
+  IsOptional,
+  IsNotEmpty,
+  IsEnum,
+  IsBoolean,
+  IsInt,
+  MaxLength,
+  IsUUID,
+} from "class-validator";
+import { QuestionLevel } from "../../database/entities/question.entity";
 
 export class CreateQuestionDto {
   @IsString()

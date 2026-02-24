@@ -29,7 +29,7 @@ export class AuthController {
   @Get("google")
   @UseGuards(ThrottlerGuard, AuthGuard("google"))
   @Throttle({ auth: { ttl: 60000, limit: 5 } })
-  googleLogin(@Req() req: any, @Query('locale') locale?: string) {
+  googleLogin(@Req() req: any, @Query("locale") locale?: string) {
     // Store locale in session for use in callback
     if (locale) {
       req.session.oauthLocale = locale;
@@ -40,7 +40,7 @@ export class AuthController {
   @UseGuards(AuthGuard("google"))
   googleAuthCallback(
     @Req() req: Request & { user: User; session: any },
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     const redirectUrl = this.buildRedirectUrl(req.session);
 
@@ -60,7 +60,7 @@ export class AuthController {
   @Get("github")
   @UseGuards(ThrottlerGuard, AuthGuard("github"))
   @Throttle({ auth: { ttl: 60000, limit: 5 } })
-  githubLogin(@Req() req: any, @Query('locale') locale?: string) {
+  githubLogin(@Req() req: any, @Query("locale") locale?: string) {
     // Store locale in session for use in callback
     if (locale) {
       req.session.oauthLocale = locale;
@@ -71,7 +71,7 @@ export class AuthController {
   @UseGuards(AuthGuard("github"))
   githubAuthCallback(
     @Req() req: Request & { user: User; session: any },
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     const redirectUrl = this.buildRedirectUrl(req.session);
 
@@ -91,7 +91,7 @@ export class AuthController {
   private buildRedirectUrl(session: any): string {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:9000";
     // Get locale from session (stored during OAuth init), default to 'en'
-    const locale = session.oauthLocale || 'en';
+    const locale = session.oauthLocale || "en";
     // Clear the stored locale
     delete session.oauthLocale;
     // Add locale and auth_success flag

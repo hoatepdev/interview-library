@@ -8,29 +8,32 @@
  * It checks existing questions by title before inserting.
  */
 
-import { DataSource } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
+import { DataSource } from "typeorm";
+import { ConfigService } from "@nestjs/config";
 // Import all entities to avoid metadata errors
-import { Question } from '../entities/question.entity';
-import { QuestionTranslation } from '../entities/question-translation.entity';
-import { Topic } from '../entities/topic.entity';
-import { TopicTranslation } from '../entities/topic-translation.entity';
-import { User } from '../entities/user.entity';
-import { UserQuestion } from '../entities/user-question.entity';
-import { PracticeLog } from '../entities/practice-log.entity';
-import { additionalQuestions } from './interview-data-additional';
+import { Question } from "../entities/question.entity";
+import { QuestionTranslation } from "../entities/question-translation.entity";
+import { Topic } from "../entities/topic.entity";
+import { TopicTranslation } from "../entities/topic-translation.entity";
+import { User } from "../entities/user.entity";
+import { UserQuestion } from "../entities/user-question.entity";
+import { PracticeLog } from "../entities/practice-log.entity";
+import { additionalQuestions } from "./interview-data-additional";
 
 // Topic slug to ID mapping (will be fetched from DB)
 const topicSlugToId: Record<string, string> = {};
 
-async function getTopicIdBySlug(dataSource: DataSource, slug: string): Promise<string | null> {
+async function getTopicIdBySlug(
+  dataSource: DataSource,
+  slug: string,
+): Promise<string | null> {
   if (topicSlugToId[slug]) {
     return topicSlugToId[slug];
   }
 
   const result = await dataSource.query(
     `SELECT id FROM topics WHERE slug = $1`,
-    [slug]
+    [slug],
   );
 
   if (result.length === 0) {
@@ -41,25 +44,28 @@ async function getTopicIdBySlug(dataSource: DataSource, slug: string): Promise<s
   return result[0].id;
 }
 
-async function questionExists(dataSource: DataSource, title: string): Promise<boolean> {
+async function questionExists(
+  dataSource: DataSource,
+  title: string,
+): Promise<boolean> {
   const result = await dataSource.query(
     `SELECT id FROM questions WHERE title = $1`,
-    [title]
+    [title],
   );
   return result.length > 0;
 }
 
 async function runSeed() {
-  console.log('🌱 Starting additional questions seed...');
+  console.log("🌱 Starting additional questions seed...");
 
   const configService = new ConfigService();
   const dataSource = new DataSource({
-    type: 'postgres',
-    host: configService.get('DB_HOST', 'localhost'),
-    port: configService.get('DB_PORT', 5432),
-    username: configService.get('DB_USERNAME', 'postgres'),
-    password: configService.get('DB_PASSWORD', 'postgres'),
-    database: configService.get('DB_NAME', 'interview_library'),
+    type: "postgres",
+    host: configService.get("DB_HOST", "localhost"),
+    port: configService.get("DB_PORT", 5432),
+    username: configService.get("DB_USERNAME", "postgres"),
+    password: configService.get("DB_PASSWORD", "postgres"),
+    database: configService.get("DB_NAME", "interview_library"),
     entities: [
       Question,
       QuestionTranslation,
@@ -74,12 +80,12 @@ async function runSeed() {
 
   try {
     await dataSource.initialize();
-    console.log('✅ Database connected');
+    console.log("✅ Database connected");
 
     const questionRepo = dataSource.getRepository(Question);
 
     // Get all topics and build slug->id map
-    console.log('📚 Fetching topics...');
+    console.log("📚 Fetching topics...");
     const topics = await dataSource.query(`SELECT id, slug FROM topics`);
     topics.forEach((t: { id: string; slug: string }) => {
       topicSlugToId[t.slug] = t.id;
@@ -87,16 +93,21 @@ async function runSeed() {
     console.log(`   Found ${topics.length} topics`);
 
     // Insert questions (skipping duplicates)
-    console.log('❓ Adding new questions...');
+    console.log("❓ Adding new questions...");
     let added = 0;
     let skipped = 0;
     const questionCounts: Record<string, number> = {};
 
     for (const questionData of additionalQuestions) {
       // Check if topic exists
-      const topicId = await getTopicIdBySlug(dataSource, questionData.topicSlug);
+      const topicId = await getTopicIdBySlug(
+        dataSource,
+        questionData.topicSlug,
+      );
       if (!topicId) {
-        console.warn(`⚠️  Topic not found: ${questionData.topicSlug} - skipping question`);
+        console.warn(
+          `⚠️  Topic not found: ${questionData.topicSlug} - skipping question`,
+        );
         continue;
       }
 
@@ -120,13 +131,16 @@ async function runSeed() {
       await questionRepo.save(question);
 
       // Count by topic
-      const topicName = Object.keys(topicSlugToId).find(slug => topicSlugToId[slug] === topicId) || questionData.topicSlug;
+      const topicName =
+        Object.keys(topicSlugToId).find(
+          (slug) => topicSlugToId[slug] === topicId,
+        ) || questionData.topicSlug;
       questionCounts[topicName] = (questionCounts[topicName] || 0) + 1;
       added++;
     }
 
     // Summary
-    console.log('\n✅ Seed completed successfully!');
+    console.log("\n✅ Seed completed successfully!");
     console.log(`\n📊 Summary:`);
     console.log(`   Questions added: ${added}`);
     console.log(`   Questions skipped (duplicates): ${skipped}`);
@@ -134,13 +148,12 @@ async function runSeed() {
     Object.entries(questionCounts).forEach(([topic, count]) => {
       console.log(`   - ${topic}: +${count}`);
     });
-
   } catch (error) {
-    console.error('❌ Seed failed:', error);
+    console.error("❌ Seed failed:", error);
     throw error;
   } finally {
     await dataSource.destroy();
-    console.log('\n👋 Database connection closed');
+    console.log("\n👋 Database connection closed");
   }
 }
 
