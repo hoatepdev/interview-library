@@ -1,5 +1,5 @@
 import { Controller, Get, Patch, Param, Body, UseGuards } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
+import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { AdminService } from './admin.service';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
@@ -19,6 +19,7 @@ export class AdminController {
   }
 
   @Patch('users/:id/role')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   updateUserRole(@Param('id') id: string, @Body() dto: UpdateUserRoleDto) {
     return this.adminService.updateUserRole(id, dto.role);

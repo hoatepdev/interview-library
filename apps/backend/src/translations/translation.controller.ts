@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { TranslationService, CreateTopicTranslationDto, UpdateTopicTranslationDto, CreateQuestionTranslationDto, UpdateQuestionTranslationDto } from './translation-crud.service';
 import { type Locale } from '@interview-library/shared/i18n';
 
@@ -20,6 +20,7 @@ export class TranslationController {
   }
 
   @Post('topics')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.CREATED)
   createTopicTranslation(@Body() dto: CreateTopicTranslationDto) {
@@ -27,6 +28,7 @@ export class TranslationController {
   }
 
   @Put('topics/:topicId/:locale')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   updateTopicTranslation(
     @Param('topicId') topicId: string,
@@ -37,6 +39,7 @@ export class TranslationController {
   }
 
   @Delete('topics/:topicId/:locale')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteTopicTranslation(@Param('topicId') topicId: string, @Param('locale') locale: Locale) {
@@ -56,6 +59,7 @@ export class TranslationController {
   }
 
   @Post('questions')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.CREATED)
   createQuestionTranslation(@Body() dto: CreateQuestionTranslationDto) {
@@ -63,6 +67,7 @@ export class TranslationController {
   }
 
   @Put('questions/:questionId/:locale')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   updateQuestionTranslation(
     @Param('questionId') questionId: string,
@@ -73,6 +78,7 @@ export class TranslationController {
   }
 
   @Delete('questions/:questionId/:locale')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteQuestionTranslation(@Param('questionId') questionId: string, @Param('locale') locale: Locale) {

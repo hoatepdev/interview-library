@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode, HttpStatus, Query, Req, UseGuards } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
+import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { Request } from 'express';
 import { TopicsService } from './topics.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
@@ -14,6 +14,7 @@ export class TopicsController {
   constructor(private readonly topicsService: TopicsService) {}
 
   @Post()
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.MODERATOR, UserRole.ADMIN)
@@ -41,6 +42,7 @@ export class TopicsController {
   }
 
   @Put(':id')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.MODERATOR, UserRole.ADMIN)
@@ -49,6 +51,7 @@ export class TopicsController {
   }
 
   @Delete(':id')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Roles(UserRole.MODERATOR, UserRole.ADMIN)

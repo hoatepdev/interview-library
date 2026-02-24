@@ -12,12 +12,11 @@ import {
 } from "@nestjs/common";
 import { Response } from "express";
 import { AuthGuard } from "@nestjs/passport";
-import { Throttle, SkipThrottle } from "@nestjs/throttler";
+import { ThrottlerGuard, Throttle } from "@nestjs/throttler";
 import { AuthService } from "./auth.service";
 import { SessionAuthGuard } from "./guards/session-auth.guard";
 import { User } from "../database/entities/user.entity";
 
-@Throttle({ auth: { ttl: 60000, limit: 5 } })
 @Controller("auth")
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
@@ -36,7 +35,6 @@ export class AuthController {
     }
   }
 
-  @SkipThrottle()
   @Get("google/callback")
   @UseGuards(AuthGuard("google"))
   googleAuthCallback(
@@ -67,7 +65,6 @@ export class AuthController {
     }
   }
 
-  @SkipThrottle()
   @Get("github/callback")
   @UseGuards(AuthGuard("github"))
   githubAuthCallback(
@@ -114,6 +111,8 @@ export class AuthController {
   }
 
   @Post("logout")
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ auth: { ttl: 60000, limit: 50 } })
   @HttpCode(HttpStatus.OK)
   logout(@Req() req: any, @Res() res: Response) {
     req.logout((err: any) => {

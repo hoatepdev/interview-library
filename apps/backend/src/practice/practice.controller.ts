@@ -7,8 +7,9 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  UseGuards,
 } from "@nestjs/common";
-import { SkipThrottle, Throttle } from "@nestjs/throttler";
+import { ThrottlerGuard, Throttle } from "@nestjs/throttler";
 import { Request } from "express";
 import { PracticeService } from "./practice.service";
 import { CreatePracticeLogDto } from "./dto/create-practice-log.dto";
@@ -36,7 +37,6 @@ export class PracticeController {
     return this.practiceService.getNextQuestionForPractice(query, lang, userId);
   }
 
-  @SkipThrottle()
   @Get("due-count")
   async getDueQuestionsCount(@Req() req: AuthenticatedRequest) {
     const userId = req.user?.id;
@@ -52,6 +52,7 @@ export class PracticeController {
   }
 
   @Post("log")
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.CREATED)
   logPractice(@Req() req: AuthenticatedRequest, @Body() createPracticeLogDto: CreatePracticeLogDto) {

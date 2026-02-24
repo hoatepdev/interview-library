@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
+import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { ReviewService } from './review.service';
 import { ReviewActionDto } from './dto/review-action.dto';
 import { RejectActionDto } from './dto/reject-action.dto';
@@ -51,6 +51,7 @@ export class ReviewController {
   }
 
   @Post('questions/:id/approve')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.OK)
   approveQuestion(
@@ -62,6 +63,7 @@ export class ReviewController {
   }
 
   @Post('questions/:id/reject')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.OK)
   rejectQuestion(
@@ -73,6 +75,7 @@ export class ReviewController {
   }
 
   @Post('revisions/:id/approve')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.OK)
   approveRevision(
@@ -84,6 +87,7 @@ export class ReviewController {
   }
 
   @Post('revisions/:id/reject')
+  @UseGuards(ThrottlerGuard)
   @Throttle({ strict: { ttl: 60000, limit: 20 } })
   @HttpCode(HttpStatus.OK)
   rejectRevision(
