@@ -28,11 +28,11 @@ echo "==> Adding current user to docker group..."
 sudo usermod -aG docker "$USER"
 
 echo "==> Creating app directory..."
-mkdir -p ~/interview-library
+mkdir -p ~/services/interview-library
 
 echo "==> Creating .env file from example..."
-if [ ! -f ~/interview-library/.env ]; then
-  cat > ~/interview-library/.env << 'EOF'
+if [ ! -f ~/services/interview-library/.env ]; then
+  cat > ~/services/interview-library/.env << 'EOF'
 PORT=9001
 NODE_ENV=production
 FRONTEND_URL=https://your-app.vercel.app
@@ -53,7 +53,7 @@ GITHUB_CALLBACK_URL=https://api.your-domain.com/api/auth/github/callback
 
 SESSION_SECRET=CHANGE_ME_RUN_openssl_rand_-hex_32
 EOF
-  echo "==> .env created at ~/interview-library/.env — EDIT IT before starting!"
+  echo "==> .env created at ~/services/interview-library/.env — EDIT IT before starting!"
 else
   echo "==> .env already exists, skipping."
 fi
@@ -62,7 +62,7 @@ echo ""
 echo "✅ Setup complete!"
 echo ""
 echo "Next steps:"
-echo "  1. Edit ~/interview-library/.env with your actual values"
+echo "  1. Edit ~/services/interview-library/.env with your actual values"
 echo "  2. Log out and back in (for docker group to take effect)"
 echo "  3. Configure GitHub Secrets (see DEPLOY.md)"
 echo "  4. Push to main branch to trigger deployment"
