@@ -24,7 +24,11 @@
     "seed:middle-nextjs": "ts-node src/database/seeds/seed-middle-nextjs.ts",
     "seed:middle-nodejs": "ts-node src/database/seeds/seed-middle-nodejs.ts",
     "seed:middle-nestjs": "ts-node src/database/seeds/seed-middle-nestjs.ts",
-    "seed:middle-postgresql": "ts-node src/database/seeds/seed-middle-postgresql.ts"
+    "seed:middle-postgresql": "ts-node src/database/seeds/seed-middle-postgresql.ts",
+    "seed:middle-system-design": "ts-node src/database/seeds/seed-middle-system-design.ts",
+    "seed:middle-docker-devops": "ts-node src/database/seeds/seed-middle-docker-devops.ts",
+    "seed:middle-testing": "ts-node src/database/seeds/seed-middle-testing.ts",
+    "seed:middle-git": "ts-node src/database/seeds/seed-middle-git.ts"
   },
   "dependencies": {
     "@interview-library/shared": "workspace:*",
