@@ -2600,6 +2600,294 @@ export class TypeOrmExceptionFilter implements ExceptionFilter {
     level: QuestionLevel.MIDDLE,
     topicSlug: "nestjs",
   },
+
+  // 19. Role-Based Access Control (RBAC)
+  {
+    title:
+      "How do you implement Role-Based Access Control (RBAC) in NestJS?",
+    content:
+      "Design a flexible RBAC system using guards, decorators, and metadata. How do you protect routes by role? How would you extend it to support permissions beyond simple roles?",
+    answer: `**Custom @Roles() decorator** — attach metadata to route handlers:
+\`\`\`typescript
+import { SetMetadata } from '@nestjs/common';
+
+export const ROLES_KEY = 'roles';
+export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
+\`\`\`
+
+**RolesGuard** — reads metadata and checks the user's role:
+\`\`\`typescript
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { ROLES_KEY } from './roles.decorator';
+
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    // Get roles from both handler and class level, merge them
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    // No roles specified → route is public (or rely on AuthGuard only)
+    if (!requiredRoles || requiredRoles.length === 0) return true;
+
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    if (!user) return false;
+
+    return requiredRoles.some((role) => user.roles?.includes(role));
+  }
+}
+\`\`\`
+
+**Usage on controllers**:
+\`\`\`typescript
+@Controller('admin/users')
+@UseGuards(SessionAuthGuard, RolesGuard)
+@Roles('ADMIN')
+export class AdminUsersController {
+  @Get()
+  findAll() { /* only ADMIN */ }
+
+  @Post(':id/ban')
+  @Roles('ADMIN', 'MODERATOR')  // override: ADMIN or MODERATOR
+  banUser(@Param('id') id: string) { /* ADMIN or MOD */ }
+}
+\`\`\`
+
+**Global registration** (apply to all routes):
+\`\`\`typescript
+// app.module.ts
+providers: [
+  { provide: APP_GUARD, useClass: SessionAuthGuard },
+  { provide: APP_GUARD, useClass: RolesGuard },
+],
+\`\`\`
+
+**Extending to permissions** (finer-grained than roles):
+\`\`\`typescript
+// Permissions decorator
+export const PERMISSIONS_KEY = 'permissions';
+export const RequirePermissions = (...permissions: string[]) =>
+  SetMetadata(PERMISSIONS_KEY, permissions);
+
+// Usage:
+@RequirePermissions('articles:create', 'articles:publish')
+@Post()
+createArticle() {}
+
+// PermissionsGuard reads user.permissions and checks
+// Permissions can be stored in DB: user → roles → role_permissions → permissions
+\`\`\`
+
+**Database schema for full RBAC**:
+\`\`\`sql
+CREATE TABLE roles (id UUID PRIMARY KEY, name TEXT UNIQUE);
+CREATE TABLE permissions (id UUID PRIMARY KEY, name TEXT UNIQUE);
+CREATE TABLE role_permissions (
+  role_id UUID REFERENCES roles(id),
+  permission_id UUID REFERENCES permissions(id),
+  PRIMARY KEY (role_id, permission_id)
+);
+CREATE TABLE user_roles (
+  user_id UUID REFERENCES users(id),
+  role_id UUID REFERENCES roles(id),
+  PRIMARY KEY (user_id, role_id)
+);
+\`\`\`
+
+**CASL integration** — attribute-based access control:
+\`\`\`typescript
+// Define abilities per role
+const ability = defineAbility((can, cannot) => {
+  if (user.role === 'ADMIN') {
+    can('manage', 'all');
+  } else if (user.role === 'MODERATOR') {
+    can('read', 'Article');
+    can('update', 'Article', { status: 'pending_review' });
+    cannot('delete', 'Article');
+  } else {
+    can('read', 'Article', { published: true });
+    can('update', 'Article', { authorId: user.id }); // only own articles
+  }
+});
+\`\`\`
+
+**Common mistakes**:
+- Forgetting to apply AuthGuard before RolesGuard — user object is undefined
+- Hardcoding roles in code — use enums or DB-driven roles
+- Not checking permissions at the service layer — guards protect routes, but services may be called from other services (e.g., queue workers)`,
+    level: QuestionLevel.MIDDLE,
+    topicSlug: "nestjs",
+  },
+
+  // 20. WebSockets and Gateways
+  {
+    title:
+      "How do you implement real-time communication with WebSockets in NestJS?",
+    content:
+      "Explain NestJS Gateways, the @WebSocketGateway decorator, rooms, broadcasting, and how to handle authentication in WebSocket connections.",
+    answer: `**NestJS Gateway** — WebSocket endpoint using Socket.IO or ws:
+\`\`\`typescript
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  SubscribeMessage,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  ConnectedSocket,
+  MessageBody,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+
+@WebSocketGateway({
+  cors: { origin: '*' },
+  namespace: '/chat',
+})
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  server: Server;
+
+  // Lifecycle hooks
+  handleConnection(client: Socket) {
+    console.log(\`Client connected: \${client.id}\`);
+  }
+
+  handleDisconnect(client: Socket) {
+    console.log(\`Client disconnected: \${client.id}\`);
+  }
+
+  // Listen for 'sendMessage' event from client
+  @SubscribeMessage('sendMessage')
+  handleMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { room: string; message: string },
+  ) {
+    // Broadcast to everyone in the room except sender
+    client.to(payload.room).emit('newMessage', {
+      userId: client.data.userId,
+      message: payload.message,
+      timestamp: new Date(),
+    });
+
+    return { event: 'messageSent', data: { success: true } }; // ack to sender
+  }
+
+  // Join a room
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
+    client.join(room);
+    this.server.to(room).emit('userJoined', { userId: client.data.userId });
+  }
+}
+\`\`\`
+
+**Authentication** — verify token during handshake:
+\`\`\`typescript
+@WebSocketGateway({
+  cors: { origin: '*' },
+})
+export class ChatGateway implements OnGatewayConnection {
+  constructor(private authService: AuthService) {}
+
+  async handleConnection(client: Socket) {
+    try {
+      const token = client.handshake.auth?.token
+        || client.handshake.headers?.authorization?.split(' ')[1];
+
+      if (!token) {
+        client.disconnect();
+        return;
+      }
+
+      const user = await this.authService.verifyToken(token);
+      client.data.userId = user.id;    // attach user to socket
+      client.data.roles = user.roles;
+      client.join(\`user:\${user.id}\`);  // personal room for targeted messages
+    } catch (e) {
+      client.emit('error', { message: 'Authentication failed' });
+      client.disconnect();
+    }
+  }
+}
+\`\`\`
+
+**Guards on WebSocket events**:
+\`\`\`typescript
+// WsGuard — analogous to HTTP guard
+@Injectable()
+export class WsAuthGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const client = context.switchToWs().getClient<Socket>();
+    return !!client.data.userId; // authenticated during handleConnection
+  }
+}
+
+// Usage
+@UseGuards(WsAuthGuard)
+@SubscribeMessage('sendMessage')
+handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any) {}
+\`\`\`
+
+**Broadcasting from services** (outside the gateway):
+\`\`\`typescript
+@Injectable()
+export class NotificationService {
+  constructor(private chatGateway: ChatGateway) {}
+
+  notifyUser(userId: string, event: string, data: any) {
+    this.chatGateway.server.to(\`user:\${userId}\`).emit(event, data);
+  }
+
+  broadcastToRoom(room: string, event: string, data: any) {
+    this.chatGateway.server.to(room).emit(event, data);
+  }
+}
+\`\`\`
+
+**Scaling WebSockets** — multiple server instances:
+\`\`\`typescript
+// Use Redis adapter so events are broadcast across all instances
+import { IoAdapter } from '@nestjs/platform-socket.io';
+import { createAdapter } from '@socket.io/redis-adapter';
+import { createClient } from 'redis';
+
+export class RedisIoAdapter extends IoAdapter {
+  async connectToRedis() {
+    const pubClient = createClient({ url: process.env.REDIS_URL });
+    const subClient = pubClient.duplicate();
+    await Promise.all([pubClient.connect(), subClient.connect()]);
+    this.adapterConstructor = createAdapter(pubClient, subClient);
+  }
+
+  createIOServer(port: number, options?: any) {
+    const server = super.createIOServer(port, options);
+    server.adapter(this.adapterConstructor);
+    return server;
+  }
+}
+
+// main.ts
+const redisAdapter = new RedisIoAdapter(app);
+await redisAdapter.connectToRedis();
+app.useWebSocketAdapter(redisAdapter);
+\`\`\`
+
+**Key considerations**:
+- WebSocket connections are stateful — load balancer needs sticky sessions or Redis adapter
+- Always handle disconnects gracefully (cleanup rooms, update online status)
+- Use namespaces to separate concerns (\`/chat\`, \`/notifications\`, \`/live-updates\`)
+- Rate-limit message events to prevent spam`,
+    level: QuestionLevel.MIDDLE,
+    topicSlug: "nestjs",
+  },
 ];
 
 // ============================================
