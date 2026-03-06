@@ -27,6 +27,12 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared package
+        run: pnpm --filter @interview-library/shared build
+
       - name: Install Vercel CLI
         run: pnpm add -g vercel@latest
 

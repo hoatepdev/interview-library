@@ -49,5 +49,13 @@ ARCHITECTURE.md
 DATABASE_SCHEMA.md
 API_CONTRACT.md
 
-# Frontend (not needed for backend image)
-apps/frontend
+# Frontend source (not needed for backend image)
+# Keep package.json so pnpm workspace resolution & frozen-lockfile work
+apps/frontend/src
+apps/frontend/public
+apps/frontend/.next
+apps/frontend/next.config.ts
+apps/frontend/tsconfig.json
+apps/frontend/tailwind.config.ts
+apps/frontend/postcss.config.*
+apps/frontend/components.json
