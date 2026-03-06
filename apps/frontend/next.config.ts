@@ -1,9 +1,13 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+import path from 'path';
+
+const monorepoRoot = path.resolve(process.cwd(), '../..');
 
 const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  outputFileTracingRoot: monorepoRoot,
   async rewrites() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9001/api';
     return [
