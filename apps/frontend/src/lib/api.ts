@@ -17,6 +17,7 @@ import type {
   PracticeLogEntry,
   DueQuestion,
   AnalyticsResponse,
+  PaginatedResponse,
 } from '@/types';
 
 const api = axios.create({
@@ -51,10 +52,10 @@ export const topicsApi = {
 // Questions
 export const questionsApi = {
   getAll: (params?: QueryQuestionsDto) =>
-    api.get<Question[]>('/questions', { params }).then((res) => res.data),
+    api.get<PaginatedResponse<Question>>('/questions', { params }).then((res) => res.data),
   getById: (id: string) => api.get<Question>(`/questions/${id}`).then((res) => res.data),
   getByTopicSlug: (slug: string, params?: QueryQuestionsDto) =>
-    api.get<Question[]>(`/questions/by-topic-slug/${slug}`, { params }).then((res) => res.data),
+    api.get<PaginatedResponse<Question>>(`/questions/by-topic-slug/${slug}`, { params }).then((res) => res.data),
   create: (data: CreateQuestionDto) => api.post<Question>('/questions', data).then((res) => res.data),
   update: (id: string, data: UpdateQuestionDto) => api.put<Question>(`/questions/${id}`, data).then((res) => res.data),
   delete: (id: string) => api.delete(`/questions/${id}`).then((res) => res.data),
@@ -119,7 +120,7 @@ export async function getTopics(): Promise<Topic[]> {
   return topicsApi.getAll();
 }
 
-export async function getQuestions(params?: QueryQuestionsDto): Promise<Question[]> {
+export async function getQuestions(params?: QueryQuestionsDto): Promise<PaginatedResponse<Question>> {
   return questionsApi.getAll(params);
 }
 

@@ -110,6 +110,8 @@ export interface QueryQuestionsDto {
   status?: QuestionStatus;
   favorite?: boolean;
   search?: string;
+  page?: number;
+  limit?: number;
 }
 
 export interface PracticeLog {
@@ -211,4 +213,12 @@ export interface ImportResult {
   imported: number;
   skipped: number;
   errors: ImportError[];
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }

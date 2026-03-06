@@ -4,6 +4,9 @@ import {
   IsString,
   IsUUID,
   IsBoolean,
+  IsInt,
+  Min,
+  Max,
 } from "class-validator";
 import { QuestionLevel } from "../../database/entities/question.entity";
 import { QuestionStatus } from "../../common/utils/question-status.util";
@@ -40,4 +43,17 @@ export class QueryQuestionsDto {
   @IsOptional()
   @IsEnum(ContentStatus)
   contentStatus?: ContentStatus;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  page?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  @Type(() => Number)
+  limit?: number;
 }

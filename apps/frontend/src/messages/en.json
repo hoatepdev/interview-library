@@ -104,6 +104,10 @@
     "dueForReviewTooltip": "Due for review",
     "dueButtonLabel": "Due",
     "previewSection": "Preview",
+    "showing": "Showing {from}–{to} of {total} questions",
+    "page": "Page",
+    "previous": "Previous",
+    "next": "Next",
     "levels": {
       "junior": "Junior",
       "middle": "Middle",

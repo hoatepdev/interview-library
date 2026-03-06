@@ -48,8 +48,8 @@ export default function TopicDetailPage() {
   const fetchQuestions = useCallback(async () => {
     setIsLoading(true);
     try {
-      const data = await questionsApi.getByTopicSlug(slug);
-      setQuestions(data);
+      const response = await questionsApi.getByTopicSlug(slug);
+      setQuestions(response.data);
     } catch (error) {
       console.error("Failed to fetch questions:", error);
       toast.error(tNotif("error"));

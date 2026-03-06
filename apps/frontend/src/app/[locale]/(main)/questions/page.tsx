@@ -11,6 +11,7 @@ import {
   getTopics,
   Topic,
 } from "@/lib/api";
+import { QuestionLevel, QuestionStatus, QueryQuestionsDto } from "@/types";
 import { QuestionList } from "@/components/questions/QuestionList";
 
 import { Search, Plus, Filter, Star, X, Clock } from "lucide-react";
@@ -21,6 +22,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { useRequireAuth } from "@/hooks/use-require-auth";
+import { Pagination } from "@/components/ui/pagination";
 
 // Filter presets
 type FilterPreset = "all" | "favorites" | "need-practice" | "mastered" | "due";
@@ -49,21 +51,29 @@ function QuestionsContent() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<FilterPreset>("all");
   const [dueCount, setDueCount] = useState<number>(0);
+  const [pagination, setPagination] = useState<{
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  } | null>(null);
 
   // Build query params from URL
-  const buildQueryParams = useCallback(() => {
-    const params: Record<string, string> = {};
+  const buildQueryParams = useCallback((): QueryQuestionsDto => {
+    const params: QueryQuestionsDto = {};
     const search = searchParams.get("search");
     const level = searchParams.get("level");
     const status = searchParams.get("status");
     const topic = searchParams.get("topic");
     const favorites = searchParams.get("favorites");
+    const page = searchParams.get("page");
 
     if (search) params.search = search;
-    if (level && level !== "all") params.level = level;
-    if (status && status !== "all") params.status = status;
+    if (level && level !== "all") params.level = level as QuestionLevel;
+    if (status && status !== "all") params.status = status as QuestionStatus;
     if (topic && topic !== "all") params.topicId = topic;
-    if (favorites === "true") params.favorite = "true";
+    if (favorites === "true") params.favorite = true;
+    if (page) params.page = parseInt(page, 10);
 
     return params;
   }, [searchParams]);
@@ -73,8 +83,14 @@ function QuestionsContent() {
     setIsLoading(true);
     try {
       const params = buildQueryParams();
-      const data = await questionsApi.getAll(params);
-      setQuestions(data);
+      const response = await questionsApi.getAll(params);
+      setQuestions(response.data);
+      setPagination({
+        total: response.total,
+        page: response.page,
+        limit: response.limit,
+        totalPages: response.totalPages,
+      });
     } catch (error) {
       console.error("Failed to fetch questions", error);
       toast.error(tNotif("error"));
@@ -140,6 +156,8 @@ function QuestionsContent() {
         params.set(key, String(value));
       }
     });
+    // Reset to page 1 when filters change
+    params.delete("page");
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
@@ -211,6 +229,13 @@ function QuestionsContent() {
   const clearFilters = () => {
     setActivePreset("all");
     router.push("/questions", { scroll: false });
+  };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(page));
+    router.push(`?${params.toString()}`, { scroll: true });
   };
 
   // Get current filter values from URL
@@ -485,12 +510,32 @@ function QuestionsContent() {
             ))}
           </div>
         ) : (
-          <QuestionList
-            questions={questions}
-            onEdit={handleEditQuestionClick}
-            onDelete={(id) => handleDeleteQuestion(id)}
-            onToggleFavorite={handleToggleFavorite}
-          />
+          <>
+            <QuestionList
+              questions={questions}
+              onEdit={handleEditQuestionClick}
+              onDelete={(id) => handleDeleteQuestion(id)}
+              onToggleFavorite={handleToggleFavorite}
+            />
+            {/* Pagination */}
+            {pagination && pagination.totalPages > 1 && (
+              <div className="mt-8 flex flex-col items-center gap-4">
+                {/* Show "Showing X–Y of Z questions" */}
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {t("showing", {
+                    from: (pagination.page - 1) * pagination.limit + 1,
+                    to: Math.min(pagination.page * pagination.limit, pagination.total),
+                    total: pagination.total,
+                  })}
+                </p>
+                <Pagination
+                  currentPage={pagination.page}
+                  totalPages={pagination.totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

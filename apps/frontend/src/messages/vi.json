@@ -104,6 +104,10 @@
     "dueForReviewTooltip": "Cần ôn tập",
     "dueButtonLabel": "Đến hạn",
     "previewSection": "Xem trước",
+    "showing": "Đang hiện {from}–{to} trong tổng số {total} câu hỏi",
+    "page": "Trang",
+    "previous": "Trước",
+    "next": "Tiếp theo",
     "levels": {
       "junior": "Junior",
       "middle": "Middle",
