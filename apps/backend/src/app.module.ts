@@ -17,7 +17,10 @@ import { DomainEventModule } from "./common/services/domain-event.module";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: path.join(__dirname, "../../../.env"),
+      envFilePath: [
+        path.resolve(process.cwd(), "../../.env"), // apps/backend -> monorepo root
+        path.resolve(process.cwd(), ".env"), // if cwd is monorepo root
+      ],
     }),
     ThrottlerModule.forRoot([
       { name: "default", ttl: 60000, limit: 100 },

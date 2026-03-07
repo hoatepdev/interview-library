@@ -1,3 +1,16 @@
+// Eagerly load .env so process.env is populated before NestJS constructs
+// any provider (Passport strategies read process.env in their constructors).
+// Check multiple locations because __dirname differs between ts-node (src/)
+// and compiled (dist/src/), and cwd is apps/backend/ via pnpm --filter.
+import * as path from "path";
+import { config } from "dotenv";
+config({
+  path: [
+    path.resolve(process.cwd(), "../../.env"), // apps/backend -> monorepo root
+    path.resolve(process.cwd(), ".env"), // if cwd is monorepo root
+  ],
+});
+
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
