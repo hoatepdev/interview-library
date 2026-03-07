@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # ─── Backend: lint + test ──────────────────────────────────────────────────
+  backend:
+    name: Backend (lint + test)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared package
+        run: pnpm --filter @interview-library/shared build
+
+      - name: Lint backend
+        run: pnpm --filter backend lint
+
+      - name: Run backend tests with coverage
+        run: pnpm --filter backend test:cov
+        env:
+          NODE_ENV: test
+
+  # ─── Frontend: lint + type-check ──────────────────────────────────────────
+  frontend:
+    name: Frontend (lint + build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared package
+        run: pnpm --filter @interview-library/shared build
+
+      - name: Lint frontend
+        run: pnpm --filter frontend lint
+
+      - name: Validate i18n
+        run: pnpm validate:i18n
+
+      - name: Build frontend
+        run: pnpm --filter frontend build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:9001/api
+          # Dummy OAuth credentials to satisfy Next.js build-time validation
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
+          GITHUB_CLIENT_ID: dummy
+          GITHUB_CLIENT_SECRET: dummy
+          SESSION_SECRET: ci-session-secret-placeholder

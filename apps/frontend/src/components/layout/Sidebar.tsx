@@ -66,10 +66,10 @@ export function Sidebar() {
 
         {isModOrAdmin && (
           <Link
-            href={"/moderation" as any}
+            href="/moderation"
             className={cn(
               "group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200",
-              (pathname as string) === "/moderation"
+              pathname === "/moderation"
                 ? "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 shadow-sm"
                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
             )}
@@ -77,7 +77,7 @@ export function Sidebar() {
             <ShieldCheck
               className={cn(
                 "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
-                (pathname as string) === "/moderation"
+                pathname === "/moderation"
                   ? "text-amber-600 dark:text-amber-400"
                   : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
               )}
@@ -89,10 +89,10 @@ export function Sidebar() {
 
         {isAdmin && (
           <Link
-            href={"/admin/users" as any}
+            href="/admin/users"
             className={cn(
               "group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200",
-              (pathname as string) === "/admin/users"
+              pathname === "/admin/users"
                 ? "bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 shadow-sm"
                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
             )}
@@ -100,7 +100,7 @@ export function Sidebar() {
             <UserCog
               className={cn(
                 "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
-                (pathname as string) === "/admin/users"
+                pathname === "/admin/users"
                   ? "text-purple-600 dark:text-purple-400"
                   : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
               )}

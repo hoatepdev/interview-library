@@ -30,7 +30,9 @@ export const routing = defineRouting({
     '/analytics': {
       en: '/analytics',
       vi: '/phan-tich'
-    }
+    },
+    '/moderation': '/moderation',
+    '/admin/users': '/admin/users'
   }
 });
 

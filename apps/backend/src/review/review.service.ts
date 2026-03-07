@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { Question } from "../database/entities/question.entity";
 import { QuestionRevision } from "../database/entities/question-revision.entity";
 import {
@@ -23,6 +23,7 @@ export class ReviewService {
     private readonly revisionRepository: Repository<QuestionRevision>,
     @InjectRepository(ContentReview)
     private readonly contentReviewRepository: Repository<ContentReview>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getPendingItems(): Promise<{
@@ -140,30 +141,37 @@ export class ReviewService {
       throw new BadRequestException("Revision is not pending review");
     }
 
-    // Apply revision fields to the question
     const question = revision.question;
-    question.title = revision.title;
-    question.content = revision.content;
-    question.answer = revision.answer;
-    if (revision.level) question.level = revision.level;
-    if (revision.topicId) question.topicId = revision.topicId;
-    await this.questionRepository.save(question);
 
-    revision.contentStatus = ContentStatus.APPROVED;
-    revision.reviewedBy = reviewerId;
-    revision.reviewedAt = new Date();
-    revision.reviewNote = note || null;
-    await this.revisionRepository.save(revision);
+    await this.dataSource.transaction(async (manager) => {
+      const questionRepo = manager.getRepository(Question);
+      const revisionRepo = manager.getRepository(QuestionRevision);
+      const contentReviewRepo = manager.getRepository(ContentReview);
 
-    await this.contentReviewRepository.save(
-      this.contentReviewRepository.create({
-        targetType: ReviewTargetType.QUESTION_REVISION,
-        targetId: revisionId,
-        action: ReviewAction.APPROVED,
-        note,
-        reviewerId,
-      }),
-    );
+      // Apply revision fields to the question
+      question.title = revision.title;
+      question.content = revision.content;
+      question.answer = revision.answer;
+      if (revision.level) question.level = revision.level;
+      if (revision.topicId) question.topicId = revision.topicId;
+      await questionRepo.save(question);
+
+      revision.contentStatus = ContentStatus.APPROVED;
+      revision.reviewedBy = reviewerId;
+      revision.reviewedAt = new Date();
+      revision.reviewNote = note || null;
+      await revisionRepo.save(revision);
+
+      await contentReviewRepo.save(
+        contentReviewRepo.create({
+          targetType: ReviewTargetType.QUESTION_REVISION,
+          targetId: revisionId,
+          action: ReviewAction.APPROVED,
+          note,
+          reviewerId,
+        }),
+      );
+    });
 
     return question;
   }

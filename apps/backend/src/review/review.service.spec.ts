@@ -4,6 +4,7 @@ import { ContentStatus } from "../common/enums/content-status.enum";
 import { ReviewAction, ReviewTargetType } from "../database/entities/content-review.entity";
 import {
   createMockRepository,
+  createMockDataSource,
   createMockQuestion,
   createMockRevision,
   createMockContentReview,
@@ -14,16 +15,42 @@ describe("ReviewService", () => {
   let questionRepo: ReturnType<typeof createMockRepository>;
   let revisionRepo: ReturnType<typeof createMockRepository>;
   let contentReviewRepo: ReturnType<typeof createMockRepository>;
+  let mockDataSource: ReturnType<typeof createMockDataSource>;
+
+  // Repos exposed inside transaction
+  let txQuestionRepo: ReturnType<typeof createMockRepository>;
+  let txRevisionRepo: ReturnType<typeof createMockRepository>;
+  let txContentReviewRepo: ReturnType<typeof createMockRepository>;
 
   beforeEach(() => {
     questionRepo = createMockRepository();
     revisionRepo = createMockRepository();
     contentReviewRepo = createMockRepository();
 
+    txQuestionRepo = createMockRepository();
+    txRevisionRepo = createMockRepository();
+    txContentReviewRepo = createMockRepository();
+    txContentReviewRepo.create.mockImplementation((dto: any) => dto);
+    txContentReviewRepo.save.mockResolvedValue(createMockContentReview());
+
+    mockDataSource = createMockDataSource();
+    mockDataSource.transaction.mockImplementation(async (cb: any) => {
+      return cb({
+        getRepository: jest.fn().mockImplementation((Entity: any) => {
+          const name = typeof Entity === "string" ? Entity : Entity?.name ?? "";
+          if (name === "Question") return txQuestionRepo;
+          if (name === "QuestionRevision") return txRevisionRepo;
+          if (name === "ContentReview") return txContentReviewRepo;
+          return createMockRepository();
+        }),
+      });
+    });
+
     service = new ReviewService(
       questionRepo as any,
       revisionRepo as any,
       contentReviewRepo as any,
+      mockDataSource as any,
     );
   });
 
@@ -141,7 +168,7 @@ describe("ReviewService", () => {
   // ─── approveRevision ──────────────────────────────────────────────────────
 
   describe("approveRevision", () => {
-    it("applies revision fields to the question and marks revision APPROVED", async () => {
+    it("applies revision fields to the question and marks revision APPROVED (within a transaction)", async () => {
       const originalQuestion = createMockQuestion({
         title: "Original title",
         content: "Original content",
@@ -156,27 +183,28 @@ describe("ReviewService", () => {
       });
 
       revisionRepo.findOne.mockResolvedValue(revision);
-      questionRepo.save.mockResolvedValue(originalQuestion);
-      revisionRepo.save.mockResolvedValue(revision);
-      contentReviewRepo.create.mockImplementation((dto) => dto);
-      contentReviewRepo.save.mockResolvedValue(createMockContentReview());
+      txQuestionRepo.save.mockResolvedValue(originalQuestion);
+      txRevisionRepo.save.mockResolvedValue(revision);
 
       const result = await service.approveRevision("revision-uuid-1", "admin-uuid-1", "Applied");
+
+      // Transaction was used
+      expect(mockDataSource.transaction).toHaveBeenCalled();
 
       // Question should be updated with revision fields
       expect(originalQuestion.title).toBe("Updated title");
       expect(originalQuestion.content).toBe("Updated content");
       expect(originalQuestion.answer).toBe("Updated answer");
-      expect(questionRepo.save).toHaveBeenCalledWith(originalQuestion);
+      expect(txQuestionRepo.save).toHaveBeenCalledWith(originalQuestion);
 
       // Revision should be marked approved
       expect(revision.contentStatus).toBe(ContentStatus.APPROVED);
       expect(revision.reviewedBy).toBe("admin-uuid-1");
       expect(revision.reviewedAt).toBeInstanceOf(Date);
-      expect(revisionRepo.save).toHaveBeenCalledWith(revision);
+      expect(txRevisionRepo.save).toHaveBeenCalledWith(revision);
 
-      // ContentReview audit record
-      expect(contentReviewRepo.create).toHaveBeenCalledWith(
+      // ContentReview audit record created inside transaction
+      expect(txContentReviewRepo.create).toHaveBeenCalledWith(
         expect.objectContaining({
           targetType: ReviewTargetType.QUESTION_REVISION,
           targetId: "revision-uuid-1",
@@ -194,18 +222,14 @@ describe("ReviewService", () => {
         question: originalQuestion,
         contentStatus: ContentStatus.PENDING_REVIEW,
       });
-      // Explicitly set level to null to test the conditional guard
       (revision as any).level = null;
 
       revisionRepo.findOne.mockResolvedValue(revision);
-      questionRepo.save.mockResolvedValue(originalQuestion);
-      revisionRepo.save.mockResolvedValue(revision);
-      contentReviewRepo.create.mockImplementation((dto) => dto);
-      contentReviewRepo.save.mockResolvedValue(createMockContentReview());
+      txQuestionRepo.save.mockResolvedValue(originalQuestion);
+      txRevisionRepo.save.mockResolvedValue(revision);
 
       await service.approveRevision("revision-uuid-1", "admin-uuid-1");
 
-      // Level should remain unchanged since revision.level is null
       expect(originalQuestion.level).toBe(QuestionLevel.SENIOR);
     });
 
@@ -215,14 +239,11 @@ describe("ReviewService", () => {
         question: originalQuestion,
         contentStatus: ContentStatus.PENDING_REVIEW,
       });
-      // Explicitly set topicId to null to test the conditional guard
       (revision as any).topicId = null;
 
       revisionRepo.findOne.mockResolvedValue(revision);
-      questionRepo.save.mockResolvedValue(originalQuestion);
-      revisionRepo.save.mockResolvedValue(revision);
-      contentReviewRepo.create.mockImplementation((dto) => dto);
-      contentReviewRepo.save.mockResolvedValue(createMockContentReview());
+      txQuestionRepo.save.mockResolvedValue(originalQuestion);
+      txRevisionRepo.save.mockResolvedValue(revision);
 
       await service.approveRevision("revision-uuid-1", "admin-uuid-1");
 

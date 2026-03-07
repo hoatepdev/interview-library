@@ -80,21 +80,6 @@ export function DueForReview() {
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
-        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-          <Clock className="w-5 h-5" />
-          {t("dueForReview")}
-        </h3>
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-        </div>
-      </div>
-    );
-  }
-
   if (questions.length === 0) {
     return null;
   }
@@ -173,7 +158,10 @@ export function DueForReview() {
           ))}
 
           {totalCount > questions.length && (
-            <button className="w-full p-3 text-center text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors hover:bg-blue-50/50 dark:hover:bg-blue-500/5">
+            <button
+              onClick={() => router.push('/practice')}
+              className="w-full p-3 text-center text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors hover:bg-blue-50/50 dark:hover:bg-blue-500/5"
+            >
               {t("viewAll")} ({totalCount})
             </button>
           )}

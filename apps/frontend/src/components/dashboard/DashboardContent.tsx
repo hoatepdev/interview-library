@@ -29,6 +29,26 @@ const ratingColorMap: Record<string, string> = {
   poor: 'text-red-500 bg-red-500/10',
 };
 
+// Static color class map — avoids dynamic Tailwind class construction which
+// gets purged at build time since the compiler cannot detect them statically.
+const statColorClassMap: Record<string, { icon: string; bar: string; barFill: string }> = {
+  blue: {
+    icon: 'bg-blue-500/10 text-blue-500',
+    bar: 'bg-blue-500/20',
+    barFill: 'bg-blue-500',
+  },
+  green: {
+    icon: 'bg-green-500/10 text-green-500',
+    bar: 'bg-green-500/20',
+    barFill: 'bg-green-500',
+  },
+  purple: {
+    icon: 'bg-purple-500/10 text-purple-500',
+    bar: 'bg-purple-500/20',
+    barFill: 'bg-purple-500',
+  },
+};
+
 function formatPracticeTime(minutes: number, unit: string): string {
   if (minutes === 0) return `0${unit}`;
   const hours = Math.floor(minutes / 60);
@@ -206,11 +226,11 @@ export function DashboardContent() {
                 className={`relative group p-6 rounded-2xl border ${stat.border} bg-gradient-to-br ${stat.bg} backdrop-blur-xl hover:-translate-y-1 transition-all duration-300`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-xl bg-${stat.color}-500/10 text-${stat.color}-500 shadow-inner`}>
+                  <div className={`p-3 rounded-xl shadow-inner ${statColorClassMap[stat.color]?.icon ?? 'bg-slate-500/10 text-slate-500'}`}>
                     <stat.icon className="w-6 h-6" />
                   </div>
-                  <div className={`w-12 h-1 rounded-full bg-${stat.color}-500/20 overflow-hidden`}>
-                    <div className={`h-full bg-${stat.color}-500 w-2/3 shadow-[0_0_10px_rgba(var(--${stat.color}-500),0.5)]`} />
+                  <div className={`w-12 h-1 rounded-full overflow-hidden ${statColorClassMap[stat.color]?.bar ?? 'bg-slate-500/20'}`}>
+                    <div className={`h-full w-2/3 ${statColorClassMap[stat.color]?.barFill ?? 'bg-slate-500'}`} />
                   </div>
                 </div>
                 <div>
@@ -298,7 +318,7 @@ export function DashboardContent() {
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">{tAnalytics('title')}</h2>
             </div>
             <Link
-              href={"/analytics" as any}
+              href="/analytics"
               className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors flex items-center gap-1 group"
             >
               {tAnalytics('viewFullAnalytics')}
