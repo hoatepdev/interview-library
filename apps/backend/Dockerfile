@@ -65,6 +65,6 @@ COPY --from=shared-builder /app/packages/shared/dist ./packages/shared/dist
 RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001
 USER nestjs
 
-EXPOSE 9001
+EXPOSE 4000
 
 CMD ["node", "apps/backend/dist/main"]
