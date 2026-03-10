@@ -1,14 +1,18 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
-import { Question } from "@/types";
-import { practiceApi } from "@/lib/api";
-import { SelfRating } from "@/types";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { Question, Topic, SelfRating } from "@/types";
+import { practiceApi, topicsApi } from "@/lib/api";
 import { QuestionCard } from "./QuestionCard";
 import { AnswerReveal } from "./AnswerReveal";
 import { SelfRatingComponent } from "./SelfRating";
+import { PracticeFilters } from "./PracticeFilters";
+import { PracticeNotes } from "./PracticeNotes";
+import { TimerSetup } from "./TimerSetup";
+import { TimerBar } from "./TimerBar";
+import { SessionSummary, type SessionResult } from "./SessionSummary";
 import { useRequireAuth } from "@/hooks/use-require-auth";
-import { Sparkles, Shuffle } from "lucide-react";
+import { Sparkles, Shuffle, Timer } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 type PracticeMode = "smart" | "random";
@@ -22,7 +26,6 @@ export function PracticeSession() {
   const [question, setQuestion] = useState<ExtendedQuestion | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [sessionId] = useState(() => Date.now()); // Track session start time
 
   const [questionStartTime, setQuestionStartTime] = useState<number>(
     Date.now(),
@@ -30,6 +33,38 @@ export function PracticeSession() {
   const [practiceMode, setPracticeMode] = useState<PracticeMode>("smart");
   const [dueCount, setDueCount] = useState<number>(0);
   const { requireAuth } = useRequireAuth();
+
+  // Filters state
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [selectedTopicId, setSelectedTopicId] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
+
+  // Notes state
+  const [notes, setNotes] = useState("");
+  const [showNotes, setShowNotes] = useState(false);
+
+  // Timer state
+  const [timerActive, setTimerActive] = useState(false);
+  const [timerDuration, setTimerDuration] = useState(0); // total seconds
+  const [timerRemaining, setTimerRemaining] = useState(0); // remaining seconds
+  const [timerPaused, setTimerPaused] = useState(false);
+  const [showTimerSetup, setShowTimerSetup] = useState(false);
+  const [sessionResults, setSessionResults] = useState<SessionResult[]>([]);
+  const [showSummary, setShowSummary] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Load topics for filters
+  useEffect(() => {
+    const loadTopics = async () => {
+      try {
+        const data = await topicsApi.getAll();
+        setTopics(data);
+      } catch (error) {
+        console.error("Failed to load topics", error);
+      }
+    };
+    loadTopics();
+  }, []);
 
   // Load due questions count
   useEffect(() => {
@@ -44,25 +79,56 @@ export function PracticeSession() {
     loadDueCount();
   }, []);
 
+  // Timer countdown
+  useEffect(() => {
+    if (timerActive && !timerPaused && timerRemaining > 0) {
+      timerRef.current = setInterval(() => {
+        setTimerRemaining((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current!);
+            setTimerActive(false);
+            setShowSummary(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [timerActive, timerPaused, timerRemaining]);
+
   const loadQuestion = useCallback(
     async (excludeQuestionId?: string) => {
       setIsLoading(true);
       setIsRevealed(false);
       setQuestionStartTime(Date.now());
+      setNotes("");
+      setShowNotes(false);
       try {
-        // Use smart practice for authenticated users, random for guests
+        const params: Record<string, string | undefined> = {
+          excludeQuestionId,
+        };
+        if (selectedTopicId) params.topicId = selectedTopicId;
+        if (selectedLevel) params.level = selectedLevel;
+
         const q =
           practiceMode === "smart"
-            ? await practiceApi.getNextQuestion({ excludeQuestionId })
-            : await practiceApi.getRandomQuestion({ excludeQuestionId });
+            ? await practiceApi.getNextQuestion(params)
+            : await practiceApi.getRandomQuestion(params);
         setQuestion(q);
       } catch (error) {
         console.error("Failed to load question", error);
+        setQuestion(null);
       } finally {
         setIsLoading(false);
       }
     },
-    [practiceMode],
+    [practiceMode, selectedTopicId, selectedLevel],
   );
 
   useEffect(() => {
@@ -82,7 +148,21 @@ export function PracticeSession() {
           questionId: question.id,
           selfRating: rating,
           timeSpentSeconds,
+          ...(notes.trim() ? { notes: notes.trim() } : {}),
         });
+
+        // Track session results for timed mode
+        if (timerActive) {
+          setSessionResults((prev) => [
+            ...prev,
+            {
+              questionId: question.id,
+              questionTitle: question.title,
+              rating,
+              timeSpentSeconds,
+            },
+          ]);
+        }
 
         // Refresh due count after logging
         try {
@@ -102,8 +182,6 @@ export function PracticeSession() {
 
   const handleModeChange = (mode: PracticeMode) => {
     setPracticeMode(mode);
-    // Reload question with new mode
-    loadQuestion(question?.id);
   };
 
   const handleReveal = () => {
@@ -111,6 +189,64 @@ export function PracticeSession() {
       setIsRevealed(true);
     });
   };
+
+  const handleFilterChange = (topicId: string, level: string) => {
+    setSelectedTopicId(topicId);
+    setSelectedLevel(level);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedTopicId("");
+    setSelectedLevel("");
+  };
+
+  const handleStartTimer = (durationMinutes: number) => {
+    const totalSeconds = durationMinutes * 60;
+    setTimerDuration(totalSeconds);
+    setTimerRemaining(totalSeconds);
+    setTimerActive(true);
+    setTimerPaused(false);
+    setSessionResults([]);
+    setShowTimerSetup(false);
+    setShowSummary(false);
+  };
+
+  const handlePauseTimer = () => {
+    setTimerPaused((prev) => !prev);
+  };
+
+  const handleStopTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimerActive(false);
+    setShowSummary(true);
+  };
+
+  const handleNewSession = () => {
+    setShowSummary(false);
+    setSessionResults([]);
+    setShowTimerSetup(true);
+  };
+
+  const handleExitSession = () => {
+    setShowSummary(false);
+    setSessionResults([]);
+    setTimerActive(false);
+    setShowTimerSetup(false);
+    setTimerDuration(0);
+    setTimerRemaining(0);
+  };
+
+  // Show session summary
+  if (showSummary) {
+    return (
+      <SessionSummary
+        results={sessionResults}
+        duration={timerDuration}
+        onNewSession={handleNewSession}
+        onExit={handleExitSession}
+      />
+    );
+  }
 
   if (isLoading) {
     return (
@@ -130,8 +266,21 @@ export function PracticeSession() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* Practice Mode Selector */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Timer Bar (when active) */}
+      {timerActive && (
+        <div className="mb-4">
+          <TimerBar
+            remaining={timerRemaining}
+            total={timerDuration}
+            isPaused={timerPaused}
+            onPause={handlePauseTimer}
+            onStop={handleStopTimer}
+          />
+        </div>
+      )}
+
+      {/* Practice Mode Selector + Timer Toggle */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 w-full sm:w-auto">
           <button
             onClick={() => handleModeChange("smart")}
@@ -168,13 +317,49 @@ export function PracticeSession() {
           </button>
         </div>
 
-        {/* Priority indicator */}
-        {question.isPrioritized && practiceMode === "smart" && (
-          <div className="self-start sm:self-auto flex items-center gap-1.5 text-xs font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-full">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>{t("dueForReviewBadge")}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {/* Priority indicator */}
+          {question.isPrioritized && practiceMode === "smart" && (
+            <div className="flex items-center gap-1.5 text-xs font-medium text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-full">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{t("dueForReviewBadge")}</span>
+            </div>
+          )}
+
+          {/* Timer toggle */}
+          {!timerActive && (
+            <button
+              onClick={() => setShowTimerSetup((prev) => !prev)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                showTimerSetup
+                  ? "bg-blue-500 text-white"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              }`}
+            >
+              <Timer className="w-3.5 h-3.5" />
+              <span>{t("timedMode")}</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Timer Setup */}
+      {showTimerSetup && !timerActive && (
+        <div className="mb-4">
+          <TimerSetup onStart={handleStartTimer} />
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="mb-4">
+        <PracticeFilters
+          topics={topics}
+          selectedTopicId={selectedTopicId}
+          selectedLevel={selectedLevel}
+          onTopicChange={(id) => handleFilterChange(id, selectedLevel)}
+          onLevelChange={(level) => handleFilterChange(selectedTopicId, level)}
+          onClear={handleClearFilters}
+        />
       </div>
 
       <QuestionCard question={question} />
@@ -187,12 +372,21 @@ export function PracticeSession() {
             onReveal={handleReveal}
           />
         ) : (
-          <div className="space-y-8 fade-in">
+          <div className="space-y-6 fade-in">
             <AnswerReveal
               answer={question.answer}
               isRevealed={isRevealed}
               onReveal={handleReveal}
             />
+
+            {/* Notes */}
+            <PracticeNotes
+              notes={notes}
+              onNotesChange={setNotes}
+              isExpanded={showNotes}
+              onToggle={() => setShowNotes((prev) => !prev)}
+            />
+
             <SelfRatingComponent onRate={handleRate} />
           </div>
         )}

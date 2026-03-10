@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { BarChart3, Target, TrendingUp, Clock, Flame, Lock, CalendarDays } from 'lucide-react';
 import { practiceApi, topicsApi } from '@/lib/api';
@@ -17,6 +17,9 @@ import { ActivityAreaChart } from './ActivityAreaChart';
 import { TopicMasteryChart } from './TopicMasteryChart';
 import { RatingTrendChart } from './RatingTrendChart';
 import { StreakDisplay } from './StreakDisplay';
+import { DateRangePicker } from './DateRangePicker';
+import { ExportCsvButton } from './ExportCsvButton';
+import { RecentHistoryTable } from './RecentHistoryTable';
 
 interface AnalyticsData {
   stats: PracticeStats | null;
@@ -32,35 +35,37 @@ export function AnalyticsPage() {
   const { openDialog } = useLoginDialog();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [days, setDays] = useState(30);
+
+  const loadData = useCallback(async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const [statsResult, analyticsResult, dueResult] = await Promise.allSettled([
+        practiceApi.getStats(),
+        practiceApi.getAnalytics(days),
+        practiceApi.getQuestionsDueForReview(100),
+      ]);
+
+      setData({
+        stats: statsResult.status === 'fulfilled' ? statsResult.value : null,
+        analytics: analyticsResult.status === 'fulfilled' ? analyticsResult.value : null,
+        dueQuestions: dueResult.status === 'fulfilled' ? dueResult.value : [],
+      });
+    } catch (error) {
+      console.error('Failed to load analytics', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, days]);
 
   useEffect(() => {
     if (!user) {
       setLoading(false);
       return;
     }
-
-    const loadData = async () => {
-      try {
-        const [statsResult, analyticsResult, dueResult] = await Promise.allSettled([
-          practiceApi.getStats(),
-          practiceApi.getAnalytics(30),
-          practiceApi.getQuestionsDueForReview(100),
-        ]);
-
-        setData({
-          stats: statsResult.status === 'fulfilled' ? statsResult.value : null,
-          analytics: analyticsResult.status === 'fulfilled' ? analyticsResult.value : null,
-          dueQuestions: dueResult.status === 'fulfilled' ? dueResult.value : [],
-        });
-      } catch (error) {
-        console.error('Failed to load analytics', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadData();
-  }, [user]);
+  }, [user, loadData]);
 
   // Auth loading state
   if (authLoading) {
@@ -157,6 +162,12 @@ export function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Date Range + Export Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <DateRangePicker value={days} onChange={setDays} />
+        <ExportCsvButton analytics={analytics ?? null} />
+      </div>
+
       {/* Summary Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="group relative overflow-hidden bg-blue-500/5 dark:bg-slate-900/30 backdrop-blur-xl border border-blue-500/20 dark:border-blue-500/10 rounded-2xl p-4 shadow-sm dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:border-blue-500/40 transition-all duration-500">
@@ -273,6 +284,11 @@ export function AnalyticsPage() {
             </div>
           </div>
         </div>
+      </ChartCard>
+
+      {/* Recent Practice History */}
+      <ChartCard title={t('recentHistory')} subtitle={t('recentHistoryDesc')} icon={Clock} iconColor="text-slate-500">
+        <RecentHistoryTable />
       </ChartCard>
     </div>
   );

@@ -14,6 +14,7 @@ import { Request } from "express";
 import { PracticeService } from "./practice.service";
 import { CreatePracticeLogDto } from "./dto/create-practice-log.dto";
 import { QueryPracticeDto } from "./dto/query-practice.dto";
+import { QueryHistoryDto } from "./dto/query-history.dto";
 import { User } from "../database/entities/user.entity";
 
 interface AuthenticatedRequest extends Request {
@@ -96,13 +97,12 @@ export class PracticeController {
   }
 
   @Get("history")
-  getHistory(@Req() req: AuthenticatedRequest, @Query("limit") limit?: string) {
+  getHistory(
+    @Req() req: AuthenticatedRequest,
+    @Query() query: QueryHistoryDto,
+  ) {
     const lang = req.i18n?.lang || "en";
     const userId = req.user?.id;
-    return this.practiceService.getHistory(
-      limit ? parseInt(limit) : 20,
-      lang,
-      userId,
-    );
+    return this.practiceService.getHistory(query, lang, userId);
   }
 }

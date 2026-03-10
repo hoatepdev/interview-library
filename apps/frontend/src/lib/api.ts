@@ -18,6 +18,7 @@ import type {
   DueQuestion,
   AnalyticsResponse,
   PaginatedResponse,
+  QueryHistoryParams,
 } from '@/types';
 
 const api = axios.create({
@@ -78,8 +79,8 @@ export const practiceApi = {
   getStats: () => api.get<PracticeStats>('/practice/stats').then((res) => res.data),
   getAnalytics: (days = 30) =>
     api.get<AnalyticsResponse>('/practice/analytics', { params: { days } }).then((res) => res.data),
-  getHistory: (limit = 20) =>
-    api.get<PracticeLogEntry[]>('/practice/history', { params: { limit } }).then((res) => res.data),
+  getHistory: (params?: QueryHistoryParams) =>
+    api.get<PaginatedResponse<PracticeLogEntry>>('/practice/history', { params }).then((res) => res.data),
 };
 
 // Auth

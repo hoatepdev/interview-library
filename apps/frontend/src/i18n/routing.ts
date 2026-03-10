@@ -25,6 +25,10 @@ export const routing = defineRouting({
       en: '/practice',
       vi: '/luyen-tap'
     },
+    '/practice/history': {
+      en: '/practice/history',
+      vi: '/luyen-tap/lich-su'
+    },
     '/settings': '/settings',
     '/history': '/history',
     '/analytics': {

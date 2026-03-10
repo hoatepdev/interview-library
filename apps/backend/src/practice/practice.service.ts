@@ -7,6 +7,7 @@ import { PracticeLog } from "../database/entities/practice-log.entity";
 import { UserQuestion } from "../database/entities/user-question.entity";
 import { CreatePracticeLogDto } from "./dto/create-practice-log.dto";
 import { QueryPracticeDto } from "./dto/query-practice.dto";
+import { QueryHistoryDto } from "./dto/query-history.dto";
 import { type Locale } from "@interview-library/shared/i18n";
 import { TranslationService } from "../i18n/translation.service";
 import { SpacedRepetitionService } from "./spaced-repetition.service";
@@ -733,16 +734,49 @@ export class PracticeService {
     return { current, longest: Math.max(longest, current) };
   }
 
-  async getHistory(limit = 20, locale: Locale = "en", userId?: string) {
-    const where = userId ? { userId } : {};
-    const logs = await this.practiceLogRepository.find({
-      where,
-      relations: ["question", "question.topic", "question.translations"],
-      order: { practicedAt: "DESC" },
-      take: limit,
-    });
+  async getHistory(query: QueryHistoryDto, locale: Locale = "en", userId?: string) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
 
-    return logs.map((log) => this.formatLogWithTranslations(log, locale));
+    const qb = this.practiceLogRepository
+      .createQueryBuilder("log")
+      .leftJoinAndSelect("log.question", "question")
+      .leftJoinAndSelect("question.topic", "topic")
+      .leftJoinAndSelect("question.translations", "translations")
+      .orderBy("log.practicedAt", "DESC");
+
+    if (userId) {
+      qb.andWhere("log.userId = :userId", { userId });
+    }
+
+    if (query.topicId) {
+      qb.andWhere("question.topicId = :topicId", { topicId: query.topicId });
+    }
+
+    if (query.rating) {
+      qb.andWhere("log.selfRating = :rating", { rating: query.rating });
+    }
+
+    if (query.dateFrom) {
+      qb.andWhere("log.practicedAt >= :dateFrom", { dateFrom: query.dateFrom });
+    }
+
+    if (query.dateTo) {
+      qb.andWhere("log.practicedAt <= :dateTo", { dateTo: query.dateTo + "T23:59:59" });
+    }
+
+    const [logs, total] = await qb
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      data: logs.map((log) => this.formatLogWithTranslations(log, locale)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   private formatArrayAsObject(arr: any[]) {

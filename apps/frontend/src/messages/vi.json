@@ -27,6 +27,7 @@
     "topics": "Chủ đề",
     "questions": "Câu hỏi",
     "practice": "Luyện tập",
+    "history": "Lịch sử",
     "settings": "Cài đặt",
     "analytics": "Phân tích",
     "moderation": "Kiểm duyệt",
@@ -178,7 +179,36 @@
       "fair": "Khá",
       "good": "Tốt",
       "great": "Rất tốt"
-    }
+    },
+    "filterByTopic": "Tất cả chủ đề",
+    "filterByLevel": "Tất cả trình độ",
+    "clearFilters": "Xóa bộ lọc",
+    "addNotes": "Thêm ghi chú",
+    "notesPlaceholder": "Viết suy nghĩ của bạn về câu hỏi này...",
+    "notesLabel": "Ghi chú",
+    "timedMode": "Hẹn giờ",
+    "timerSetup": "Đặt giới hạn thời gian",
+    "timerDurations": {
+      "5": "5 phút",
+      "10": "10 phút",
+      "15": "15 phút",
+      "30": "30 phút"
+    },
+    "startTimedSession": "Bắt đầu phiên hẹn giờ",
+    "pauseTimer": "Tạm dừng",
+    "resumeTimer": "Tiếp tục",
+    "stopTimer": "Dừng",
+    "sessionComplete": "Hoàn thành phiên!",
+    "questionsAnswered": "Câu hỏi đã trả lời",
+    "avgTimePerQuestion": "TB thời gian / Câu",
+    "sessionAccuracy": "Độ chính xác phiên",
+    "newSession": "Phiên mới",
+    "exitSession": "Thoát",
+    "streak": "Chuỗi luyện tập",
+    "currentStreak": "Hiện tại",
+    "longestStreak": "Cao nhất",
+    "streakDays": "{count} ngày",
+    "noStreak": "Bắt đầu luyện tập để xây dựng chuỗi!"
   },
   "form": {
     "name": "Tên",
@@ -358,6 +388,31 @@
     "dueNext7Days": "Đến hạn 7 ngày tới",
     "viewFullAnalytics": "Xem phân tích đầy đủ",
     "noDataYet": "Bắt đầu luyện tập để xem phân tích tại đây.",
-    "loginRequired": "Đăng nhập để xem phân tích và theo dõi tiến độ."
+    "loginRequired": "Đăng nhập để xem phân tích và theo dõi tiến độ.",
+    "dateRange": "Khoảng thời gian",
+    "last7Days": "7 ngày",
+    "last14Days": "14 ngày",
+    "last30Days": "30 ngày",
+    "last90Days": "90 ngày",
+    "exportCsv": "Xuất CSV",
+    "recentHistory": "Luyện tập gần đây",
+    "recentHistoryDesc": "Các phiên luyện tập mới nhất",
+    "viewFullHistory": "Xem toàn bộ lịch sử"
+  },
+  "history": {
+    "title": "Lịch sử luyện tập",
+    "subtitle": "Xem lại các phiên luyện tập trước đây.",
+    "date": "Ngày",
+    "question": "Câu hỏi",
+    "topic": "Chủ đề",
+    "level": "Trình độ",
+    "rating": "Đánh giá",
+    "timeSpent": "Thời gian",
+    "notes": "Ghi chú",
+    "noHistory": "Chưa có lịch sử luyện tập. Hãy bắt đầu luyện tập!",
+    "filterByRating": "Tất cả đánh giá",
+    "filterByDate": "Khoảng ngày",
+    "dateFrom": "Từ",
+    "dateTo": "Đến"
   }
 }

@@ -222,3 +222,12 @@ export interface PaginatedResponse<T> {
   limit: number;
   totalPages: number;
 }
+
+export interface QueryHistoryParams {
+  page?: number;
+  limit?: number;
+  topicId?: string;
+  rating?: SelfRating;
+  dateFrom?: string;
+  dateTo?: string;
+}

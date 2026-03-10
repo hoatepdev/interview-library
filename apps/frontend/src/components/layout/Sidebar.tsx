@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   UserCog,
   BarChart3,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -23,6 +24,7 @@ export const navigation = [
   { nameKey: "nav.topics", href: "/topics" as const, icon: BookOpen },
   { nameKey: "nav.questions", href: "/questions" as const, icon: HelpCircle },
   { nameKey: "nav.practice", href: "/practice" as const, icon: Swords },
+  { nameKey: "nav.history", href: "/practice/history" as const, icon: Clock, indent: true },
   { nameKey: "nav.analytics", href: "/analytics" as const, icon: BarChart3 },
 ];
 
@@ -39,12 +41,14 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navigation.map((item) => {
           const isActive = pathname === item.href;
+          const isIndented = 'indent' in item && item.indent;
           return (
             <Link
               key={item.nameKey}
               href={item.href}
               className={cn(
-                "group flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200",
+                "group flex items-center py-2.5 text-sm font-medium rounded-xl transition-all duration-200",
+                isIndented ? "px-3 pl-8" : "px-3",
                 isActive
                   ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm"
                   : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
@@ -52,7 +56,8 @@ export function Sidebar() {
             >
               <item.icon
                 className={cn(
-                  "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
+                  "mr-3 flex-shrink-0 transition-colors",
+                  isIndented ? "h-4 w-4" : "h-5 w-5",
                   isActive
                     ? "text-blue-600 dark:text-blue-400"
                     : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"

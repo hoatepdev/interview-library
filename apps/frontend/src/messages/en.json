@@ -27,6 +27,7 @@
     "topics": "Topics",
     "questions": "Questions",
     "practice": "Practice",
+    "history": "History",
     "settings": "Settings",
     "analytics": "Analytics",
     "moderation": "Moderation",
@@ -178,7 +179,36 @@
       "fair": "Fair",
       "good": "Good",
       "great": "Great"
-    }
+    },
+    "filterByTopic": "All Topics",
+    "filterByLevel": "All Levels",
+    "clearFilters": "Clear filters",
+    "addNotes": "Add notes",
+    "notesPlaceholder": "Write your thoughts about this question...",
+    "notesLabel": "Notes",
+    "timedMode": "Timed",
+    "timerSetup": "Set a time limit",
+    "timerDurations": {
+      "5": "5 min",
+      "10": "10 min",
+      "15": "15 min",
+      "30": "30 min"
+    },
+    "startTimedSession": "Start Timed Session",
+    "pauseTimer": "Pause",
+    "resumeTimer": "Resume",
+    "stopTimer": "Stop",
+    "sessionComplete": "Session Complete!",
+    "questionsAnswered": "Questions Answered",
+    "avgTimePerQuestion": "Avg Time / Question",
+    "sessionAccuracy": "Session Accuracy",
+    "newSession": "New Session",
+    "exitSession": "Exit",
+    "streak": "Practice Streak",
+    "currentStreak": "Current",
+    "longestStreak": "Best",
+    "streakDays": "{count} days",
+    "noStreak": "Start practicing to build your streak!"
   },
   "form": {
     "name": "Name",
@@ -358,6 +388,31 @@
     "dueNext7Days": "Due Next 7 Days",
     "viewFullAnalytics": "View Full Analytics",
     "noDataYet": "Start practicing to see your analytics here.",
-    "loginRequired": "Sign in to view your analytics and track progress."
+    "loginRequired": "Sign in to view your analytics and track progress.",
+    "dateRange": "Date Range",
+    "last7Days": "7d",
+    "last14Days": "14d",
+    "last30Days": "30d",
+    "last90Days": "90d",
+    "exportCsv": "Export CSV",
+    "recentHistory": "Recent Practice",
+    "recentHistoryDesc": "Your latest practice sessions",
+    "viewFullHistory": "View full history"
+  },
+  "history": {
+    "title": "Practice History",
+    "subtitle": "Review your past practice sessions.",
+    "date": "Date",
+    "question": "Question",
+    "topic": "Topic",
+    "level": "Level",
+    "rating": "Rating",
+    "timeSpent": "Time",
+    "notes": "Notes",
+    "noHistory": "No practice history yet. Start practicing!",
+    "filterByRating": "All Ratings",
+    "filterByDate": "Date Range",
+    "dateFrom": "From",
+    "dateTo": "To"
   }
 }

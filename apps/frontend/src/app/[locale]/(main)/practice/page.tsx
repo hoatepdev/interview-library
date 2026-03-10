@@ -1,9 +1,9 @@
 import { PracticeSession } from "@/components/practice/PracticeSession";
 import { PracticeStatsComponent } from "@/components/practice/PracticeStats";
 import { DueForReview } from "@/components/practice/DueForReview";
+import { PracticeStreak } from "@/components/practice/PracticeStreak";
 import { useTranslations } from "next-intl";
 import { Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function PracticePage() {
   const t = useTranslations("practice");
@@ -35,7 +35,8 @@ export default function PracticePage() {
                 <p className="text-orange-50 text-sm leading-relaxed mb-4">{t("dueForReviewDesc")}</p>
              </div>
           </div>
-          
+
+          <PracticeStreak />
           <DueForReview />
           <PracticeStatsComponent />
         </div>

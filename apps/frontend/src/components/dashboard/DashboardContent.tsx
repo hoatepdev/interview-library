@@ -108,14 +108,15 @@ export function DashboardContent() {
           topicsApi.getAll(),
           user ? practiceApi.getStats() : Promise.resolve(null),
           user ? practiceApi.getDueQuestionsCount() : Promise.resolve({ count: 0 }),
-          user ? practiceApi.getHistory(5) : Promise.resolve([]),
+          user ? practiceApi.getHistory({ limit: 5 }) : Promise.resolve([]),
           user ? practiceApi.getAnalytics(30) : Promise.resolve(null),
         ]);
 
         const topicsList = topics.status === 'fulfilled' ? topics.value : [];
         const statsData = stats.status === 'fulfilled' ? stats.value as PracticeStats | null : null;
         const due = dueResult.status === 'fulfilled' ? (dueResult.value as { count: number }) : { count: 0 };
-        const recentLogs = history.status === 'fulfilled' ? history.value as PracticeLogEntry[] : [];
+        const historyResult = history.status === 'fulfilled' ? history.value : { data: [] };
+        const recentLogs = 'data' in historyResult ? historyResult.data as PracticeLogEntry[] : [];
         const analyticsData = analyticsResult.status === 'fulfilled' ? analyticsResult.value as AnalyticsResponse | null : null;
 
         const masteredCount = statsData?.questionsByStatus?.mastered
