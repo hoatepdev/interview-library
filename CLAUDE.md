@@ -7,10 +7,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Interview Library is a personal interview question management app with spaced repetition learning. It's a pnpm monorepo with a Next.js frontend, NestJS backend, and a shared utilities package.
 
 For detailed documentation see:
-- [ARCHITECTURE.md](ARCHITECTURE.md) — system design and module structure
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) — system design and module structure
 - [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) — full DB schema, enums, relationships
-- [API_CONTRACT.md](API_CONTRACT.md) — all API endpoints with request/response shapes
+- [API_CONTRACT.md](docs/API_CONTRACT.md) — all API endpoints with request/response shapes
 - [README.md](README.md) — quick start and deployment
+- [DEPLOY.md](DEPLOY.md) — deployment guide (Vercel + VPS)
 
 ## Commands
 
@@ -63,6 +64,13 @@ pnpm validate:i18n        # Validate translation files
 pnpm import:translations  # Import translations
 ```
 
+### Utility
+
+```bash
+pnpm clean                # Remove all node_modules
+pnpm kill-port            # Kill processes on ports 9000 and 9001
+```
+
 ## Architecture
 
 ### Monorepo Structure
@@ -85,7 +93,7 @@ Package manager: pnpm (>=9.0.0). Node >=20.0.0. Shared code imported as `@interv
 
 **Role-based UI**: `src/hooks/use-role.ts` — `useRole()` returns `{ isAdmin, isModerator, isModOrAdmin }`. Use these to conditionally render navigation links and UI elements.
 
-**Key pages**: Dashboard (`/`), Topics (`/topics`), Questions (`/questions`), Practice (`/practice`), Moderation (`/moderation`, MOD/ADMIN only), Admin Users (`/admin/users`, ADMIN only).
+**Key pages**: Dashboard (`/`), Topics (`/topics`), Topic Detail (`/topics/[slug]`), Questions (`/questions`), Question Detail (`/questions/[id]`), New Question (`/questions/new`), Practice (`/practice`), Practice History (`/practice/history`), Analytics (`/analytics`), Settings (`/settings`), Moderation (`/moderation`, MOD/ADMIN only), Admin Users (`/admin/users`, ADMIN only).
 
 ### Backend
 
@@ -102,6 +110,10 @@ Package manager: pnpm (>=9.0.0). Node >=20.0.0. Shared code imported as `@interv
 **Practice/Spaced Repetition**: `practice/spaced-repetition.service.ts` implements SM-2. Self-rating: poor/fair/good/great. Per-user state in `user_questions`.
 
 **API prefix**: All endpoints under `/api`. Frontend proxies `/api/*` to backend via Next.js rewrites in `next.config.ts`.
+
+**Rate limiting**: `@nestjs/throttler` with three profiles — `default` (100 req/min), `strict` (20 req/min for mutations), `auth` (5 req/min). Applied per-endpoint via `@UseGuards(ThrottlerGuard)` + `@Throttle()`.
+
+**Soft-delete/Restore**: Topics, questions, users, and revisions support soft-delete via `deleted_at`/`deleted_by` columns. Restore endpoints (`POST /:id/restore`) are ADMIN-only. Lifecycle events logged to `domain_events` table.
 
 ### i18n Flow
 

@@ -74,7 +74,13 @@ List all approved topics.
 ```
 
 ### `GET /api/topics/:id`
-Get topic by ID or slug.
+Get topic by ID.
+
+**Response `200`** — Topic object (same shape as above)
+**Response `404`** — Topic not found
+
+### `GET /api/topics/slug/:slug`
+Get topic by slug.
 
 **Response `200`** — Topic object (same shape as above)
 **Response `404`** — Topic not found
@@ -111,7 +117,19 @@ Delete a topic and all its questions. **Requires MODERATOR or ADMIN.**
 
 **Auth required:** Yes (role: moderator, admin)
 
+**Query params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| force | boolean | Force delete (cascades to questions) |
+
 **Response `200`**
+
+### `POST /api/topics/:id/restore`
+Restore a soft-deleted topic. **Requires ADMIN.**
+
+**Auth required:** Yes (role: admin)
+
+**Response `200`** — Restored topic object
 
 ---
 
@@ -150,6 +168,13 @@ List questions. Public users see only `approved` questions. Owners see their own
   }
 ]
 ```
+
+### `GET /api/questions/by-topic-slug/:slug`
+Get questions filtered by topic slug.
+
+**Query params:** Same as `GET /api/questions`
+
+**Response `200`** — Array of question objects
 
 ### `GET /api/questions/:id`
 Get question by ID.
@@ -198,7 +223,19 @@ Delete a question.
 
 **Auth required:** Yes (owner, moderator, or admin)
 
+**Query params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| force | boolean | Force hard delete |
+
 **Response `200`**
+
+### `POST /api/questions/:id/restore`
+Restore a soft-deleted question. **Requires ADMIN.**
+
+**Auth required:** Yes (role: admin)
+
+**Response `200`** — Restored question object
 
 ### `PATCH /api/questions/:id/favorite`
 Toggle favorite for the current user.
@@ -230,6 +267,28 @@ Update learning status for the current user.
 Get a random question for practice.
 
 **Auth required:** No (but needed for user-specific filtering)
+
+**Query params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| topicId | uuid | Restrict to topic |
+| level | string | Restrict to level |
+| status | string | Restrict to status |
+| excludeQuestionId | uuid | Exclude this question (avoid repeats) |
+| mode | `smart`\|`random` | `smart` prioritizes due questions |
+
+**Response `200`** — Question object with `isDue` field
+**Response `404`** — No questions available
+
+### `GET /api/practice/next`
+Get the next question for practice (smart prioritization of due questions).
+
+**Auth required:** No (but needed for user-specific filtering)
+
+**Query params:** Same as `/practice/random`
+
+**Response `200`** — Question object
+**Response `404`** — No questions available
 
 **Query params:**
 | Param | Type | Description |
@@ -282,6 +341,30 @@ Get practice statistics.
   "practiceByRating": { "poor": 10, "fair": 20, "good": 55, "great": 35 },
   "questionsNeedingReview": 8,
   "recentLogs": [...]
+}
+```
+
+### `GET /api/practice/analytics`
+Get practice analytics for charts and visualizations.
+
+**Auth required:** No
+
+**Query params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| days | number | Number of days to analyze (default: 30) |
+
+**Response `200`**
+```json
+{
+  "dailyStats": [
+    { "date": "2024-01-01", "count": 5, "avgRating": 4.2, "timeSpentMinutes": 45 }
+  ],
+  "ratingDistribution": { "poor": 10, "fair": 20, "good": 55, "great": 35 },
+  "levelProgress": [
+    { "level": "junior", "new": 5, "learning": 3, "mastered": 2 }
+  ],
+  "streak": { "currentDays": 7, "longestDays": 14 }
 }
 ```
 
@@ -436,15 +519,125 @@ Valid values: `user`, `moderator`, `admin`
 
 **Response `200`** — Updated user object
 
+### `DELETE /api/admin/users/:id`
+Soft-delete a user.
+
+**Response `204`** — No content
+
+### `POST /api/admin/users/:id/restore`
+Restore a soft-deleted user.
+
+**Response `200`** — Restored user object
+
+Valid values: `user`, `moderator`, `admin`
+
+**Response `200`** — Updated user object
+
 ---
 
 ## Translations
 
+Manage localized content for topics and questions.
+
+### Topic Translations
+
+#### `GET /api/translations/topics/:topicId`
+Get all translations for a topic.
+
+**Response `200`**
+```json
+[
+  { "locale": "en", "name": "JavaScript", "description": "..." },
+  { "locale": "vi", "name": "JavaScript", "description": "..." }
+]
+```
+
+#### `GET /api/translations/topics/:topicId/:locale`
+Get a specific translation for a topic.
+
+**Response `200`** — Translation object
+
+#### `POST /api/translations/topics`
+Create a topic translation.
+
+**Body:**
+```json
+{
+  "topicId": "uuid",
+  "locale": "vi",
+  "name": "JavaScript",
+  "description": "..."
+}
+```
+
+**Response `201`** — Created translation object
+
+#### `PUT /api/translations/topics/:topicId/:locale`
+Update a topic translation.
+
+**Body:** Partial translation fields
+
+**Response `200`** — Updated translation object
+
+#### `DELETE /api/translations/topics/:topicId/:locale`
+Delete a topic translation.
+
+**Response `204`** — No content
+
+### Question Translations
+
+#### `GET /api/translations/questions/:questionId`
+Get all translations for a question.
+
+#### `GET /api/translations/questions/:questionId/:locale`
+Get a specific translation for a question.
+
+#### `POST /api/translations/questions`
+Create a question translation.
+
+**Body:**
+```json
+{
+  "questionId": "uuid",
+  "locale": "vi",
+  "title": "...",
+  "content": "...",
+  "answer": "..."
+}
+```
+
+**Response `201`** — Created translation object
+
+#### `PUT /api/translations/questions/:questionId/:locale`
+Update a question translation.
+
+**Response `200`** — Updated translation object
+
+#### `DELETE /api/translations/questions/:questionId/:locale`
+Delete a question translation.
+
+**Response `204`** — No content
+
+### Missing Translations
+
+#### `GET /api/translations/missing/:entityType/:locale`
+Get entities missing translations for a locale.
+
+**Params:**
+- `entityType`: `topics` or `questions`
+- `locale`: Target locale (e.g., `vi`)
+
+**Response `200`** — Array of entities without translations
+
+---
+
+## Frontend Translations
+
 ### `GET /api/translations`
-Get translations for the current locale (from `Accept-Language` header).
+Get frontend translations for the current locale (from `Accept-Language` header).
 
 ### `GET /api/translations/:locale`
-Get translations for a specific locale (`en` or `vi`).
+Get frontend translations for a specific locale (`en` or `vi`).
 
 **Response `200`**
 ```json

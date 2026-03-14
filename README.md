@@ -90,6 +90,8 @@ NEXT_PUBLIC_API_URL=http://localhost:9001/api
 
 ```bash
 pnpm dev                          # Start frontend + backend concurrently
+pnpm dev:frontend                 # Frontend only (port 9000)
+pnpm dev:backend                  # Backend only (port 9001)
 pnpm build                        # Build both apps
 pnpm db:migrate                   # Run pending migrations
 pnpm db:migrate:revert            # Revert last migration
@@ -97,6 +99,9 @@ pnpm --filter backend test        # Run backend tests
 pnpm --filter frontend lint       # Lint frontend
 pnpm --filter backend lint        # Lint backend
 pnpm validate:i18n                # Validate translation files
+pnpm import:translations          # Import translations
+pnpm clean                        # Remove all node_modules
+pnpm kill-port                    # Kill processes on ports 9000 and 9001
 ```
 
 ## Project Structure
@@ -116,10 +121,11 @@ interview-library/
 
 | File | Description |
 |------|-------------|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System design, module structure, key decisions |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, module structure, key decisions |
 | [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) | Full database schema with tables, enums, ERD |
-| [API_CONTRACT.md](API_CONTRACT.md) | All API endpoints with request/response examples |
+| [API_CONTRACT.md](docs/API_CONTRACT.md) | All API endpoints with request/response examples |
 | [CLAUDE.md](CLAUDE.md) | Development guide for working with this codebase |
+| [DEPLOY.md](DEPLOY.md) | Deployment guide (Vercel + VPS) |
 
 ## Deployment
 

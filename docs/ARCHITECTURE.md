@@ -31,12 +31,17 @@ app/
     ├── (main)/               # Authenticated layout (sidebar + header)
     │   ├── page.tsx          # Dashboard
     │   ├── topics/
+    │   │   └── [slug]/       # Topic detail
     │   ├── questions/
+    │   │   ├── [id]/         # Question detail
+    │   │   └── new/          # Create question
     │   ├── practice/
+    │   │   └── history/      # Practice history
+    │   ├── analytics/        # Analytics dashboard
     │   ├── settings/
     │   ├── moderation/       # MOD/ADMIN only
     │   └── admin/users/      # ADMIN only
-    └── not-found.tsx
+    └── [...rest]/            # Catch-all for invalid routes
 ```
 
 Locales: `en` (default), `vi`. The `middleware.ts` handles locale detection and redirect.
@@ -131,6 +136,26 @@ src/
 
 **First user becomes ADMIN** — `auth.service.ts` checks user count on first OAuth login.
 
+### Rate Limiting
+
+`@nestjs/throttler` provides rate limiting across all endpoints. Three profiles configured:
+
+| Profile | Limit | TTL | Usage |
+|---------|-------|-----|-------|
+| `default` | 100 | 60s | Standard endpoints |
+| `strict` | 20 | 60s | Mutations (POST/PUT/DELETE) |
+| `auth` | 5 | 60s | Authentication endpoints |
+
+Applied via `@UseGuards(ThrottlerGuard)` + `@Throttle({ strict: { limit: 20, ttl: 60000 } })` decorators.
+
+### Soft-Delete & Restore
+
+Most entities support soft-delete via `deleted_at`/`deleted_by` columns:
+- Topics, questions, users, question_revisions
+- Restore endpoints (`POST /:id/restore`) are ADMIN-only
+- Lifecycle events logged to `domain_events` table
+- Force delete (`?force=true`) cascades to children (topics → questions)
+
 ### Content Approval Workflow
 
 ```
@@ -174,7 +199,7 @@ SM-2 state stored per-user in `user_questions` (independent of global `questions
 
 TypeORM with migrations. DataSource config: `src/database/data-source.ts`.
 
-Entities: `User`, `Topic`, `TopicTranslation`, `Question`, `QuestionTranslation`, `QuestionRevision`, `ContentReview`, `UserQuestion`, `PracticeLog`.
+Entities: `User`, `Topic`, `TopicTranslation`, `Question`, `QuestionTranslation`, `QuestionRevision`, `ContentReview`, `UserQuestion`, `PracticeLog`, `DomainEvent`.
 
 See [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) for full schema.
 
