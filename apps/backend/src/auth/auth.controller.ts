@@ -89,7 +89,7 @@ export class AuthController {
    * Build the redirect URL with locale and auth_success flag
    */
   private buildRedirectUrl(session: any): string {
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:9000";
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:9100";
     // Get locale from session (stored during OAuth init), default to 'en'
     const locale = session.oauthLocale || "en";
     // Clear the stored locale

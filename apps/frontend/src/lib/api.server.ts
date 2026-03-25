@@ -12,7 +12,7 @@ import type {
   PracticeLogEntry,
 } from "@/types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9001/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9101/api";
 
 async function fetchApi<T>(
   endpoint: string,

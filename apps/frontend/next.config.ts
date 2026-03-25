@@ -9,7 +9,7 @@ const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 const nextConfig = {
   outputFileTracingRoot: monorepoRoot,
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9001/api';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9101/api';
     return [
       {
         source: '/api/:path*',

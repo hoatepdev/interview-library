@@ -16,7 +16,7 @@ export function LoginButton() {
     const locale = resolveLocale(pathLocale);
 
     // Build backend OAuth URL with locale parameter
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api$', '') || 'http://localhost:9001';
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api$', '') || 'http://localhost:9101';
 
     const google = new URL("/api/auth/google", apiBaseUrl);
     google.searchParams.set('locale', locale);

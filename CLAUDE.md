@@ -18,10 +18,10 @@ For detailed documentation see:
 ### Development
 
 ```bash
-pnpm dev                  # Run frontend (port 9000) + backend (port 9001) concurrently
+pnpm dev                  # Run frontend (port 9100) + backend (port 9101) concurrently
 pnpm dev:frontend         # Frontend only
 pnpm dev:backend          # Backend only
-docker compose up -d      # Start PostgreSQL (port 5432)
+docker compose up -d      # Start PostgreSQL (port 5442)
 ```
 
 ### Build
@@ -68,7 +68,7 @@ pnpm import:translations  # Import translations
 
 ```bash
 pnpm clean                # Remove all node_modules
-pnpm kill-port            # Kill processes on ports 9000 and 9001
+pnpm kill-port            # Kill processes on ports 9100 and 9101
 ```
 
 ## Architecture
@@ -121,7 +121,7 @@ Locale config is centralized in `packages/shared/src/i18n/locales.ts` (LOCALES, 
 
 ### Environment
 
-Copy `.env.example` to `.env` at the project root. Required vars: DB credentials, OAuth client IDs/secrets, SESSION_SECRET. Frontend reads `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:9001/api`).
+Copy `.env.example` to `.env` at the project root. Required vars: DB credentials, OAuth client IDs/secrets, SESSION_SECRET. Frontend reads `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:9101/api`).
 
 ## Development Guidelines
 

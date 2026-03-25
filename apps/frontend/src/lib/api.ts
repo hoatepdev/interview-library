@@ -22,7 +22,7 @@ import type {
 } from '@/types';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9001/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9101/api',
   headers: {
     'Content-Type': 'application/json',
   },

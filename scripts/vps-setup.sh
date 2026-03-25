@@ -33,7 +33,7 @@ mkdir -p ~/services/interview-library
 echo "==> Creating .env file from example..."
 if [ ! -f ~/services/interview-library/.env ]; then
   cat > ~/services/interview-library/.env << 'EOF'
-PORT=9001
+PORT=9101
 NODE_ENV=production
 FRONTEND_URL=https://your-app.vercel.app
 

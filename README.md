@@ -48,23 +48,23 @@ cp apps/backend/.env.example apps/backend/.env
 # Run migrations
 pnpm db:migrate
 
-# Start dev servers (frontend :9000, backend :9001)
+# Start dev servers (frontend :9100, backend :9101)
 pnpm dev
 ```
 
-Open [http://localhost:9000](http://localhost:9000).
+Open [http://localhost:9100](http://localhost:9100).
 
 ### Environment Variables
 
 **`apps/backend/.env`**
 
 ```env
-PORT=9001
+PORT=9101
 NODE_ENV=development
-FRONTEND_URL=http://localhost:9000
+FRONTEND_URL=http://localhost:9100
 
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=5442
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
 DB_NAME=interview_library
@@ -73,25 +73,25 @@ SESSION_SECRET=your_random_secret_string
 
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
-GOOGLE_CALLBACK_URL=http://localhost:9001/api/auth/google/callback
+GOOGLE_CALLBACK_URL=http://localhost:9101/api/auth/google/callback
 
 GITHUB_CLIENT_ID=...
 GITHUB_CLIENT_SECRET=...
-GITHUB_CALLBACK_URL=http://localhost:9001/api/auth/github/callback
+GITHUB_CALLBACK_URL=http://localhost:9101/api/auth/github/callback
 ```
 
 **`apps/frontend/.env.local`** (optional, defaults to localhost)
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:9001/api
+NEXT_PUBLIC_API_URL=http://localhost:9101/api
 ```
 
 ## Commands
 
 ```bash
 pnpm dev                          # Start frontend + backend concurrently
-pnpm dev:frontend                 # Frontend only (port 9000)
-pnpm dev:backend                  # Backend only (port 9001)
+pnpm dev:frontend                 # Frontend only (port 9100)
+pnpm dev:backend                  # Backend only (port 9101)
 pnpm build                        # Build both apps
 pnpm db:migrate                   # Run pending migrations
 pnpm db:migrate:revert            # Revert last migration
@@ -101,7 +101,7 @@ pnpm --filter backend lint        # Lint backend
 pnpm validate:i18n                # Validate translation files
 pnpm import:translations          # Import translations
 pnpm clean                        # Remove all node_modules
-pnpm kill-port                    # Kill processes on ports 9000 and 9001
+pnpm kill-port                    # Kill processes on ports 9100 and 9101
 ```
 
 ## Project Structure
@@ -109,8 +109,8 @@ pnpm kill-port                    # Kill processes on ports 9000 and 9001
 ```
 interview-library/
 ├── apps/
-│   ├── backend/          # NestJS API (port 9001)
-│   └── frontend/         # Next.js app (port 9000)
+│   ├── backend/          # NestJS API (port 9101)
+│   └── frontend/         # Next.js app (port 9100)
 ├── packages/
 │   └── shared/           # Shared i18n config (locales, etc.)
 ├── docker-compose.yml

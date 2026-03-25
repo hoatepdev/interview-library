@@ -1,6 +1,6 @@
 # API Contract
 
-Base URL: `http://localhost:9001/api`
+Base URL: `http://localhost:9101/api`
 
 All endpoints accept and return JSON. Authentication uses HTTP-only session cookies (set automatically after OAuth login).
 

@@ -7,8 +7,8 @@ Interview Library is a pnpm monorepo with three packages:
 ```
 interview-library/
 ├── apps/
-│   ├── backend/      # NestJS REST API  (port 9001)
-│   └── frontend/     # Next.js web app  (port 9000)
+│   ├── backend/      # NestJS REST API  (port 9101)
+│   └── frontend/     # Next.js web app  (port 9100)
 └── packages/
     └── shared/       # Shared i18n config (CJS + ESM)
 ```
@@ -70,7 +70,7 @@ React Context only — no Redux or Zustand:
 ### API Client (`src/lib/api.ts`)
 
 Axios instance with:
-- `baseURL` from `NEXT_PUBLIC_API_URL` (default `http://localhost:9001/api`)
+- `baseURL` from `NEXT_PUBLIC_API_URL` (default `http://localhost:9101/api`)
 - `withCredentials: true` for session cookies
 - Request interceptor injects `Accept-Language` from current locale
 
