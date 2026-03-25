@@ -22,6 +22,7 @@ import { UserQuestion } from "../entities/user-question.entity";
 import { PracticeLog } from "../entities/practice-log.entity";
 import { ContentReview } from "../entities/content-review.entity";
 import { DomainEvent } from "../entities/domain-event.entity";
+import { getQuestionContent, getQuestionTitle } from "./get-question-content";
 
 import { seniorSystemDesignQuestions } from "./interview-data-senior-system-design";
 import { seniorPostgresqlQuestions } from "./interview-data-senior-postgresql";
@@ -98,6 +99,7 @@ async function runSeed() {
     let totalSkipped = 0;
 
     for (const questionData of ALL_SENIOR_QUESTIONS) {
+      const normalizedTitle = getQuestionTitle(questionData);
       const topicId = topicSlugToId[questionData.topicSlug];
       if (!topicId) {
         console.warn(
@@ -113,7 +115,7 @@ async function runSeed() {
       // Check for duplicate by title
       const existing = await dataSource.query(
         `SELECT id FROM questions WHERE title = $1`,
-        [questionData.title],
+        [normalizedTitle],
       );
       if (existing.length > 0) {
         topicStats[questionData.topicSlug].skipped++;
@@ -122,12 +124,13 @@ async function runSeed() {
       }
 
       const question = questionRepo.create({
-        title: questionData.title,
+        title: normalizedTitle,
+        content: getQuestionContent(questionData),
         answer: questionData.answer,
         topicId: topicId,
         level: questionData.level,
-        difficultyScore: questionData.difficultyScore,
-        displayOrder: questionData.displayOrder,
+        difficultyScore: questionData.difficultyScore ?? 0,
+        displayOrder: questionData.displayOrder ?? 0,
       });
 
       await questionRepo.save(question);

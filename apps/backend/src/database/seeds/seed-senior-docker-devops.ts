@@ -22,6 +22,7 @@ import { PracticeLog } from "../entities/practice-log.entity";
 import { ContentReview } from "../entities/content-review.entity";
 import { DomainEvent } from "../entities/domain-event.entity";
 import { seniorDockerDevopsQuestions } from "./interview-data-senior-docker-devops";
+import { getQuestionContent, getQuestionTitle } from "./get-question-content";
 
 const topicSlugToId: Record<string, string> = {};
 
@@ -71,6 +72,7 @@ async function runSeed() {
     let skipped = 0;
 
     for (const questionData of seniorDockerDevopsQuestions) {
+      const normalizedTitle = getQuestionTitle(questionData);
       const topicId = topicSlugToId[questionData.topicSlug];
       if (!topicId) {
         console.warn(
@@ -82,7 +84,7 @@ async function runSeed() {
       // Check for duplicate by title
       const existing = await dataSource.query(
         `SELECT id FROM questions WHERE title = $1`,
-        [questionData.title],
+        [normalizedTitle],
       );
       if (existing.length > 0) {
         skipped++;
@@ -90,7 +92,8 @@ async function runSeed() {
       }
 
       const question = questionRepo.create({
-        title: questionData.title,
+        title: normalizedTitle,
+        content: getQuestionContent(questionData),
         answer: questionData.answer,
         topicId: topicId,
         level: questionData.level,

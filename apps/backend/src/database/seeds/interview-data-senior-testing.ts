@@ -1366,7 +1366,7 @@ After step 3, the acceptance test should pass. The cycle is: acceptance test dri
 
 1. **Snapshot entropy**: Components change frequently → snapshots become stale → developers update without reviewing → tests provide zero regression protection.
 2. **Review blindness**: A 500-line snapshot diff in a PR is skipped by every reviewer.
-3. **False security**: A snapshot test that passes after `--updateSnapshot` tells you nothing about whether the component still works correctly.
+3. **False security**: A snapshot test that passes after \`--updateSnapshot\` tells you nothing about whether the component still works correctly.
 4. **CI performance**: serializing and diffing 10,000 React component trees takes 3–5 extra minutes per CI run.
 
 **What snapshots are actually good for**:

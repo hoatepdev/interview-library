@@ -18,6 +18,8 @@ export interface QuestionSeed {
   answer: string;
   level: QuestionLevel;
   topicSlug: string;
+  difficultyScore?: number;
+  displayOrder?: number;
 }
 
 interface SeniorAnswer {
