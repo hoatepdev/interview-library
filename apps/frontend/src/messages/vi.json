@@ -134,7 +134,10 @@
     "importPartialSuccess": "Đã nhập {imported} câu hỏi, bỏ qua {skipped}",
     "importErrors": "{count} lỗi xảy ra",
     "importErrorRow": "Dòng {row}: {message}",
-    "importNoFile": "Vui lòng chọn tệp"
+    "importNoFile": "Vui lòng chọn tệp",
+    "translateToVi": "Dịch sang tiếng Việt",
+    "showOriginal": "Xem bản gốc",
+    "translationError": "Dịch thất bại. Vui lòng thử lại."
   },
   "practice": {
     "title": "Luyện tập",
@@ -208,7 +211,9 @@
     "currentStreak": "Hiện tại",
     "longestStreak": "Cao nhất",
     "streakDays": "{count} ngày",
-    "noStreak": "Bắt đầu luyện tập để xây dựng chuỗi!"
+    "noStreak": "Bắt đầu luyện tập để xây dựng chuỗi!",
+    "translateToVi": "Dịch sang tiếng Việt",
+    "showOriginal": "Xem bản gốc"
   },
   "form": {
     "name": "Tên",

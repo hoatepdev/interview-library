@@ -3,14 +3,16 @@
 import { Eye, EyeOff } from "lucide-react";
 import { RichTextPreview } from "@/components/ui/rich-text-editor";
 import { useTranslations } from "next-intl";
+import { normalizeAnswer } from "@/lib/parse-answer";
 
 interface AnswerRevealProps {
   answer?: string;
+  displayAnswer?: string;
   onReveal: () => void;
   isRevealed: boolean;
 }
 
-export function AnswerReveal({ answer, onReveal, isRevealed }: AnswerRevealProps) {
+export function AnswerReveal({ answer, displayAnswer, onReveal, isRevealed }: AnswerRevealProps) {
   const t = useTranslations("practice");
 
   if (!isRevealed) {
@@ -32,8 +34,8 @@ export function AnswerReveal({ answer, onReveal, isRevealed }: AnswerRevealProps
         <span>{t("answerRevealedLabel")}</span>
       </div>
       <div className="prose max-w-none text-gray-800 dark:text-gray-200">
-        {answer ? (
-          <RichTextPreview content={answer} />
+        {answer || displayAnswer ? (
+          <RichTextPreview content={normalizeAnswer(displayAnswer ?? answer ?? "")} />
         ) : (
           <p className="text-gray-500 dark:text-gray-400 italic">{t("noAnswerProvided")}</p>
         )}

@@ -109,6 +109,43 @@ export const reviewApi = {
     api.post<QuestionRevision>(`/review/revisions/${id}/reject`, { note }).then((res) => res.data),
 };
 
+// Translations
+export interface QuestionTranslation {
+  id: number;
+  questionId: string;
+  locale: string;
+  title: string;
+  content: string;
+  answer?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const translationsApi = {
+  getQuestionTranslation: (questionId: string, locale: string) =>
+    api
+      .get<QuestionTranslation>(`/translations/questions/${questionId}/${locale}`)
+      .then((res) => res.data),
+  createQuestionTranslation: (data: {
+    questionId: string;
+    locale: string;
+    title: string;
+    content: string;
+    answer?: string;
+  }) =>
+    api
+      .post<QuestionTranslation>('/translations/questions', data)
+      .then((res) => res.data),
+  updateQuestionTranslation: (
+    questionId: string,
+    locale: string,
+    data: { title?: string; content?: string; answer?: string },
+  ) =>
+    api
+      .put<QuestionTranslation>(`/translations/questions/${questionId}/${locale}`, data)
+      .then((res) => res.data),
+};
+
 // Admin (ADMIN only)
 export const adminApi = {
   getUsers: () => api.get('/admin/users').then((res) => res.data),

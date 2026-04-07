@@ -1,12 +1,13 @@
 import { Question } from "@/types";
-import { Badge } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface QuestionCardProps {
   question: Question;
+  displayTitle?: string;
+  displayContent?: string;
 }
 
-export function QuestionCard({ question }: QuestionCardProps) {
+export function QuestionCard({ question, displayTitle, displayContent }: QuestionCardProps) {
   const t = useTranslations("questions");
 
   return (
@@ -22,13 +23,17 @@ export function QuestionCard({ question }: QuestionCardProps) {
           )}
         </span>
       </div>
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{question.title}</h2>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+        {displayTitle ?? question.title}
+      </h2>
       <div className="prose max-w-none text-gray-600 dark:text-gray-300">
-        <p>{question.content}</p>
+        <p>{displayContent ?? question.content}</p>
       </div>
       <div className="mt-4 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-        {question.difficultyScore && (
-          <span>{t("difficultyLabel")} {question.difficultyScore}</span>
+        {!!question.difficultyScore && (
+          <span>
+            {t("difficultyLabel")} {question.difficultyScore}
+          </span>
         )}
       </div>
     </div>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Question, Topic, SelfRating } from "@/types";
 import { practiceApi, topicsApi } from "@/lib/api";
+import { useQuestionTranslation } from "@/hooks/use-question-translation";
 import { QuestionCard } from "./QuestionCard";
 import { AnswerReveal } from "./AnswerReveal";
 import { SelfRatingComponent } from "./SelfRating";
@@ -12,7 +13,7 @@ import { TimerSetup } from "./TimerSetup";
 import { TimerBar } from "./TimerBar";
 import { SessionSummary, type SessionResult } from "./SessionSummary";
 import { useRequireAuth } from "@/hooks/use-require-auth";
-import { Sparkles, Shuffle, Timer } from "lucide-react";
+import { Sparkles, Shuffle, Timer, Languages, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 type PracticeMode = "smart" | "random";
@@ -33,6 +34,16 @@ export function PracticeSession() {
   const [practiceMode, setPracticeMode] = useState<PracticeMode>("smart");
   const [dueCount, setDueCount] = useState<number>(0);
   const { requireAuth } = useRequireAuth();
+
+  const {
+    isVietnamese,
+    isLoading: isTranslating,
+    displayTitle,
+    displayContent,
+    displayAnswer,
+    loadTranslation,
+    showOriginal,
+  } = useQuestionTranslation(question);
 
   // Filters state
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -362,12 +373,32 @@ export function PracticeSession() {
         />
       </div>
 
-      <QuestionCard question={question} />
+      <QuestionCard
+        question={question}
+        displayTitle={displayTitle}
+        displayContent={displayContent}
+      />
 
       <div className="mt-8">
+        {/* Translate toggle */}
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={isVietnamese ? showOriginal : loadTranslation}
+            disabled={isTranslating}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors disabled:opacity-50"
+          >
+            {isTranslating ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Languages className="w-3.5 h-3.5" />
+            )}
+            <span>{isVietnamese ? t("showOriginal") : t("translateToVi")}</span>
+          </button>
+        </div>
         {!isRevealed ? (
           <AnswerReveal
             answer={question.answer}
+            displayAnswer={displayAnswer}
             isRevealed={isRevealed}
             onReveal={handleReveal}
           />
@@ -375,6 +406,7 @@ export function PracticeSession() {
           <div className="space-y-6 fade-in">
             <AnswerReveal
               answer={question.answer}
+              displayAnswer={displayAnswer}
               isRevealed={isRevealed}
               onReveal={handleReveal}
             />

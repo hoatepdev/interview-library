@@ -134,7 +134,10 @@
     "importPartialSuccess": "Imported {imported} questions, {skipped} skipped",
     "importErrors": "{count} errors occurred",
     "importErrorRow": "Row {row}: {message}",
-    "importNoFile": "Please select a file"
+    "importNoFile": "Please select a file",
+    "translateToVi": "Translate to Vietnamese",
+    "showOriginal": "Show original",
+    "translationError": "Translation failed. Please try again."
   },
   "practice": {
     "title": "Practice Mode",
@@ -208,7 +211,9 @@
     "currentStreak": "Current",
     "longestStreak": "Best",
     "streakDays": "{count} days",
-    "noStreak": "Start practicing to build your streak!"
+    "noStreak": "Start practicing to build your streak!",
+    "translateToVi": "Translate to Vietnamese",
+    "showOriginal": "Show original"
   },
   "form": {
     "name": "Name",
